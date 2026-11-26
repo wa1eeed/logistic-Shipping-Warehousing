@@ -3,10 +3,10 @@
 
 <svg class="lx-map lx-choropleth" viewBox="@ViewBox" role="img" aria-label="@AriaLabel" xmlns="http://www.w3.org/2000/svg">
     <g>
-        @foreach (var shape in IraqMapShapes.Governorates)
+        @foreach (var shape in Map.Shapes)
         {
             var value = ValueOf(shape.Code);
-            var name = Logistico.SharedKernel.Iraq.IraqGovernorates.Find(shape.Code)?.Name ?? shape.Code;
+            var name = Map.NameOf(shape.Code);
             var shown = value is { } v ? Format(v) : "—";
             <path d="@shape.Path" class="@Bp.Cls("lx-map-gov", StepFor(value), Bp.When(Selected == shape.Code, "lx-map-gov-selected"))"
                   @onclick="@(() => OnSelect.InvokeAsync(Selected == shape.Code ? null : shape.Code))"
@@ -16,11 +16,11 @@
         }
     </g>
     <g>
-        @foreach (var shape in IraqMapShapes.Governorates)
+        @foreach (var shape in Map.Shapes)
         {
             var value = ValueOf(shape.Code);
             var (x, y) = IraqMap.LabelAt(shape);
-            @SvgText(x, y, "lx-map-label", Logistico.SharedKernel.Iraq.IraqGovernorates.Find(shape.Code)?.Name ?? shape.Code)
+            @SvgText(x, y, "lx-map-label", Map.NameOf(shape.Code))
             @SvgText(x, y + 13, "lx-map-label lx-map-count", value is { } v ? Format(v) : "—")
         }
     </g>
@@ -39,6 +39,8 @@
 @code {
     private const int Steps = 7;
 
+    private static MapSource Map => MapSource.Current;
+
     /// <summary>Value per governorate code; governorates without a value are drawn empty.</summary>
     [Parameter, EditorRequired] public IReadOnlyDictionary<string, decimal> Values { get; set; } = new Dictionary<string, decimal>();
     [Parameter] public Func<decimal, string> Format { get; set; } = v => Fmt.Number(v, 0);
@@ -47,7 +49,7 @@
     [Parameter] public EventCallback<string?> OnSelect { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
 
-    private static string ViewBox => string.Create(CultureInfo.InvariantCulture, $"0 0 {IraqMapShapes.Width} {IraqMapShapes.Height}");
+    private static string ViewBox => string.Create(CultureInfo.InvariantCulture, $"0 0 {Map.Width} {Map.Height}");
 
     private (decimal Min, decimal Max)? Range => Values.Count == 0 ? null : (Values.Values.Min(), Values.Values.Max());
 

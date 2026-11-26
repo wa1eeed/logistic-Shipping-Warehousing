@@ -5,10 +5,10 @@
 <svg @ref="svg" class="@Bp.Cls("lx-map", "lx-coverage-map", Bp.When(OnPick.HasDelegate, "lx-map-picking"))" viewBox="@ViewBox" role="img"
      aria-label="@L["CoverageMap"]" xmlns="http://www.w3.org/2000/svg" @onclick="ClickAsync">
     <g>
-        @foreach (var shape in IraqMapShapes.Governorates)
+        @foreach (var shape in Map.Shapes)
         {
             var owner = OwnerOf(shape.Code);
-            var name = IraqGovernorates.Find(shape.Code)?.Name ?? shape.Code;
+            var name = Map.NameOf(shape.Code);
             var mine = Editing is not null && owner?.Code == Editing;
             <path d="@shape.Path" fill="@(owner is null ? null : ColorOf(owner.Code, mine ? 0.85 : Editing is null ? 0.55 : 0.28))"
                   class="@Bp.Cls("lx-map-gov", Bp.When(owner is null, "lx-map-s0"), Bp.When(mine, "lx-map-gov-selected"))" @onclick="@(() => clicked = shape.Code)">
@@ -20,10 +20,10 @@
     @if (!Compact)
     {
         <g>
-            @foreach (var shape in IraqMapShapes.Governorates)
+            @foreach (var shape in Map.Shapes)
             {
                 var (x, y) = IraqMap.LabelAt(shape);
-                @SvgText(x, y, "lx-map-label", IraqGovernorates.Find(shape.Code)?.Name ?? shape.Code)
+                @SvgText(x, y, "lx-map-label", Map.NameOf(shape.Code))
             }
         </g>
     }
@@ -31,13 +31,13 @@
     <g>
         @foreach (var hub in Hubs.Where(h => h.Latitude > 0 && h.Code != Editing))
         {
-            var (x, y) = IraqMapShapes.Project(hub.Latitude, hub.Longitude);
+            var (x, y) = Map.Project(hub.Latitude, hub.Longitude);
             <circle cx="@F(x)" cy="@F(y)" r="@(hub.Kind == HubKind.SortingHub ? "12" : "9")" fill="@ColorOf(hub.Code, 1)" class="lx-map-hub-plain" />
             @SvgText(x, y + 3.2, "lx-map-hub-text", hub.RoutingTag)
         }
         @if (Pin is { } pin)
         {
-            var (x, y) = IraqMapShapes.Project(pin.Latitude, pin.Longitude);
+            var (x, y) = Map.Project(pin.Latitude, pin.Longitude);
             <g class="lx-map-pin" transform="@($"translate({F(x)},{F(y)})")">
                 <path d="M0,0 C-9,-12 -12,-17 -12,-23 A12,12 0 1 1 12,-23 C12,-17 9,-12 0,0 Z" />
                 <circle cx="0" cy="-23" r="5" fill="#fff" />
@@ -64,6 +64,8 @@
     private ElementReference svg;
     private string? clicked;
 
+    private static MapSource Map => MapSource.Current;
+
     /// <summary>Every warehouse to draw (the one being edited included, with its live coverage).</summary>
     [Parameter, EditorRequired] public IReadOnlyList<HubInfo> Hubs { get; set; } = [];
 
@@ -77,7 +79,7 @@
 
     [Parameter] public bool Compact { get; set; }
 
-    private static string ViewBox => string.Create(CultureInfo.InvariantCulture, $"0 0 {IraqMapShapes.Width} {IraqMapShapes.Height}");
+    private static string ViewBox => string.Create(CultureInfo.InvariantCulture, $"0 0 {Map.Width} {Map.Height}");
 
     private HubInfo? OwnerOf(string governorate)
     {
@@ -113,7 +115,7 @@
         var point = await JS.InvokeAsync<double[]?>("lx.svgPoint", svg, e.ClientX, e.ClientY);
         if (point is [var x, var y])
         {
-            var (lat, lon) = IraqMapShapes.Unproject(x, y);
+            var (lat, lon) = Map.Unproject(x, y);
             await OnPick.InvokeAsync((Math.Round(lat, 5), Math.Round(lon, 5), governorate));
         }
     }

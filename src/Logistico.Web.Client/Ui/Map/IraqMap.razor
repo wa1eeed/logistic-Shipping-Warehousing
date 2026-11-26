@@ -3,10 +3,10 @@
 
 <svg class="lx-map" viewBox="@ViewBox" role="img" aria-label="@L["Nav_Network"]" xmlns="http://www.w3.org/2000/svg">
     <g>
-        @foreach (var shape in IraqMapShapes.Governorates)
+        @foreach (var shape in Map.Shapes)
         {
             var value = ValueOf(shape.Code);
-            var name = Logistico.SharedKernel.Iraq.IraqGovernorates.Find(shape.Code)?.Name ?? shape.Code;
+            var name = Map.NameOf(shape.Code);
             <path d="@shape.Path" class="@Bp.Cls("lx-map-gov", StepFor(value), Bp.When(Selected == shape.Code, "lx-map-gov-selected"))"
                   @onclick="@(() => OnSelect.InvokeAsync(Selected == shape.Code ? null : shape.Code))" tabindex="0" role="button" aria-label="@($"{name}: {Fmt.Number(value)}")">
                 <title>@name · @Fmt.Number(value)</title>
@@ -33,10 +33,10 @@
     @if (!Compact)
     {
         <g>
-            @foreach (var shape in IraqMapShapes.Governorates)
+            @foreach (var shape in Map.Shapes)
             {
                 var (x, y) = LabelAt(shape);
-                @SvgText(x, y, "lx-map-label", Logistico.SharedKernel.Iraq.IraqGovernorates.Find(shape.Code)?.Name ?? shape.Code)
+                @SvgText(x, y, "lx-map-label", Map.NameOf(shape.Code))
                 @SvgText(x, y + 13, "lx-map-label lx-map-count", Fmt.Number(ValueOf(shape.Code)))
             }
         </g>
@@ -84,6 +84,9 @@
     /// <summary>Shades of the map ramp (lx-map-s0 … s6 in app.css, one ramp per theme).</summary>
     private const int Steps = 7;
 
+    /// <summary>The map for the company's country (Iraq or Saudi Arabia).</summary>
+    private static MapSource Map => MapSource.Current;
+
     [Parameter] public IReadOnlyList<GovernorateLoad> Governorates { get; set; } = [];
     [Parameter] public IReadOnlyList<HubLoad> Hubs { get; set; } = [];
     [Parameter] public IReadOnlyList<LaneLoad> Lanes { get; set; } = [];
@@ -97,7 +100,7 @@
     /// <summary>Small version for the dashboard: no labels or legend.</summary>
     [Parameter] public bool Compact { get; set; }
 
-    private static string ViewBox => string.Create(CultureInfo.InvariantCulture, $"0 0 {IraqMapShapes.Width} {IraqMapShapes.Height}");
+    private static string ViewBox => string.Create(CultureInfo.InvariantCulture, $"0 0 {Map.Width} {Map.Height}");
 
     private int ValueOf(string code)
     {
@@ -114,7 +117,7 @@
 
     private string StepFor(int value)
     {
-        var max = Math.Max(1, IraqMapShapes.Governorates.Max(s => ValueOf(s.Code)));
+        var max = Math.Max(1, Map.Shapes.Max(s => ValueOf(s.Code)));
         if (value <= 0)
         {
             return "lx-map-s0";
@@ -152,7 +155,7 @@
 
     /// <summary>Map position of an active hub from its coordinates; null for hubs that are not in the network any more.</summary>
     private static (double X, double Y)? PointOf(string hubCode) =>
-        HubCatalog.Find(hubCode) is { Latitude: > 0 } hub ? IraqMapShapes.Project(hub.Latitude, hub.Longitude) : null;
+        HubCatalog.Find(hubCode) is { Latitude: > 0 } hub ? Map.Project(hub.Latitude, hub.Longitude) : null;
 
     /// <summary>SVG &lt;text&gt; (Razor reserves the &lt;text&gt; tag, so it is written as markup).</summary>
     private static MarkupString SvgText(double x, double y, string cssClass, string content) =>
