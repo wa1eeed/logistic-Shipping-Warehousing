@@ -35,6 +35,7 @@ internal static class SellerPortalEndpoints
         seller.MapPost("/orders", BookAsync).WithSummary("Books a delivery from the shop's governorate; the fee comes from the company's prices.");
         seller.MapGet("/quote", QuoteAsync).WithSummary("The company's delivery fee for this shop to a governorate.");
         seller.MapPost("/orders/{id:guid}/cancel", CancelAsync).WithSummary("Cancels an order that has not been picked up yet.");
+        seller.MapPost("/orders/{id:guid}/complaint", ComplaintAsync).WithSummary("Files a complaint about one of the shop's own orders; staff pick it up from the requests inbox.");
         seller.MapGet("/payouts/{id:guid}/statement.csv", StatementAsync).WithSummary("Parcel-by-parcel CSV statement of one of the shop's payouts.");
         return app;
     }
@@ -186,6 +187,38 @@ internal static class SellerPortalEndpoints
         catch (DbUpdateConcurrencyException)
         {
             return Api.Stale();
+        }
+    }
+
+    private static async Task<IResult> ComplaintAsync(Guid id, SellerComplaint body, ClaimsPrincipal user, IMerchantDirectory merchants, ShipmentsDbContext db, RequestDesk desk, CancellationToken ct)
+    {
+        if (await ShopOfAsync(user, merchants, ct) is not { } shop)
+        {
+            return NotLinked();
+        }
+
+        // A shop may only complain about its own orders; scoping to its merchant id is the security boundary.
+        var shipment = await db.Shipments.FirstOrDefaultAsync(s => s.Id == id && s.MerchantId == shop.Id, ct);
+        if (shipment is null)
+        {
+            return Api.NotFound();
+        }
+
+        var fields = new CreateServiceRequest { Type = RequestType.Complaint, ShipmentId = id, Source = RequestSource.Seller, Details = body.Details };
+        if (Api.Validate(fields) is { } invalid)
+        {
+            return invalid;
+        }
+
+        try
+        {
+            var (created, _) = await desk.CreateAsync(shipment, fields, RequestSource.Seller, user.UserName(), ct);
+            await db.SaveChangesAsync(ct);
+            return TypedResults.Created("/" + ShipmentsApiRoutes.RequestById(created.Id), new SellerComplaintReceipt(created.Number));
+        }
+        catch (DomainException ex)
+        {
+            return Api.Rule(ex);
         }
     }
 

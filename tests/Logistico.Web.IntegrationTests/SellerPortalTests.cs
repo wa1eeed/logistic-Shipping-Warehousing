@@ -138,6 +138,45 @@ public sealed class SellerPortalTests(LogisticoApiFactory factory)
         Assert.Equal((StaffRoles.Viewer, (Guid?)null), (listed.Role, listed.MerchantId));
     }
 
+    [Fact]
+    public async Task A_seller_files_a_complaint_on_their_own_order_only()
+    {
+        var company = Guid.CreateVersion7();
+        var admin = factory.CreateUserClient(tenant: company);
+        var shop = await admin.CreateMerchantAsync("Complaint Shop", "complaint.shop");
+        var other = await admin.CreateMerchantAsync("Other Complaint Shop", "other.complaint.shop");
+        var seller = factory.CreateUserClient("complaint@logistico.test", company, StaffRoles.Seller, merchantId: shop);
+
+        var mine = await BookAsync(seller, "زبون الشكوى");
+        var theirs = await admin.BookAsync(ApiTestHelpers.DomesticOrder(other, "زبون غيري"));
+
+        // A complaint needs some words about what went wrong.
+        var empty = await seller.PostAsJsonAsync("/" + ShipmentsApiRoutes.SellerComplaint(mine.Id), new SellerComplaint());
+        Assert.Equal(HttpStatusCode.BadRequest, empty.StatusCode);
+
+        // The shop files a complaint on its own order and gets the request number back.
+        var filed = await seller.PostAsJsonAsync("/" + ShipmentsApiRoutes.SellerComplaint(mine.Id), new SellerComplaint { Details = "الطلب تأخر كثيراً ولم يصل الزبون." });
+        Assert.Equal(HttpStatusCode.Created, filed.StatusCode);
+        var receipt = (await filed.Content.ReadFromJsonAsync<SellerComplaintReceipt>())!;
+        Assert.False(string.IsNullOrWhiteSpace(receipt.Number));
+
+        // Staff see it in the requests inbox: a seller complaint on that order, still open.
+        var inbox = (await admin.GetFromJsonAsync<ServiceRequestList>("/" + ShipmentsApiRoutes.Requests + "?shipmentId=" + mine.Id))!;
+        var request = Assert.Single(inbox.Items);
+        Assert.Equal((RequestType.Complaint, RequestSource.Seller, RequestStatus.Open), (request.Type, request.Source, request.Status));
+        Assert.Equal(receipt.Number, request.Number);
+
+        // A second open complaint on the same order is a duplicate.
+        var duplicate = await seller.PostAsJsonAsync("/" + ShipmentsApiRoutes.SellerComplaint(mine.Id), new SellerComplaint { Details = "تكرار." });
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, duplicate.StatusCode);
+        Assert.Equal("request.duplicate", await CodeAsync(duplicate));
+
+        // Another shop's order looks like it does not exist, and no request is recorded against it.
+        var foreign = await seller.PostAsJsonAsync("/" + ShipmentsApiRoutes.SellerComplaint(theirs.Id), new SellerComplaint { Details = "ليس طلبي." });
+        Assert.Equal(HttpStatusCode.NotFound, foreign.StatusCode);
+        Assert.Empty((await admin.GetFromJsonAsync<ServiceRequestList>("/" + ShipmentsApiRoutes.Requests + "?shipmentId=" + theirs.Id))!.Items);
+    }
+
     /// <summary>A Baghdad delivery booked by the seller itself.</summary>
     private static async Task<CreateShipmentResponse> BookAsync(HttpClient seller, string customer, decimal cod = 25_000)
     {

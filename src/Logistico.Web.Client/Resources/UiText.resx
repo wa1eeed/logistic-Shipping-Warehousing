@@ -1034,6 +1034,12 @@
   <data name="Seller_CancelMessage" xml:space="preserve"><value>Order {0} has not been picked up yet. Cancelling takes it off the courier's pickups.</value></data>
   <data name="Seller_CancelTitle" xml:space="preserve"><value>Cancel this order?</value></data>
   <data name="Seller_CancelledToast" xml:space="preserve"><value>Order {0} cancelled.</value></data>
+  <data name="Seller_Complaint" xml:space="preserve"><value>Raise a complaint</value></data>
+  <data name="Seller_ComplaintFor" xml:space="preserve"><value>About order {0}</value></data>
+  <data name="Seller_ComplaintDetails" xml:space="preserve"><value>What went wrong</value></data>
+  <data name="Seller_ComplaintPlaceholder" xml:space="preserve"><value>Describe what happened so our team can look into it.</value></data>
+  <data name="Seller_ComplaintSubmit" xml:space="preserve"><value>Send complaint</value></data>
+  <data name="Seller_ComplaintSent" xml:space="preserve"><value>Your complaint {0} was received; our team will follow up.</value></data>
   <data name="Seller_FeeN" xml:space="preserve"><value>Fee {0}</value></data>
   <data name="Seller_NewOrder" xml:space="preserve"><value>New order</value></data>
   <data name="Seller_NoMatches" xml:space="preserve"><value>Nothing matches this search or filter.</value></data>

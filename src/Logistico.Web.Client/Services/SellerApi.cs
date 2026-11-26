@@ -19,5 +19,8 @@ internal sealed class SellerApi(HttpClient http) : ApiClient(http)
 
     public Task CancelAsync(Guid id, CancellationToken ct = default) => SendAsync(HttpMethod.Post, ShipmentsApiRoutes.SellerCancel(id), null, null, ct);
 
+    public Task<SellerComplaintReceipt> ComplaintAsync(Guid id, SellerComplaint body, CancellationToken ct = default) =>
+        SendAsync<SellerComplaintReceipt>(HttpMethod.Post, ShipmentsApiRoutes.SellerComplaint(id), body, null, ct);
+
     public string StatementUrl(Guid settlementId) => ShipmentsApiRoutes.SellerStatement(settlementId);
 }
