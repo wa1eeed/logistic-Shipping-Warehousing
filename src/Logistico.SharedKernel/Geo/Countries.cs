@@ -13,6 +13,8 @@ public static class Countries
 {
     public const string Iraq = "IQ";
 
+    public const string Saudi = "SA";
+
     private static readonly Country[] Named =
     [
         new("IQ", "Iraq", "العراق"),
