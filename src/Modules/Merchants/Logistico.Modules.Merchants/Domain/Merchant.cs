@@ -1,5 +1,5 @@
 using Logistico.Modules.Merchants.Contracts;
-using Logistico.SharedKernel.Iraq;
+using Logistico.SharedKernel.Geo;
 
 namespace Logistico.Modules.Merchants.Domain;
 
@@ -24,6 +24,12 @@ internal sealed class Merchant
     public string? Address { get; private set; }
     public string? Notes { get; private set; }
     public bool IsActive { get; private set; }
+
+    /// <summary>The seller's declared daily shipment volume (their pricing tier).</summary>
+    public MerchantVolumeBand DailyShipments { get; private set; }
+
+    /// <summary>True when the seller signed themselves up from the public site (not added by staff).</summary>
+    public bool SelfRegistered { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
     public uint Version { get; private set; }
@@ -32,6 +38,14 @@ internal sealed class Merchant
     {
         var merchant = new Merchant { Id = Guid.CreateVersion7(now), TenantId = tenantId, CreatedAt = now };
         merchant.Apply(request, now);
+        return merchant;
+    }
+
+    /// <summary>A seller who signed up from the public site; active immediately and flagged for staff.</summary>
+    public static Merchant CreateSelfRegistered(Guid tenantId, MerchantRequest request, DateTimeOffset now)
+    {
+        var merchant = Create(tenantId, request, now);
+        merchant.SelfRegistered = true;
         return merchant;
     }
 
@@ -45,11 +59,12 @@ internal sealed class Merchant
         Name = request.Name.Trim();
         InstagramHandle = NormalizeHandle(request.InstagramHandle);
         ContactName = request.ContactName.Trim();
-        Phone = IraqPhone.Normalize(request.Phone) ?? request.Phone.Trim();
+        Phone = PhoneNumbers.Normalize(request.Phone) ?? request.Phone.Trim();
         Governorate = request.Governorate.ToUpperInvariant();
         Address = string.IsNullOrWhiteSpace(request.Address) ? null : request.Address.Trim();
         Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim();
         IsActive = request.IsActive;
+        DailyShipments = request.DailyShipments;
         UpdatedAt = now;
     }
 }

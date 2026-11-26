@@ -18,7 +18,7 @@ namespace Logistico.Modules.Merchants.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("merchant")
-                .HasAnnotation("ProductVersion", "10.0.13")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -43,6 +43,10 @@ namespace Logistico.Modules.Merchants.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("DailyShipments")
+                        .HasColumnType("integer")
+                        .HasColumnName("daily_shipments");
 
                     b.Property<string>("Governorate")
                         .IsRequired()
@@ -81,6 +85,10 @@ namespace Logistico.Modules.Merchants.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("search_text")
                         .HasComputedColumnSql("translate(lower(' ' || name || ' ' || coalesce(instagram_handle, '') || ' ' || contact_name || ' ' || phone), 'أإآٱىةؤئ٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹ـًٌٍَُِّْٰ', 'اااايهوي01234567890123456789')", true);
+
+                    b.Property<bool>("SelfRegistered")
+                        .HasColumnType("boolean")
+                        .HasColumnName("self_registered");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid")

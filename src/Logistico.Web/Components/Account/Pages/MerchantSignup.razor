@@ -1,0 +1,256 @@
+@page "/Account/Join"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using Logistico.Modules.Merchants
+@using Logistico.Modules.Merchants.Contracts
+@using Logistico.Modules.Shipments.Contracts
+@using Logistico.SharedKernel
+@using Logistico.SharedKernel.Geo
+@using Logistico.SharedKernel.Identity
+@using Logistico.SharedKernel.Iraq
+@using Logistico.SharedKernel.Saudi
+@using Logistico.Web.Data
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IServiceProvider Services
+@inject IOperatingNetwork Network
+@inject IdentityRedirectManager RedirectManager
+@inject ILogger<MerchantSignup> Logger
+
+<PageTitle>انضم كمتجر · لوجستيكو</PageTitle>
+
+<div class="lx-signin-split lx-setup-page">
+<aside class="lx-signin-hero">
+    <div class="lx-signin-hero-brand">
+        <span class="lx-logo lx-logo-large" aria-hidden="true"></span>
+        <span class="lx-signin-app">لوجستيكو</span>
+    </div>
+    <h1 class="lx-signin-hero-title">وصّل طلبات متجرك مع لوجستيكو</h1>
+    <p class="lx-signin-hero-text">سجّل متجرك خلال دقيقة وابدأ بإرسال شحناتك عبر المملكة، مع تتبّع لحظي، دفع عند الاستلام، وتسوية دورية لمبالغك.</p>
+    <ol class="lx-signin-points lx-setup-steps">
+        <li><span class="bp6-icon-standard bp6-icon-shop" aria-hidden="true"></span> سجّل متجرك وبياناتك</li>
+        <li><span class="bp6-icon-standard bp6-icon-box" aria-hidden="true"></span> أنشئ شحناتك وتابعها</li>
+        <li><span class="bp6-icon-standard bp6-icon-bank-account" aria-hidden="true"></span> احصل على تسوية مبالغك</li>
+    </ol>
+    <Logistico.Web.Client.Ui.Map.NetworkSilhouette CssClass="lx-signin-map" />
+</aside>
+
+<div class="lx-signin">
+    <div class="bp6-card bp6-elevation-2 lx-signin-card lx-setup-card">
+        @if (done)
+        {
+            <h2 class="bp6-heading">تم إنشاء حساب متجرك 🎉</h2>
+            <p class="bp6-text-muted">جارِ تحويلك إلى بوابة متجرك…</p>
+        }
+        else
+        {
+            <h2 class="bp6-heading">انضم كمتجر</h2>
+            <p class="bp6-text-muted">أنشئ حساب متجرك وابدأ الشحن فوراً.</p>
+
+            @if (errors.Count > 0)
+            {
+                <div class="bp6-callout bp6-intent-danger lx-mb" role="alert">
+                    <span class="bp6-icon-standard bp6-icon-error lx-callout-icon"></span>
+                    @foreach (var error in errors)
+                    {
+                        <div>@error</div>
+                    }
+                </div>
+            }
+
+            <EditForm EditContext="editContext" method="post" OnValidSubmit="RunAsync" FormName="join">
+                <DataAnnotationsValidator />
+
+                <h3 class="lx-setup-section"><span class="bp6-icon-standard bp6-icon-shop" aria-hidden="true"></span> متجرك</h3>
+                <div class="bp6-form-group">
+                    <label class="bp6-label" for="Input.StoreName">اسم المتجر</label>
+                    <InputText @bind-Value="Input.StoreName" id="Input.StoreName" class="bp6-input bp6-fill" dir="auto" maxlength="150" />
+                    <div class="bp6-form-helper-text"><ValidationMessage For="() => Input.StoreName" /></div>
+                </div>
+                <div class="lx-setup-row">
+                    <div class="bp6-form-group">
+                        <label class="bp6-label" for="Input.ContactName">اسم المسؤول</label>
+                        <InputText @bind-Value="Input.ContactName" id="Input.ContactName" class="bp6-input bp6-fill" dir="auto" maxlength="120" autocomplete="name" />
+                        <div class="bp6-form-helper-text"><ValidationMessage For="() => Input.ContactName" /></div>
+                    </div>
+                    <div class="bp6-form-group">
+                        <label class="bp6-label" for="Input.Phone">الجوال</label>
+                        <InputText @bind-Value="Input.Phone" id="Input.Phone" class="bp6-input bp6-fill" type="tel" dir="ltr" maxlength="20" placeholder="050 123 4567" />
+                        <div class="bp6-form-helper-text"><ValidationMessage For="() => Input.Phone" /></div>
+                    </div>
+                </div>
+                <div class="lx-setup-row">
+                    @if (regions.Count > 0)
+                    {
+                        <div class="bp6-form-group">
+                            <label class="bp6-label" for="Input.Region">المنطقة</label>
+                            <div class="bp6-html-select bp6-fill">
+                                <InputSelect @bind-Value="Input.Region" id="Input.Region">
+                                    @foreach (var r in regions.OrderBy(r => r.Name, StringComparer.CurrentCulture))
+                                    {
+                                        <option value="@r.Code">@r.Name</option>
+                                    }
+                                </InputSelect>
+                                <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
+                            </div>
+                        </div>
+                    }
+                    <div class="bp6-form-group">
+                        <label class="bp6-label" for="Input.DailyShipments">عدد الشحنات اليومي</label>
+                        <div class="bp6-html-select bp6-fill">
+                            <InputSelect @bind-Value="Input.DailyShipments" id="Input.DailyShipments">
+                                <option value="@MerchantVolumeBand.Under10">أقل من ١٠ شحنات يومياً</option>
+                                <option value="@MerchantVolumeBand.From10To50">١٠ – ٥٠ شحنة يومياً</option>
+                                <option value="@MerchantVolumeBand.From50To200">٥٠ – ٢٠٠ شحنة يومياً</option>
+                                <option value="@MerchantVolumeBand.Over200">أكثر من ٢٠٠ شحنة يومياً</option>
+                            </InputSelect>
+                            <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
+                        </div>
+                        <div class="bp6-form-helper-text">يساعدنا على اختيار باقة الأسعار المناسبة لك.</div>
+                    </div>
+                </div>
+
+                <h3 class="lx-setup-section"><span class="bp6-icon-standard bp6-icon-person" aria-hidden="true"></span> حسابك</h3>
+                <div class="bp6-form-group">
+                    <label class="bp6-label" for="Input.Email">البريد الإلكتروني</label>
+                    <InputText @bind-Value="Input.Email" id="Input.Email" class="bp6-input bp6-fill" dir="ltr" autocomplete="username" placeholder="name@store.com" />
+                    <div class="bp6-form-helper-text"><ValidationMessage For="() => Input.Email" /></div>
+                </div>
+                <div class="lx-setup-row">
+                    <div class="bp6-form-group">
+                        <label class="bp6-label" for="Input.Password">كلمة المرور</label>
+                        <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="bp6-input bp6-fill" dir="ltr" autocomplete="new-password" />
+                        <div class="bp6-form-helper-text"><ValidationMessage For="() => Input.Password" /></div>
+                    </div>
+                    <div class="bp6-form-group">
+                        <label class="bp6-label" for="Input.ConfirmPassword">تأكيد كلمة المرور</label>
+                        <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="bp6-input bp6-fill" dir="ltr" autocomplete="new-password" />
+                        <div class="bp6-form-helper-text"><ValidationMessage For="() => Input.ConfirmPassword" /></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="bp6-button bp6-intent-primary bp6-large bp6-fill lx-mt">
+                    <span class="bp6-icon-standard bp6-icon-tick"></span>
+                    <span class="bp6-button-text">أنشئ حساب المتجر</span>
+                </button>
+                <p class="bp6-text-muted lx-small" style="margin-top:12px;text-align:center">لديك حساب؟ <a href="Account/Login">تسجيل الدخول</a></p>
+            </EditForm>
+        }
+    </div>
+</div>
+</div>
+
+@code {
+    private EditContext editContext = default!;
+    private List<string> errors = [];
+    private bool done;
+    private List<(string Code, string Name)> regions = [];
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Input ??= new();
+        editContext = new EditContext(Input);
+
+        var country = await Network.CountryAsync(Tenants.Default, CancellationToken.None);
+        regions = Countries.IsSaudi(country)
+            ? SaudiRegions.All.Select(r => (r.Code, r.Name)).ToList()
+            : Countries.IsIraq(country)
+                ? IraqGovernorates.All.Select(g => (g.Code, g.Name)).ToList()
+                : [];
+        if (string.IsNullOrEmpty(Input.Region) && regions.Count > 0)
+        {
+            Input.Region = regions[0].Code;
+        }
+    }
+
+    private async Task RunAsync()
+    {
+        errors = [];
+
+        if (!PhoneNumbers.IsValid(Input.Phone))
+        {
+            errors = ["أدخل رقم جوال صحيحاً، مثال: 050 123 4567."];
+            return;
+        }
+
+        if (await UserManager.FindByEmailAsync(Input.Email) is not null)
+        {
+            errors = ["هذا البريد مسجّل مسبقاً. سجّل الدخول بدلاً من ذلك."];
+            return;
+        }
+
+        var merchantRequest = new MerchantRequest
+        {
+            Name = Input.StoreName,
+            ContactName = Input.ContactName,
+            Phone = Input.Phone,
+            Governorate = string.IsNullOrEmpty(Input.Region) ? (regions.FirstOrDefault().Code ?? "") : Input.Region,
+            DailyShipments = Input.DailyShipments,
+            IsActive = true,
+        };
+
+        // The user account (joins the operating company as a seller).
+        var user = new ApplicationUser
+        {
+            UserName = Input.Email,
+            Email = Input.Email,
+            EmailConfirmed = true,
+            DisplayName = Input.StoreName.Trim(),
+            TenantId = Tenants.Default,
+        };
+        var created = await UserManager.CreateAsync(user, Input.Password);
+        if (!created.Succeeded)
+        {
+            errors = [.. created.Errors.Select(e => e.Description)];
+            return;
+        }
+
+        await UserManager.AddToRoleAsync(user, StaffRoles.Seller);
+
+        // The shop record (shows up among the sellers in the admin console) and the link between them.
+        var merchantId = await Services.RegisterSelfServiceMerchantAsync(merchantRequest, CancellationToken.None);
+        await UserManager.AddClaimAsync(user, new Claim(LogisticoClaimTypes.MerchantId, merchantId.ToString()));
+
+        Logger.LogInformation("Merchant self-registered: {Store}", Input.StoreName);
+        await SignInManager.SignInAsync(user, isPersistent: false);
+        done = true;
+        RedirectManager.RedirectTo("seller");
+    }
+
+    private sealed class InputModel
+    {
+        [Required(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Required))]
+        [StringLength(150, MinimumLength = 2, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
+        public string StoreName { get; set; } = "";
+
+        [Required(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Required))]
+        [StringLength(120, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
+        public string ContactName { get; set; } = "";
+
+        [Required(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Required))]
+        public string Phone { get; set; } = "";
+
+        public string Region { get; set; } = "";
+
+        public MerchantVolumeBand DailyShipments { get; set; } = MerchantVolumeBand.Under10;
+
+        [Required(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Required))]
+        [EmailAddress(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Email))]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Required))]
+        [StringLength(100, MinimumLength = 10, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.PasswordLength))]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+
+        [Compare(nameof(Password), ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.PasswordsDiffer))]
+        [DataType(DataType.Password)]
+        public string ConfirmPassword { get; set; } = "";
+    }
+}
