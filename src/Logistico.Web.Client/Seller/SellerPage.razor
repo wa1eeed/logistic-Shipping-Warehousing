@@ -150,13 +150,16 @@
                     <InputText class="bp6-input bp6-fill" @bind-Value="draft.ConsigneeName" autocomplete="off" />
                 </FormField>
                 <FormField Label="@L["Field_CustomerPhone"]" Required="true" Helper="@L["PhoneHelper"]" Field="() => draft.ConsigneePhone">
-                    <InputText class="bp6-input bp6-fill" @bind-Value="draft.ConsigneePhone" type="tel" dir="ltr" placeholder="050 123 4567" autocomplete="off" />
+                    <div class="lx-phone-field" dir="ltr">
+                        <span class="lx-phone-cc" aria-hidden="true">+966</span>
+                        <InputText class="bp6-input bp6-fill" @bind-Value="draft.ConsigneePhone" type="tel" inputmode="tel" placeholder="50 123 4567" autocomplete="off" />
+                    </div>
                 </FormField>
                 <FormField Label="@L["Field_Governorate"]" Required="true" Field="() => draft.DestinationCode">
                     <span class="bp6-html-select bp6-fill">
                         <InputSelect @bind-Value="draft.DestinationCode" @bind-Value:after="QuoteAsync">
                             <option value="">@L["ChooseGovernorate"]</option>
-                            @foreach (var g in IraqGovernorates.All)
+                            @foreach (var g in HubCatalog.Destinations.OrderBy(g => g.Name, StringComparer.CurrentCulture))
                             {
                                 <option value="@g.Code">@g.Name</option>
                             }
@@ -179,7 +182,7 @@
                 <FormField Label="@L["Field_Cod"]" Helper="@L["CodHelper"]" Field="() => draft.CodAmount">
                     <div class="bp6-input-group bp6-fill">
                         <InputNumber class="bp6-input" @bind-Value="draft.CodAmount" step="1" min="0" />
-                        <span class="bp6-input-action lx-input-suffix">@L["Iqd"]</span>
+                        <span class="bp6-input-action lx-input-suffix">@Fmt.CurrencyUnit()</span>
                     </div>
                 </FormField>
                 <FormField Label="@L["Field_WeightKg"]" Field="() => draft.GrossWeightKg">
@@ -284,6 +287,10 @@
     {
         try
         {
+            // The portal has no office shell to load the network, so the shop's own endpoint tells us the operating
+            // country and its regions — this drives the destination list, place names and the currency on this page.
+            var network = await Seller.GetPlacesAsync();
+            HubCatalog.Set(network.Hubs, network.Country, network.Places);
             home = await Seller.GetHomeAsync();
             await LoadOrdersAsync(1);
         }
@@ -466,7 +473,7 @@
     /// <summary>The company's fee for this destination and weight, from the server (it knows this shop's discount).</summary>
     private async Task QuoteAsync()
     {
-        if (!IraqGovernorates.IsKnown(draft.DestinationCode))
+        if (!HubCatalog.Destinations.Any(place => string.Equals(place.Code, draft.DestinationCode, StringComparison.OrdinalIgnoreCase)))
         {
             quote = null;
             return;

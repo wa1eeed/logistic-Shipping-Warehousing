@@ -83,7 +83,7 @@ public sealed partial class CreateShipmentRequest : IValidatableObject
     [Range(typeof(decimal), "0", "1000000000", ParseLimitsInInvariantCulture = true, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Range))]
     public decimal? CodAmount { get; set; }
 
-    [RegularExpression("^IQD$", ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Currency))]
+    [RegularExpression("^(IQD|SAR)$", ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Currency))]
     public string? CodCurrency { get; set; } = "IQD";
 
     /// <summary>Delivery fee charged to the seller (IQD).</summary>

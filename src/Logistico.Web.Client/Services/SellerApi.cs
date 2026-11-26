@@ -8,6 +8,9 @@ internal sealed class SellerApi(HttpClient http) : ApiClient(http)
 {
     public Task<SellerHome> GetHomeAsync(CancellationToken ct = default) => GetAsync<SellerHome>(ShipmentsApiRoutes.Seller, ct);
 
+    /// <summary>The operating country and the regions it delivers to, for the shop's order form.</summary>
+    public Task<NetworkHubs> GetPlacesAsync(CancellationToken ct = default) => GetAsync<NetworkHubs>(ShipmentsApiRoutes.SellerPlaces, ct);
+
     public Task<SellerOrderList> GetOrdersAsync(string? q, SellerOrderView view, int page, CancellationToken ct = default) =>
         GetAsync<SellerOrderList>(ShipmentsApiRoutes.SellerOrders + Query(("q", q), ("view", view == SellerOrderView.All ? null : view), ("page", page > 1 ? page : null)), ct);
 
