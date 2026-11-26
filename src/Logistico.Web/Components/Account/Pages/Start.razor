@@ -1,0 +1,62 @@
+@page "/Account/Start"
+
+@using Logistico.SharedKernel
+
+<PageTitle>ابدأ الآن · لوجستيكو</PageTitle>
+
+<div class="lx-signin-split lx-setup-page lx-start-page">
+<aside class="lx-signin-hero">
+    <div class="lx-signin-hero-brand">
+        <span class="lx-logo lx-logo-large" aria-hidden="true"></span>
+        <span class="lx-signin-app">لوجستيكو</span>
+    </div>
+    <h1 class="lx-signin-hero-title">شبكة شحن تغطّي المملكة، بين يديك</h1>
+    <p class="lx-signin-hero-text">سواء كنت متجراً يرسل عشرات الطلبات يومياً، أو فرداً يرسل طرداً واحداً — أنشئ حسابك وابدأ الشحن والتتبّع من مكان واحد.</p>
+    <ul class="lx-signin-points lx-setup-steps">
+        <li><span class="bp6-icon-standard bp6-icon-map" aria-hidden="true"></span> تغطية من الرياض إلى كل منطقة</li>
+        <li><span class="bp6-icon-standard bp6-icon-predictive-analysis" aria-hidden="true"></span> تتبّع لحظي لكل شحنة</li>
+        <li><span class="bp6-icon-standard bp6-icon-bank-account" aria-hidden="true"></span> دفع عند الاستلام وتسوية دورية</li>
+    </ul>
+    <Logistico.Web.Client.Ui.Map.NetworkSilhouette CssClass="lx-signin-map" />
+</aside>
+
+<div class="lx-signin">
+    <div class="lx-start">
+        <h2 class="lx-start-title">أهلاً بك في لوجستيكو</h2>
+        <p class="lx-start-sub">اختر كيف تحب أن تبدأ — يأخذ التسجيل أقل من دقيقة.</p>
+
+        <div class="lx-start-choices">
+            <a class="lx-start-choice lx-start-choice-primary" href="Account/Join">
+                <span class="lx-start-choice-icon bp6-icon-standard bp6-icon-shop" aria-hidden="true"></span>
+                <span class="lx-start-choice-body">
+                    <span class="lx-start-choice-title">أنشئ حساب متجرك <span class="lx-start-badge">تفعيل فوري</span></span>
+                    <span class="lx-start-choice-text">سجّل متجرك وابدأ بإرسال شحناتك عبر المملكة فوراً، مع دفع عند الاستلام وتسوية دورية لمبالغك.</span>
+                </span>
+                <span class="lx-start-choice-arrow bp6-icon-standard bp6-icon-chevron-left" aria-hidden="true"></span>
+            </a>
+
+            <a class="lx-start-choice" href="Account/Login">
+                <span class="lx-start-choice-icon bp6-icon-standard bp6-icon-log-in" aria-hidden="true"></span>
+                <span class="lx-start-choice-body">
+                    <span class="lx-start-choice-title">لديّ حساب — تسجيل الدخول</span>
+                    <span class="lx-start-choice-text">ادخل إلى بوابة متجرك أو لوحة التحكم ومتابعة شحناتك ومبالغك.</span>
+                </span>
+                <span class="lx-start-choice-arrow bp6-icon-standard bp6-icon-chevron-left" aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div class="lx-start-or">أو</div>
+
+        <a class="lx-start-choice lx-start-choice-track" href="track">
+            <span class="lx-start-choice-icon bp6-icon-standard bp6-icon-search" aria-hidden="true"></span>
+            <span class="lx-start-choice-body">
+                <span class="lx-start-choice-title">تتبّع شحنة برقمها</span>
+                <span class="lx-start-choice-text">لا تحتاج حساباً — أدخل رقم الشحنة لمعرفة مكانها وحالتها.</span>
+            </span>
+            <span class="lx-start-choice-arrow bp6-icon-standard bp6-icon-chevron-left" aria-hidden="true"></span>
+        </a>
+
+        <p class="lx-start-foot"><a href="/">← العودة إلى الصفحة الرئيسية</a></p>
+    </div>
+</div>
+</div>
