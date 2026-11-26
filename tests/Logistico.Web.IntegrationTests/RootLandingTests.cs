@@ -57,6 +57,19 @@ public sealed partial class RootLandingTests(LogisticoApiFactory factory)
         Assert.Contains($"'nonce-{scriptNonce.Groups[1].Value}'", csp, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task The_saudi_riyal_symbol_font_is_served()
+    {
+        var anon = factory.CreateClient();
+
+        var response = await anon.GetAsync("/fonts/saudi-riyal.woff2");
+
+        // The glyph-only font the new riyal sign (U+20C1) renders with must be served from the site's own origin.
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("font/woff2", response.Content.Headers.ContentType?.MediaType);
+        Assert.True((await response.Content.ReadAsByteArrayAsync()).Length > 0);
+    }
+
     [GeneratedRegex("<script nonce=\"([0-9A-F]+)\"")]
     private static partial Regex ScriptNonce();
 }
