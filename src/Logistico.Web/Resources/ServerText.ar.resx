@@ -61,7 +61,7 @@
   <data name="SetupStep2" xml:space="preserve"><value>أول مدير</value></data>
   <data name="SetupStep3" xml:space="preserve"><value>دليل لما تبقى</value></data>
   <data name="SetupCode" xml:space="preserve"><value>رمز الإعداد</value></data>
-  <data name="SetupCodeHelp" xml:space="preserve"><value>كتبه الخادم في سجله عند التشغيل. لعرضه مع Docker:</value></data>
+  <data name="SetupCodeHelp" xml:space="preserve"><value>كتبه الخادم في سجلّه عند التشغيل. افتح سجلّات الخادم (Logs) وابحث عن «setup code».</value></data>
   <data name="SetupCompany" xml:space="preserve"><value>الشركة</value></data>
   <data name="SetupCompanyName" xml:space="preserve"><value>اسم الشركة</value></data>
   <data name="SetupCompanyNamePlaceholder" xml:space="preserve"><value>الرافدين للتوصيل</value></data>

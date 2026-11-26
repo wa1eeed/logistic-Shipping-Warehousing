@@ -61,7 +61,7 @@
   <data name="SetupStep2" xml:space="preserve"><value>The first administrator</value></data>
   <data name="SetupStep3" xml:space="preserve"><value>A guide to the rest</value></data>
   <data name="SetupCode" xml:space="preserve"><value>Setup code</value></data>
-  <data name="SetupCodeHelp" xml:space="preserve"><value>The server wrote it to its log when it started. To see it with Docker:</value></data>
+  <data name="SetupCodeHelp" xml:space="preserve"><value>The server wrote it to its log at startup. Open your server logs and look for the setup code.</value></data>
   <data name="SetupCompany" xml:space="preserve"><value>Company</value></data>
   <data name="SetupCompanyName" xml:space="preserve"><value>Company name</value></data>
   <data name="SetupCompanyNamePlaceholder" xml:space="preserve"><value>Al-Rafidain Express</value></data>

@@ -2124,3 +2124,88 @@ body.bp6-dark { color: var(--lx-text); background: var(--lx-bg); color-scheme: d
     .lx-plan-actions { margin-inline-start: 0; inline-size: 100%; justify-content: flex-end; }
     .lx-plan-fill-cell { min-inline-size: 160px; }
 }
+
+/* ============================================================
+   Setup (first-run) page — scoped polish. Only .lx-setup-page is
+   affected, so sign-in and registration keep their current look.
+   Built from existing design tokens, so it holds in light and dark
+   and mirrors correctly in Arabic (logical properties only).
+   ============================================================ */
+
+/* Hero: a calm ambient wash + a soft radial glow behind the brand. */
+.lx-setup-page .lx-signin-hero {
+    background:
+        radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--lx-primary) 12%, transparent), transparent 60%),
+        radial-gradient(90% 70% at 0% 100%, color-mix(in srgb, var(--lx-primary) 9%, transparent), transparent 55%),
+        var(--lx-chrome);
+}
+.lx-setup-page .lx-signin-hero::before {
+    content: ""; position: absolute; z-index: -1; inset-block-start: -18%; inset-inline-end: -12%;
+    inline-size: min(46%, 360px); block-size: min(46%, 360px); border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--lx-primary) 22%, transparent), transparent 70%);
+    filter: blur(8px); pointer-events: none;
+}
+
+/* Brand logo chip + a gradient accent on the hero title. */
+.lx-setup-page .lx-signin-hero-brand .lx-logo-large {
+    padding: 6px; border-radius: 12px; background: var(--lx-surface); box-shadow: 0 1px 0 var(--lx-border), 0 8px 24px -14px color-mix(in srgb, var(--lx-primary) 60%, transparent);
+}
+.lx-setup-page .lx-signin-hero-title {
+    background: linear-gradient(100deg, var(--lx-text-strong), color-mix(in srgb, var(--lx-primary) 70%, var(--lx-text-strong)));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -0.01em;
+}
+
+/* Steps become quiet cards with gradient icon chips and a gentle hover lift. */
+.lx-setup-page .lx-setup-steps { gap: 10px; margin-block-start: 18px; }
+.lx-setup-page .lx-setup-steps li {
+    padding: 12px 14px; border-radius: var(--lx-radius-card);
+    background: color-mix(in srgb, var(--lx-surface) 78%, transparent);
+    box-shadow: inset 0 0 0 1px var(--lx-border);
+    font-weight: 600; transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lx-setup-page .lx-setup-steps li:hover {
+    transform: translateX(-2px);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lx-primary) 45%, var(--lx-border));
+}
+.lx-setup-page:dir(ltr) .lx-setup-steps li:hover { transform: translateX(2px); }
+.lx-setup-page .lx-setup-steps .bp6-icon-standard {
+    inline-size: 36px; block-size: 36px; border-radius: 10px; color: var(--lx-on-selected);
+    background: linear-gradient(140deg, var(--lx-selected), color-mix(in srgb, var(--lx-primary) 65%, var(--lx-selected)));
+    box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--lx-primary) 90%, transparent);
+}
+
+/* Form card: a little more presence, with a thin brand rule along the top. */
+.lx-setup-page .lx-setup-card {
+    position: relative; overflow: hidden;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--lx-border-strong) 50%, transparent), 0 24px 60px -32px color-mix(in srgb, var(--lx-primary) 55%, transparent);
+}
+.lx-setup-page .lx-setup-card::before {
+    content: ""; position: absolute; inset-block-start: 0; inset-inline: 0; block-size: 3px;
+    background: linear-gradient(90deg, var(--lx-primary), color-mix(in srgb, var(--lx-primary) 25%, transparent));
+}
+.lx-setup-page .lx-setup-card > .bp6-heading { letter-spacing: -0.01em; }
+
+/* Section headers get a short accent bar before the label. */
+.lx-setup-page .lx-setup-section { font-weight: 700; margin-block-start: 24px; }
+.lx-setup-page .lx-setup-section::before {
+    content: ""; inline-size: 4px; block-size: 18px; border-radius: 3px; flex: none;
+    background: linear-gradient(var(--lx-primary), color-mix(in srgb, var(--lx-primary) 40%, transparent));
+}
+.lx-setup-page .lx-setup-section .bp6-icon-standard { color: var(--lx-primary); }
+
+/* The setup-code field is the one thing a new admin must find — give it a soft tinted frame. */
+.lx-setup-page #Input\.Code { font-weight: 600; letter-spacing: 0.12em; }
+.lx-setup-page .bp6-form-group:first-of-type .bp6-input-group {
+    border-radius: var(--lx-radius);
+    background: color-mix(in srgb, var(--lx-primary-soft) 60%, transparent);
+    box-shadow: inset 0 0 0 1px var(--lx-primary-border);
+}
+
+/* Primary action: a quiet gradient and a lift on hover. */
+.lx-setup-page .lx-setup-card button[type="submit"] {
+    background: linear-gradient(140deg, var(--lx-selected), color-mix(in srgb, var(--lx-primary) 72%, var(--lx-selected)));
+    box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--lx-primary) 85%, transparent);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.lx-setup-page .lx-setup-card button[type="submit"]:hover { transform: translateY(-1px); filter: brightness(1.03); }
