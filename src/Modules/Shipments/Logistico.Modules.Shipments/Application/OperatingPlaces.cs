@@ -4,6 +4,7 @@ using Logistico.Modules.Shipments.Infrastructure;
 using Logistico.SharedKernel;
 using Logistico.SharedKernel.Geo;
 using Logistico.SharedKernel.Iraq;
+using Logistico.SharedKernel.Saudi;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistico.Modules.Shipments.Application;
@@ -47,10 +48,18 @@ internal sealed class OperatingPlaces(ShipmentsDbContext db) : IOperatingNetwork
 
     public async Task<IReadOnlyList<PlaceInfo>> PlacesAsync(Guid tenantId, CancellationToken cancellationToken)
     {
-        if (Countries.IsIraq(await CountryAsync(tenantId, cancellationToken)))
+        var country = await CountryAsync(tenantId, cancellationToken);
+        if (Countries.IsIraq(country))
         {
             return IraqGovernorates.All
                 .Select(g => new PlaceInfo(g.Code, g.NameEn, g.NameAr, g.Latitude, g.Longitude))
+                .ToList();
+        }
+
+        if (Countries.IsSaudi(country))
+        {
+            return SaudiRegions.All
+                .Select(r => new PlaceInfo(r.Code, r.NameEn, r.NameAr, r.Latitude, r.Longitude))
                 .ToList();
         }
 
