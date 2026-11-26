@@ -37,7 +37,7 @@
   <data name="Required" xml:space="preserve"><value>This field is required.</value></data>
   <data name="ResendConfirmation" xml:space="preserve"><value>Resend email confirmation</value></data>
   <data name="SignInButton" xml:space="preserve"><value>Sign in</value></data>
-  <data name="SignInSubtitle" xml:space="preserve"><value>Staff sign-in for Logistico operations.</value></data>
+  <data name="SignInSubtitle" xml:space="preserve"><value>Sign in to your store or company account.</value></data>
   <data name="SignInTitle" xml:space="preserve"><value>Sign in</value></data>
   <data name="SignInWithPasskey" xml:space="preserve"><value>Sign in with a passkey</value></data>
   <data name="Tagline" xml:space="preserve"><value>Open-source logistics software</value></data>
@@ -45,11 +45,11 @@
   <data name="Forbidden" xml:space="preserve"><value>Your role does not allow this. Ask an administrator for access.</value></data>
   <data name="Problem_team.self" xml:space="preserve"><value>You cannot change or lock your own account here.</value></data>
   <data name="TooManyRequests" xml:space="preserve"><value>Too many attempts from this connection. Wait a minute and try again.</value></data>
-  <data name="SignInHeroTitle" xml:space="preserve"><value>Logistics software, open source</value></data>
-  <data name="SignInHeroText" xml:space="preserve"><value>Orders, warehouses, trucks and couriers for a delivery company anywhere: cash on delivery, tracking and an audit log, in one system you host yourself.</value></data>
-  <data name="SignInPoint1" xml:space="preserve"><value>A live map of hubs, regions and trucks</value></data>
-  <data name="SignInPoint2" xml:space="preserve"><value>Demand intelligence: what customers order, where and when</value></data>
-  <data name="SignInPoint3" xml:space="preserve"><value>Cash on delivery settled with sellers, parcel by parcel</value></data>
+  <data name="SignInHeroTitle" xml:space="preserve"><value>Run your store's deliveries from one place</value></data>
+  <data name="SignInHeroText" xml:space="preserve"><value>Follow your orders and shipments in real time, with cash on delivery and regular settlement of your balances across the Kingdom.</value></data>
+  <data name="SignInPoint1" xml:space="preserve"><value>Track every shipment from pickup to delivery</value></data>
+  <data name="SignInPoint2" xml:space="preserve"><value>Cash on delivery, settled to you parcel by parcel</value></data>
+  <data name="SignInPoint3" xml:space="preserve"><value>Coverage across every region of the Kingdom</value></data>
   <data name="OpenSourceLine" xml:space="preserve"><value>Open source · Apache-2.0</value></data>
   <data name="SeoTitle" xml:space="preserve"><value>Logistico — open-source logistics software</value></data>
   <data name="SeoDescription" xml:space="preserve"><value>Open-source logistics software for delivery companies: orders, warehouses, trucks, couriers, returns and cash on delivery. Arabic and English. Self-hosted. Apache-2.0.</value></data>
