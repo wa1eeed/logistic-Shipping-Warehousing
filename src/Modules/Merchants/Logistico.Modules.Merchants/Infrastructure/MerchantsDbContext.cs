@@ -30,6 +30,7 @@ internal sealed class MerchantsDbContext(DbContextOptions<MerchantsDbContext> op
             e.Property(x => x.Governorate).HasMaxLength(5);
             e.Property(x => x.Address).HasMaxLength(300);
             e.Property(x => x.Notes).HasMaxLength(1000);
+            e.Property(x => x.DailyShipments).HasConversion<int>();
             e.Property(x => x.Version).IsRowVersion();
 
             e.HasIndex(x => new { x.TenantId, x.InstagramHandle }).IsUnique().HasFilter("instagram_handle IS NOT NULL");

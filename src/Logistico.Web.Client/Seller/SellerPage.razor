@@ -82,7 +82,7 @@
                                     <span class="bp6-text-muted lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_FeeN"], Fmt.Money(o.DeliveryFee ?? 0, "IQD"))</span>
                                     @if (o.ReturnFee is { } returnFee)
                                     {
-                                        <span class="lx-intent-warning lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_ReturnFeeN"], Fmt.Money(returnFee, "IQD"))</span>
+                                        <span class="lx-intent-warning lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_ReturnFeeN"], Fmt.MoneyLocal(returnFee))</span>
                                     }
                                     @if (o.Status is ShipmentStatus.Draft or ShipmentStatus.Booked)
                                     {

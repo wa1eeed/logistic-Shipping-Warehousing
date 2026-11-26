@@ -23,21 +23,29 @@
 </div>
 
 <div class="bp6-card lx-table-card">
-    <DataTable TItem="MerchantListItem" Items="result?.Items" Loading="loading" ColumnCount="6" OnRowClick="Open" EmptyIcon="shop" EmptyTitle="@L["NoSellers"]">
+    <DataTable TItem="MerchantListItem" Items="result?.Items" Loading="loading" ColumnCount="7" OnRowClick="Open" EmptyIcon="shop" EmptyTitle="@L["NoSellers"]">
         <Header>
             <th>@L["Field_ShopName"]</th>
             <th>@L["Field_Instagram"]</th>
             <th>@L["Field_ContactName"]</th>
             <th>@L["Field_Phone"]</th>
             <th>@L["Field_Governorate"]</th>
+            <th>@(Ar ? "الشحنات اليومية" : "Daily volume")</th>
             <th>@L["Col_Status"]</th>
         </Header>
         <Row Context="m">
-            <td class="lx-strong">@m.Name</td>
+            <td class="lx-strong">
+                @m.Name
+                @if (m.SelfRegistered)
+                {
+                    <Tag Intent="Intent.Primary" Minimal="true">@(Ar ? "جديد" : "New")</Tag>
+                }
+            </td>
             <td dir="ltr">@(m.InstagramHandle is null ? "—" : "@" + m.InstagramHandle)</td>
             <td>@m.ContactName</td>
             <td dir="ltr">@PhoneNumbers.Display(m.Phone)</td>
             <td>@Fmt.Place(m.Governorate)</td>
+            <td>@Band(m.DailyShipments)</td>
             <td><Tag Intent="@(m.IsActive ? Intent.Success : Intent.None)">@(m.IsActive ? L["Active"] : L["Inactive"])</Tag></td>
         </Row>
     </DataTable>
@@ -58,6 +66,12 @@
 </Dialog>
 
 @code {
+    private static bool Ar => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar";
+
+    private static string Band(MerchantVolumeBand b) => Ar
+        ? b switch { MerchantVolumeBand.Under10 => "أقل من ١٠/يوم", MerchantVolumeBand.From10To50 => "١٠–٥٠/يوم", MerchantVolumeBand.From50To200 => "٥٠–٢٠٠/يوم", _ => "٢٠٠+/يوم" }
+        : b switch { MerchantVolumeBand.Under10 => "Under 10/day", MerchantVolumeBand.From10To50 => "10–50/day", MerchantVolumeBand.From50To200 => "50–200/day", _ => "200+/day" };
+
     [SupplyParameterFromQuery(Name = "new")] public int? NewFlag { get; set; }
 
     private PagedResult<MerchantListItem>? result;

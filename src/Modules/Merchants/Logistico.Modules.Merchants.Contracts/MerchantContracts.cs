@@ -14,6 +14,15 @@ public static class MerchantsApiRoutes
     public static string ById(Guid id) => $"{Merchants}/{id}";
 }
 
+/// <summary>A seller's declared daily shipment volume, used to place them in a pricing tier.</summary>
+public enum MerchantVolumeBand
+{
+    Under10,
+    From10To50,
+    From50To200,
+    Over200,
+}
+
 public sealed record MerchantListItem(
     Guid Id,
     string Name,
@@ -22,7 +31,9 @@ public sealed record MerchantListItem(
     string Phone,
     string Governorate,
     bool IsActive,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    MerchantVolumeBand DailyShipments = MerchantVolumeBand.Under10,
+    bool SelfRegistered = false);
 
 public sealed record MerchantDetails(
     Guid Id,
@@ -35,7 +46,9 @@ public sealed record MerchantDetails(
     string? Notes,
     bool IsActive,
     DateTimeOffset CreatedAt,
-    uint Version);
+    uint Version,
+    MerchantVolumeBand DailyShipments = MerchantVolumeBand.Under10,
+    bool SelfRegistered = false);
 
 /// <summary>Minimal seller data other modules may read (e.g. Shipments when booking an order).</summary>
 public sealed record MerchantLookupItem(Guid Id, string Name, string? InstagramHandle, string Governorate, string Phone);
@@ -69,6 +82,9 @@ public sealed class MerchantRequest : IValidatableObject
     public string? Notes { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    /// <summary>The seller's declared daily shipment volume (their pricing tier).</summary>
+    public MerchantVolumeBand DailyShipments { get; set; } = MerchantVolumeBand.Under10;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

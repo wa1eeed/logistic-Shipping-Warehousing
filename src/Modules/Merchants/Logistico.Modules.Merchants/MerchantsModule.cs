@@ -40,4 +40,16 @@ public static class MerchantsModule
         await using var scope = services.CreateAsyncScope();
         await scope.ServiceProvider.GetRequiredService<MerchantsDemoSeeder>().SeedAsync(country, ct);
     }
+
+    /// <summary>Registers a seller who signed up from the public site (the default company), returning the new seller's id.</summary>
+    public static async Task<Guid> RegisterSelfServiceMerchantAsync(this IServiceProvider services, MerchantRequest request, CancellationToken ct = default)
+    {
+        await using var scope = services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<MerchantsDbContext>();
+        var clock = scope.ServiceProvider.GetRequiredService<TimeProvider>();
+        var merchant = Domain.Merchant.CreateSelfRegistered(Logistico.SharedKernel.Tenants.Default, request, clock.GetUtcNow());
+        db.Merchants.Add(merchant);
+        await db.SaveChangesAsync(ct);
+        return merchant.Id;
+    }
 }

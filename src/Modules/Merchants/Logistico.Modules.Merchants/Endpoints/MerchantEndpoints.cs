@@ -3,8 +3,8 @@ using Logistico.Modules.Merchants.Contracts;
 using Logistico.Modules.Merchants.Domain;
 using Logistico.Modules.Merchants.Infrastructure;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Geo;
 using Logistico.SharedKernel.Identity;
-using Logistico.SharedKernel.Iraq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -38,7 +38,7 @@ internal static class MerchantEndpoints
         var size = Math.Clamp(pageSize ?? 50, 1, 200);
         var number = Paging.Page(page);
         var query = db.Merchants.AsNoTracking();
-        if (IraqPhone.Normalize(q) is { } phone)
+        if (PhoneNumbers.Normalize(q) is { } phone)
         {
             query = query.Where(m => m.Phone == phone);
         }
@@ -57,7 +57,7 @@ internal static class MerchantEndpoints
             .OrderBy(m => m.Name)
             .Skip((number - 1) * size)
             .Take(size)
-            .Select(m => new MerchantListItem(m.Id, m.Name, m.InstagramHandle, m.ContactName, m.Phone, m.Governorate, m.IsActive, m.CreatedAt))
+            .Select(m => new MerchantListItem(m.Id, m.Name, m.InstagramHandle, m.ContactName, m.Phone, m.Governorate, m.IsActive, m.CreatedAt, m.DailyShipments, m.SelfRegistered))
             .ToListAsync(ct);
         return TypedResults.Ok(new PagedResult<MerchantListItem>(items, total, number, size));
     }
@@ -148,7 +148,7 @@ internal static class MerchantEndpoints
     }
 
     private static MerchantDetails ToDetails(Merchant m) =>
-        new(m.Id, m.Name, m.InstagramHandle, m.ContactName, m.Phone, m.Governorate, m.Address, m.Notes, m.IsActive, m.CreatedAt, m.Version);
+        new(m.Id, m.Name, m.InstagramHandle, m.ContactName, m.Phone, m.Governorate, m.Address, m.Notes, m.IsActive, m.CreatedAt, m.Version, m.DailyShipments, m.SelfRegistered);
 
     private static ValidationProblem? Validate(object request)
     {
