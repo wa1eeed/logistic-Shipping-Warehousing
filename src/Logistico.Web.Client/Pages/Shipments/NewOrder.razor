@@ -129,7 +129,7 @@
                         <FormField Label="@L["Field_WeightKg"]" Field="() => model.GrossWeightKg">
                             <InputNumber class="bp6-input bp6-fill" @bind-Value="model.GrossWeightKg" @bind-Value:after="RecalculateTariff" step="0.1" min="0" />
                         </FormField>
-                        <FormField Label="@L["Field_DeliveryFee"]" Hint="@L["IqdHint"]" Field="() => model.DeliveryFee">
+                        <FormField Label="@L["Field_DeliveryFee"]" Hint="@Fmt.CurrencyUnit()" Field="() => model.DeliveryFee">
                             <InputNumber class="bp6-input bp6-fill" @bind-Value="model.DeliveryFee" step="1" min="0" />
                         </FormField>
                     </div>
@@ -162,17 +162,17 @@
                         <dt>@L["PromisedBy"]</dt>
                         <dd>@(Promise is { } p ? Fmt.Date(p) : "—")</dd>
                         <dt>@L["CustomerPays"]</dt>
-                        <dd class="lx-strong">@Fmt.Money(model.CodAmount ?? 0, "IQD")</dd>
+                        <dd class="lx-strong">@Fmt.MoneyLocal(model.CodAmount ?? 0)</dd>
                         <dt>@L["Field_DeliveryFee"]</dt>
                         <dd>
-                            @Fmt.Money(model.DeliveryFee ?? 0, "IQD")
+                            @Fmt.MoneyLocal(model.DeliveryFee ?? 0)
                             @if (model.DeliveryFee == CurrentQuote.Fee)
                             {
                                 <div class="bp6-text-muted lx-small">@PriceBreakdown(CurrentQuote)</div>
                             }
                         </dd>
                         <dt>@L["SellerReceives"]</dt>
-                        <dd class="lx-strong">@Fmt.Money((model.CodAmount ?? 0) - (model.DeliveryFee ?? 0), "IQD")</dd>
+                        <dd class="lx-strong">@Fmt.MoneyLocal((model.CodAmount ?? 0) - (model.DeliveryFee ?? 0))</dd>
                     </dl>
                     @if (serverError is not null)
                     {
@@ -352,9 +352,6 @@ else
     {
         ServiceType = ServiceType.Domestic,
         Mode = TransportMode.Road,
-        OriginCode = "IQ-BG",
-        CodCurrency = "IQD",
-        DeliveryFee = 5000,
         GrossWeightKg = 1,
     };
 
@@ -387,6 +384,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         batchMode = Batch == true;
+        // Country-aware defaults: the company's currency, its primary hub's area, and a sensible local fee.
+        model.CodCurrency = Fmt.CompanyCurrency;
+        model.OriginCode = HubCatalog.Network.All.FirstOrDefault()?.Governorate ?? "";
+        model.DeliveryFee = Countries.IsSaudi(HubCatalog.Country) ? 15 : 5000;
         var pricesTask = Shipments.GetPricingAsync();
         merchants = await Merchants.LookupAsync();
         prices = await pricesTask;

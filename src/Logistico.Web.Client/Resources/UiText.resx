@@ -59,7 +59,7 @@
   <data name="BatchPastePlaceholder" xml:space="preserve"><value>Paste one order per line: Name - 0770... - Governorate &amp; Address - Landmark - Items - COD amount</value></data>
   <data name="BatchPasteSubtitle" xml:space="preserve"><value>Paste one order per line (or blocks separated by blank lines) to book and print labels in one click</value></data>
   <data name="BatchPasteTitle" xml:space="preserve"><value>Paste multiple orders (WhatsApp / Excel)</value></data>
-  <data name="BatchSampleAction" xml:space="preserve"><value>Load 4 sample Iraqi orders</value></data>
+  <data name="BatchSampleAction" xml:space="preserve"><value>Load 4 sample orders</value></data>
   <data name="Board_Booked" xml:space="preserve"><value>New &amp; incoming</value></data>
   <data name="BookBatchN" xml:space="preserve"><value>Book {0} orders</value></data>
   <data name="BookBatchN_One" xml:space="preserve"><value>Book 1 order</value></data>
@@ -285,7 +285,7 @@
   <data name="CustomsDialogTitle" xml:space="preserve"><value>ASYCUDA declaration — {0}</value></data>
   <data name="CustomsSaved" xml:space="preserve"><value>Customs declaration updated for {0}</value></data>
   <data name="CustomsSearchPlaceholder" xml:space="preserve"><value>Search by tracking no., ASYCUDA declaration no., importer or HS code…</value></data>
-  <data name="CustomsSubtitle" xml:space="preserve"><value>International freight declarations, mandatory Iraqi e-verification (CoO &amp; Invoice), selectivity lanes and SAD XML export</value></data>
+  <data name="CustomsSubtitle" xml:space="preserve"><value>International freight declarations, mandatory e-verification (CoO &amp; Invoice), selectivity lanes and SAD XML export</value></data>
   <data name="CustomsTitle" xml:space="preserve"><value>Customs &amp; ASYCUDA World</value></data>
   <data name="DailyVolume" xml:space="preserve"><value>Daily volume</value></data>
   <data name="DailyVolumeHint" xml:space="preserve"><value>{0} – {1}, domestic orders</value></data>
@@ -344,7 +344,7 @@
   <data name="Field_Consignee" xml:space="preserve"><value>Consignee (importer)</value></data>
   <data name="Field_ConsigneePhone" xml:space="preserve"><value>Consignee phone</value></data>
   <data name="Field_ContactName" xml:space="preserve"><value>Contact person</value></data>
-  <data name="Field_CooEVerified" xml:space="preserve"><value>CoO electronically verified (Iraqi Single Window)</value></data>
+  <data name="Field_CooEVerified" xml:space="preserve"><value>CoO electronically verified (Single Window)</value></data>
   <data name="Field_CooNumber" xml:space="preserve"><value>Certificate of Origin (CoO) no.</value></data>
   <data name="Field_CountryOfOrigin" xml:space="preserve"><value>Country of origin (ISO-2)</value></data>
   <data name="Field_Courier" xml:space="preserve"><value>Courier</value></data>
@@ -463,7 +463,7 @@
   <data name="InternationalPipeline" xml:space="preserve"><value>International shipments by status</value></data>
   <data name="InvalidTrackingNumber" xml:space="preserve"><value>That doesn't look like a Logistico tracking number. Please check the digits.</value></data>
   <data name="Iqd" xml:space="preserve"><value>IQD</value></data>
-  <data name="IqdHint" xml:space="preserve"><value>IQD</value></data>
+  <data name="IqdHint" xml:space="preserve"><value>Company currency</value></data>
   <data name="ItemsPlaceholder" xml:space="preserve"><value>What is in the parcel?</value></data>
   <data name="Journey" xml:space="preserve"><value>Journey</value></data>
   <data name="Kg" xml:space="preserve"><value>kg</value></data>
@@ -991,7 +991,7 @@
   <data name="RunsheetTitle" xml:space="preserve"><value>Driver runsheet &amp; ePOD — {0}</value></data>
   <data name="SameGovernorate" xml:space="preserve"><value>Same governorate</value></data>
   <data name="SameSeller" xml:space="preserve"><value>Same seller</value></data>
-  <data name="Sample_Baghdad" xml:space="preserve"><value>Sample: Baghdad DM</value></data>
+  <data name="Sample_Baghdad" xml:space="preserve"><value>Sample order</value></data>
   <data name="Sample_Basra" xml:space="preserve"><value>Sample: Basra DM</value></data>
   <data name="Sample_Erbil" xml:space="preserve"><value>Sample: Erbil DM</value></data>
   <data name="Save" xml:space="preserve"><value>Save</value></data>
@@ -1012,13 +1012,13 @@
   <data name="Sec_Cargo" xml:space="preserve"><value>Cargo and value</value></data>
   <data name="Sec_Customer" xml:space="preserve"><value>Customer</value></data>
   <data name="Sec_Delivery" xml:space="preserve"><value>Delivery</value></data>
-  <data name="Sec_IraqCompliance" xml:space="preserve"><value>Mandatory Iraq e-verification &amp; conformity</value></data>
+  <data name="Sec_IraqCompliance" xml:space="preserve"><value>Mandatory e-verification &amp; conformity</value></data>
   <data name="Sec_Parcel" xml:space="preserve"><value>Parcel</value></data>
   <data name="Sec_ParcelAndMoney" xml:space="preserve"><value>Parcel and payment</value></data>
   <data name="Sec_Parties" xml:space="preserve"><value>Shipper and consignee</value></data>
   <data name="Sec_Payment" xml:space="preserve"><value>Payment</value></data>
   <data name="Sec_Route" xml:space="preserve"><value>Route and mode</value></data>
-  <data name="Sec_Routing" xml:space="preserve"><value>Route across Iraq</value></data>
+  <data name="Sec_Routing" xml:space="preserve"><value>Route</value></data>
   <data name="Sec_Seller" xml:space="preserve"><value>Seller</value></data>
   <data name="Sec_Shipper" xml:space="preserve"><value>Shipper</value></data>
   <data name="Sec_ValuationAndDuties" xml:space="preserve"><value>Valuation &amp; duties (CBI rate 1 USD = 1,310 IQD)</value></data>
@@ -1037,7 +1037,7 @@
   <data name="Seller_FeeN" xml:space="preserve"><value>Fee {0}</value></data>
   <data name="Seller_NewOrder" xml:space="preserve"><value>New order</value></data>
   <data name="Seller_NoMatches" xml:space="preserve"><value>Nothing matches this search or filter.</value></data>
-  <data name="Seller_NoOrdersText" xml:space="preserve"><value>Book your first order with New order. We pick it up and deliver it anywhere in Iraq.</value></data>
+  <data name="Seller_NoOrdersText" xml:space="preserve"><value>Book your first order with New order. We pick it up and deliver it anywhere.</value></data>
   <data name="Seller_NoOrdersTitle" xml:space="preserve"><value>No orders here</value></data>
   <data name="Seller_NoPayoutsText" xml:space="preserve"><value>When the company pays out the cash collected for your delivered orders, each payout and its statement appear here.</value></data>
   <data name="Seller_NoPayoutsTitle" xml:space="preserve"><value>No payouts yet</value></data>
@@ -1113,9 +1113,9 @@
   <data name="SignOut" xml:space="preserve"><value>Sign out</value></data>
   <data name="Skip" xml:space="preserve"><value>Skip</value></data>
   <data name="SmartPasteAction" xml:space="preserve"><value>Auto-fill form</value></data>
-  <data name="SmartPasteHelper" xml:space="preserve"><value>Supports Arabic &amp; English digits, Iraqi governorates, landmarks and COD (e.g. 45 الف or 45,000)</value></data>
-  <data name="SmartPastePlaceholder" xml:space="preserve"><value>Example: Sara Mohammed - 07701234567 - Baghdad Mansour 14 Ramadan St - near Al-Saa restaurant - Black dress - 45,000</value></data>
-  <data name="SmartPasteSubtitle" xml:space="preserve"><value>Paste the customer message to auto-fill name, Iraqi mobile, governorate, landmark and COD</value></data>
+  <data name="SmartPasteHelper" xml:space="preserve"><value>Supports Arabic &amp; English digits, governorates, landmarks and COD (e.g. 45 الف or 45,000)</value></data>
+  <data name="SmartPastePlaceholder" xml:space="preserve"><value>Example: Sara Mohammed - 0501234567 - Riyadh Al Olaya King Fahd Rd - near Kingdom Tower - Black dress - 450</value></data>
+  <data name="SmartPasteSubtitle" xml:space="preserve"><value>Paste the customer message to auto-fill name, mobile, governorate, landmark and COD</value></data>
   <data name="SmartPasteTitle" xml:space="preserve"><value>Smart WhatsApp / Instagram DM paste</value></data>
   <data name="SoundMuted" xml:space="preserve"><value>Audio muted</value></data>
   <data name="SoundOn" xml:space="preserve"><value>Scanner &amp; hub audio ON</value></data>
@@ -1243,8 +1243,8 @@
   <data name="WithCourier" xml:space="preserve"><value>With {0}</value></data>
   <data name="Nav_IntelligenceSection" xml:space="preserve"><value>Intelligence</value></data>
   <data name="Nav_Insights" xml:space="preserve"><value>Demand intelligence</value></data>
-  <data name="Insights_Title" xml:space="preserve"><value>Iraq demand intelligence</value></data>
-  <data name="Insights_Subtitle" xml:space="preserve"><value>What customers across Iraq order, where and when, and how those orders end</value></data>
+  <data name="Insights_Title" xml:space="preserve"><value>Demand intelligence</value></data>
+  <data name="Insights_Subtitle" xml:space="preserve"><value>What customers order, where and when, and how those orders end</value></data>
   <data name="Period_365" xml:space="preserve"><value>12 months</value></data>
   <data name="Insights_OpenData" xml:space="preserve"><value>Open data (CSV)</value></data>
   <data name="Insights_OpenDataHint" xml:space="preserve"><value>Anonymised totals you can publish: no names, phones or addresses, and groups under 10 orders are left out.</value></data>
@@ -1268,8 +1268,8 @@
   <data name="Finding_RiskyCategory" xml:space="preserve"><value>{0} has the highest return rate ({1}).</value></data>
   <data name="Finding_PeakTime" xml:space="preserve"><value>Customers order most on {0} around {1}. Plan confirmation calls and pickups for the next morning.</value></data>
   <data name="Finding_Loyalty" xml:space="preserve"><value>Repeat customers place {0} of orders, and {1} of their orders are delivered against {2} for first-time customers.</value></data>
-  <data name="Insights_DemandMap" xml:space="preserve"><value>Demand across Iraq</value></data>
-  <data name="Insights_DemandMapHint" xml:space="preserve"><value>By the customer's governorate · click one for details</value></data>
+  <data name="Insights_DemandMap" xml:space="preserve"><value>Demand by region</value></data>
+  <data name="Insights_DemandMapHint" xml:space="preserve"><value>By the customer's region · click one for details</value></data>
   <data name="Measure_Orders" xml:space="preserve"><value>Orders</value></data>
   <data name="Measure_Success" xml:space="preserve"><value>Success</value></data>
   <data name="Measure_Basket" xml:space="preserve"><value>Basket</value></data>
@@ -1289,8 +1289,8 @@
   <data name="Col_TradeLane" xml:space="preserve"><value>Lane</value></data>
   <data name="Insights_Categories" xml:space="preserve"><value>What customers buy</value></data>
   <data name="Insights_CategoriesHint" xml:space="preserve"><value>Recognised from the item descriptions on orders</value></data>
-  <data name="Insights_OrderTimes" xml:space="preserve"><value>When Iraq orders</value></data>
-  <data name="Insights_OrderTimesHint" xml:space="preserve"><value>Orders by weekday and hour, Baghdad time</value></data>
+  <data name="Insights_OrderTimes" xml:space="preserve"><value>When customers order</value></data>
+  <data name="Insights_OrderTimesHint" xml:space="preserve"><value>Orders by weekday and hour, local time</value></data>
   <data name="Insights_Baskets" xml:space="preserve"><value>Basket size and refusals</value></data>
   <data name="Insights_BasketsHint" xml:space="preserve"><value>Cash on delivery per order, and how often each size comes back</value></data>
   <data name="Basket_NoCod" xml:space="preserve"><value>Prepaid (no cash on delivery)</value></data>
@@ -1679,7 +1679,7 @@
   <data name="Plan_Set_KmCost" xml:space="preserve"><value>Cost per kilometre</value></data>
   <data name="Plan_Set_KmCostHint" xml:space="preserve"><value>Fuel and wear.</value></data>
   <data name="Plan_Set_Departures" xml:space="preserve"><value>Departure times</value></data>
-  <data name="Plan_Set_DeparturesHint" xml:space="preserve"><value>Every day, Baghdad time, separated by commas (06:00, 14:00, 22:00).</value></data>
+  <data name="Plan_Set_DeparturesHint" xml:space="preserve"><value>Every day, local time, separated by commas (06:00, 14:00, 22:00).</value></data>
   <data name="Plan_Set_Days" xml:space="preserve"><value>Days ahead</value></data>
   <data name="Plan_Set_DaysHint" xml:space="preserve"><value>How far ahead the truck plan looks.</value></data>
   <data name="Plan_Set_MaxTrucks" xml:space="preserve"><value>Trucks per departure</value></data>
@@ -1702,7 +1702,7 @@
   <data name="Plan_Set_PerStop" xml:space="preserve"><value>Minutes at each door</value></data>
   <data name="Plan_Set_PerStopHint" xml:space="preserve"><value>Calling, handing over, collecting the cash.</value></data>
   <data name="Plan_Set_RunStart" xml:space="preserve"><value>Runs start at</value></data>
-  <data name="Plan_Set_RunStartHint" xml:space="preserve"><value>Baghdad time.</value></data>
+  <data name="Plan_Set_RunStartHint" xml:space="preserve"><value>Local time.</value></data>
   <data name="Plan_Set_Speed" xml:space="preserve"><value>Speed in the city</value></data>
   <data name="Plan_Set_SpeedHint" xml:space="preserve"><value>Average, with traffic.</value></data>
   <data name="Plan_Set_RoadFactor" xml:space="preserve"><value>Road factor</value></data>
