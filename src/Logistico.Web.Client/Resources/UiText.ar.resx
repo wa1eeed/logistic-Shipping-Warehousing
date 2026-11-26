@@ -1179,7 +1179,6 @@
   <data name="Source_Scan" xml:space="preserve"><value>مسح</value></data>
   <data name="Source_System" xml:space="preserve"><value>النظام</value></data>
   <data name="Source_User" xml:space="preserve"><value>يدوي</value></data>
-  <data name="StaffSignIn" xml:space="preserve"><value>دخول الموظفين</value></data>
   <data name="StandardPrices" xml:space="preserve"><value>الأسعار القياسية</value></data>
   <data name="StartReturn" xml:space="preserve"><value>إرجاع إلى المتجر</value></data>
   <data name="StartReturnHint" xml:space="preserve"><value>تعود الشحنة إلى مركز المتجر وتنتظر التسليم. لا يُحصّل مبلغ الدفع عند الاستلام.</value></data>

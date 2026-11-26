@@ -37,7 +37,7 @@
   <data name="Required" xml:space="preserve"><value>هذا الحقل مطلوب.</value></data>
   <data name="ResendConfirmation" xml:space="preserve"><value>إعادة إرسال رسالة التأكيد</value></data>
   <data name="SignInButton" xml:space="preserve"><value>دخول</value></data>
-  <data name="SignInSubtitle" xml:space="preserve"><value>دخول موظفي لوجستيكو.</value></data>
+  <data name="SignInSubtitle" xml:space="preserve"><value>دخول أصحاب المتاجر والشركات إلى حساباتهم.</value></data>
   <data name="SignInTitle" xml:space="preserve"><value>تسجيل الدخول</value></data>
   <data name="SignInWithPasskey" xml:space="preserve"><value>الدخول بمفتاح المرور (Passkey)</value></data>
   <data name="Tagline" xml:space="preserve"><value>برنامج لوجستي مفتوح المصدر</value></data>
@@ -45,11 +45,11 @@
   <data name="Forbidden" xml:space="preserve"><value>صلاحياتك لا تسمح بهذا الإجراء. اطلب الصلاحية من مدير النظام.</value></data>
   <data name="Problem_team.self" xml:space="preserve"><value>لا يمكنك تغيير صلاحيات حسابك أو قفله من هنا.</value></data>
   <data name="TooManyRequests" xml:space="preserve"><value>محاولات كثيرة من هذا الاتصال. انتظر دقيقة ثم أعد المحاولة.</value></data>
-  <data name="SignInHeroTitle" xml:space="preserve"><value>برنامج لوجستي مفتوح المصدر</value></data>
-  <data name="SignInHeroText" xml:space="preserve"><value>الطلبات والمخازن والشاحنات والمندوبون لشركة توصيل في أي بلد: الدفع عند الاستلام والتتبع وسجل التدقيق، في نظام تستضيفه أنت.</value></data>
-  <data name="SignInPoint1" xml:space="preserve"><value>خريطة حيّة للمخازن والمناطق والشاحنات</value></data>
-  <data name="SignInPoint2" xml:space="preserve"><value>ذكاء الطلب: ماذا يطلب الزبائن وأين ومتى</value></data>
-  <data name="SignInPoint3" xml:space="preserve"><value>تسوية مبالغ الدفع عند الاستلام مع التجار شحنةً بشحنة</value></data>
+  <data name="SignInHeroTitle" xml:space="preserve"><value>أدِر شحنات متجرك من مكان واحد</value></data>
+  <data name="SignInHeroText" xml:space="preserve"><value>تابع طلباتك وشحناتك لحظة بلحظة، مع الدفع عند الاستلام وتسوية دورية لمبالغك عبر المملكة.</value></data>
+  <data name="SignInPoint1" xml:space="preserve"><value>تتبّع كل شحنة من الاستلام حتى التسليم</value></data>
+  <data name="SignInPoint2" xml:space="preserve"><value>دفع عند الاستلام وتسوية مبالغك شحنةً بشحنة</value></data>
+  <data name="SignInPoint3" xml:space="preserve"><value>تغطية تشمل كل مناطق المملكة</value></data>
   <data name="OpenSourceLine" xml:space="preserve"><value>مفتوح المصدر · Apache-2.0</value></data>
   <data name="SeoTitle" xml:space="preserve"><value>لوجستيكو — برنامج لوجستي مفتوح المصدر</value></data>
   <data name="SeoDescription" xml:space="preserve"><value>برنامج لوجستي مفتوح المصدر لشركات التوصيل: الطلبات والمخازن والشاحنات والمندوبون والمرتجعات والدفع عند الاستلام. العربية والإنجليزية. تستضيفه بنفسك.</value></data>

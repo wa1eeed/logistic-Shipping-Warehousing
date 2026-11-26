@@ -1129,7 +1129,6 @@
   <data name="Source_Scan" xml:space="preserve"><value>scan</value></data>
   <data name="Source_System" xml:space="preserve"><value>system</value></data>
   <data name="Source_User" xml:space="preserve"><value>manual</value></data>
-  <data name="StaffSignIn" xml:space="preserve"><value>Staff sign in</value></data>
   <data name="StandardPrices" xml:space="preserve"><value>Standard prices</value></data>
   <data name="StartReturn" xml:space="preserve"><value>Return to seller</value></data>
   <data name="StartReturnHint" xml:space="preserve"><value>The parcel travels back to the seller's hub and waits there for hand-over. Cash on delivery is not collected.</value></data>
