@@ -1,10 +1,11 @@
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Logistico.Web.IntegrationTests;
 
 /// <summary>The site root is the public marketing landing; the staff console lives under /admin.</summary>
 [Collection("Api")]
-public sealed class RootLandingTests(LogisticoApiFactory factory)
+public sealed partial class RootLandingTests(LogisticoApiFactory factory)
 {
     [Fact]
     public async Task Root_serves_the_public_landing_page()
@@ -38,4 +39,24 @@ public sealed class RootLandingTests(LogisticoApiFactory factory)
         Assert.Contains("Account/Login", html, StringComparison.Ordinal);
         Assert.Contains("\"track\"", html, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public async Task Landing_inline_script_runs_under_the_content_security_policy()
+    {
+        var anon = factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+        var response = await anon.GetAsync("/");
+        var html = await response.Content.ReadAsStringAsync();
+
+        // The script the map, scroll reveals and tracking box depend on carries this response's CSP nonce, so the browser
+        // runs it instead of blocking it — the placeholder must be gone and the nonce must match the policy header.
+        Assert.DoesNotContain("__CSP_NONCE__", html, StringComparison.Ordinal);
+        var scriptNonce = ScriptNonce().Match(html);
+        Assert.True(scriptNonce.Success, "the landing script should carry a nonce");
+        var csp = Assert.Single(response.Headers.GetValues("Content-Security-Policy"));
+        Assert.Contains($"'nonce-{scriptNonce.Groups[1].Value}'", csp, StringComparison.Ordinal);
+    }
+
+    [GeneratedRegex("<script nonce=\"([0-9A-F]+)\"")]
+    private static partial Regex ScriptNonce();
 }
