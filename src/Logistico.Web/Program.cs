@@ -271,12 +271,14 @@ modules.MapShipmentsModule();
 
 // The public landing page at the site root; signed-in staff go straight to the console. The page carries one inline
 // script (the interactive map, scroll reveals and the tracking box); it runs under the Content-Security-Policy only
-// with this request's nonce, so we stamp the nonce in as we serve the cached HTML.
-var landingTemplate = System.IO.File.ReadAllText(System.IO.Path.Combine(app.Environment.WebRootPath, "home", "index.html"));
+// with this request's nonce, so we stamp the nonce in as we serve the HTML. Read once, lazily, on the first anonymous
+// visit — never at startup — so a host that resolves the web root late (e.g. the QA harness) still boots.
+var webRoot = app.Environment.WebRootPath ?? System.IO.Path.Combine(app.Environment.ContentRootPath, "wwwroot");
+var landingTemplate = new Lazy<string>(() => System.IO.File.ReadAllText(System.IO.Path.Combine(webRoot, "home", "index.html")));
 app.MapGet("/", (HttpContext http) =>
     http.User.Identity?.IsAuthenticated == true
         ? Results.Redirect("/admin")
-        : Results.Text(landingTemplate.Replace("__CSP_NONCE__", http.CspNonce(), StringComparison.Ordinal), "text/html; charset=utf-8"))
+        : Results.Text(landingTemplate.Value.Replace("__CSP_NONCE__", http.CspNonce(), StringComparison.Ordinal), "text/html; charset=utf-8"))
     .AllowAnonymous()
     .ExcludeFromDescription();
 

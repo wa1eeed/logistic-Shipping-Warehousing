@@ -68,7 +68,7 @@ internal static class CourierAppEndpoints
         var delivered = await db.Shipments.AsNoTracking()
             .Where(s => s.CourierName == label && s.Status == ShipmentStatus.Delivered && s.DeliveredAt >= startOfDay)
             .GroupBy(_ => 1)
-            .Select(g => new { Count = g.Count(), Cash = g.Sum(s => s.CodCurrency == "IQD" ? s.CodAmount ?? 0 : 0) })
+            .Select(g => new { Count = g.Count(), Cash = g.Sum(s => s.CodAmount ?? 0) })
             .FirstOrDefaultAsync(ct);
         var failed = await db.ShipmentEvents.AsNoTracking()
             .CountAsync(e => e.CourierName == label && e.Status == ShipmentStatus.DeliveryFailed && e.OccurredAt >= startOfDay, ct);

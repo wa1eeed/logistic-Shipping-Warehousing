@@ -184,7 +184,7 @@
                 <FormField TValue="string" Label="@L["Field_CashCounted"]" Required="true" For="lx-cash-counted">
                     <div class="bp6-input-group bp6-fill">
                         <input id="lx-cash-counted" class="bp6-input" type="number" min="0" step="1" dir="ltr" @bind="counted" />
-                        <span class="bp6-input-action lx-input-suffix">@L["Iqd"]</span>
+                        <span class="bp6-input-action lx-input-suffix">@Fmt.CurrencyUnit()</span>
                     </div>
                 </FormField>
             </div>

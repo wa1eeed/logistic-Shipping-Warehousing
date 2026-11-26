@@ -54,7 +54,7 @@ internal static class ReturnEndpoints
             .GroupBy(s => new { s.MerchantId, s.MerchantName, s.ShipperName, Hub = s.CurrentHubCode ?? s.DestinationHubCode })
             .OrderBy(g => g.Min(s => s.LastStatusAt))
             .Select(g => new ReturnSellerGroup(g.Key.MerchantId, g.Key.MerchantName ?? g.Key.ShipperName, g.Key.Hub, g.Count(),
-                g.Min(s => s.LastStatusAt), g.Sum(s => s.CodCurrency == "IQD" ? s.CodAmount ?? 0 : 0)))
+                g.Min(s => s.LastStatusAt), g.Sum(s => s.CodAmount ?? 0)))
             .ToListAsync(ct);
 
         var reasons = await shipments

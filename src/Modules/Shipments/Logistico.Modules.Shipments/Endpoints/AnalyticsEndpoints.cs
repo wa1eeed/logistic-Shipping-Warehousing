@@ -55,7 +55,7 @@ internal static class AnalyticsEndpoints
         var returns = await domestic.Where(s => s.ReturnRequestedAt >= previousFrom && s.ReturnRequestedAt < previousTo || s.ReturnRequestedAt >= from && s.ReturnRequestedAt < to)
             .GroupBy(s => s.ReturnRequestedAt >= from).Select(g => new { Current = g.Key, Count = g.Count() }).ToListAsync(ct);
 
-        var cod = await domestic.Where(s => (s.CodCollectedAt >= previousFrom && s.CodCollectedAt < previousTo || s.CodCollectedAt >= from && s.CodCollectedAt < to) && s.CodCurrency == "IQD")
+        var cod = await domestic.Where(s => s.CodCollectedAt >= previousFrom && s.CodCollectedAt < previousTo || s.CodCollectedAt >= from && s.CodCollectedAt < to)
             .GroupBy(s => s.CodCollectedAt >= from).Select(g => new { Current = g.Key, Amount = g.Sum(s => s.CodAmount ?? 0) }).ToListAsync(ct);
 
         int CountOf<T>(IEnumerable<T> rows, bool current, Func<T, bool> isCurrent, Func<T, int> value) => rows.Where(r => isCurrent(r) == current).Sum(value);
@@ -91,7 +91,7 @@ internal static class AnalyticsEndpoints
                 Orders = g.Count(),
                 Delivered = g.Count(s => s.Status == ShipmentStatus.Delivered),
                 Returned = g.Count(s => returning.Contains(s.Status)),
-                Cod = g.Sum(s => s.CodCollectedAt != null && s.CodCurrency == "IQD" ? s.CodAmount ?? 0 : 0),
+                Cod = g.Sum(s => s.CodCollectedAt != null ? s.CodAmount ?? 0 : 0),
             })
             .OrderByDescending(s => s.Orders).Take(8)
             .ToListAsync(ct))
@@ -119,7 +119,7 @@ internal static class AnalyticsEndpoints
             {
                 Name = g.Key,
                 Delivered = g.Count(),
-                Cod = g.Sum(s => s.CodCurrency == "IQD" ? s.CodAmount ?? 0 : 0),
+                Cod = g.Sum(s => s.CodAmount ?? 0),
                 Rating = g.Average(s => (double?)s.Rating),
             })
             .ToListAsync(ct);

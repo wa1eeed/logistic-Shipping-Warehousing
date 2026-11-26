@@ -5,6 +5,7 @@ using Logistico.Modules.Shipments.Contracts.Rules;
 using Logistico.Modules.Shipments.Domain;
 using Logistico.Modules.Shipments.Infrastructure;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Geo;
 
 namespace Logistico.Modules.Shipments.Application;
 
@@ -68,7 +69,7 @@ internal static class CustomerMessages
             var shop = s.MerchantName ?? s.ShipperName;
             var courier = CourierFirstName(s.CourierName) ?? Get("OurCourier");
             var cod = s.CodAmount is > 0 && s.CodCurrency is not null
-                ? (s.CodCurrency == "IQD" ? $"{s.CodAmount.Value.ToString("N0", Arabic)} د.ع" : $"{s.CodAmount.Value.ToString("N2", Arabic)} {s.CodCurrency}")
+                ? $"{s.CodAmount.Value.ToString(Currencies.IsWhole(s.CodCurrency) ? "N0" : "N2", Arabic)} {Currencies.Symbol(s.CodCurrency, arabic: true)}"
                 : Get("NoCod");
             var reason = s.LastFailureReason is { } r ? ShipmentTexts.Of(r) : "";
             var next = s.RescheduledTo is { } at ? TimeZoneInfo.ConvertTime(at, Baghdad).ToString("dddd d MMMM", Arabic) : "";
