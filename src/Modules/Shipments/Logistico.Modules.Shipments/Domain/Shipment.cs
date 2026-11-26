@@ -169,9 +169,9 @@ internal sealed class Shipment
         {
             throw Rule("shipment.cod_currency", "Cash-on-delivery amount and currency must be given together.");
         }
-        if (codAmount is not null && !string.Equals(request.CodCurrency, "IQD", StringComparison.Ordinal))
+        if (codAmount is not null && request.CodCurrency is not ("IQD" or "SAR"))
         {
-            throw Rule("shipment.cod_currency", "Cash-on-delivery is settled in IQD only.");
+            throw Rule("shipment.cod_currency", "Cash-on-delivery is settled in IQD or SAR.");
         }
 
         if (request.DeclaredValue is > 0 && string.IsNullOrWhiteSpace(request.DeclaredCurrency))

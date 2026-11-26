@@ -123,7 +123,7 @@
                     </div>
                 </div>
 
-                @if (Countries.IsIraq(Input.Country))
+                @if (Countries.IsIraq(Input.Country) || Countries.IsSaudi(Input.Country))
                 {
                     <label class="bp6-control bp6-checkbox lx-setup-sample">
                         <InputCheckbox class="bp6-control-input" @bind-Value="Input.SampleData" />
