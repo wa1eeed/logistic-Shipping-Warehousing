@@ -20,9 +20,11 @@
   --brand:#0F9E72; --brand-press:#0B7D59; --amber:#E0A33F; --teal:#37C79B; --good:#1FB37A;
   --shadow:0 18px 40px -22px rgba(16,32,26,.3); --radius:18px;
   --maxw:1180px;
-  --ff-d:"Thmanyah Display","Thmanyah Sans",Georgia,serif;
-  --ff-b:"Thmanyah Sans","Segoe UI",system-ui,sans-serif;
+  --ff-d:"Thmanyah Display","Thmanyah Sans",Georgia,serif,"Saudi Riyal";
+  --ff-b:"Thmanyah Sans","Segoe UI",system-ui,sans-serif,"Saudi Riyal";
 }
+/* New Saudi riyal sign (U+20C1): glyph-only OFL font used only for that code point via unicode-range. */
+@font-face{font-family:"Saudi Riyal";src:url("/fonts/saudi-riyal.woff2") format("woff2");unicode-range:U+20C1;font-display:swap}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0A0F0C; --surface:#121A15; --surface-2:#0E1511; --fg:#ECF3ED; --muted:#9FB3A7; --line:#1E2A23;
   --ink:#070D0A; --ink-2:#0F2219; --on-ink:#EDF4EE; --on-ink-mut:#90A99B;

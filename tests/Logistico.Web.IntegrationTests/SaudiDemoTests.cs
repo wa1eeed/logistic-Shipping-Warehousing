@@ -56,6 +56,10 @@ public sealed class SaudiDemoTests(SaudiDemoFactory factory) : IClassFixture<Sau
         Assert.NotEmpty(fleet);
         var finance = (await Admin.GetFromJsonAsync<FinanceSummary>("/" + ShipmentsApiRoutes.FinanceSummary))!;
         Assert.NotEmpty(finance.SellerBalances);
+
+        // Cash-on-delivery analytics count the company's own (riyal) orders — not only dinar ones, which would read zero here.
+        var analytics = (await Admin.GetFromJsonAsync<AnalyticsOverview>("/" + ShipmentsApiRoutes.AnalyticsOverview + "?days=90"))!;
+        Assert.True(analytics.CodCollectedIqd.Value > 0, "collected cash-on-delivery should be counted for a Saudi (riyal) company");
     }
 
     [Fact]

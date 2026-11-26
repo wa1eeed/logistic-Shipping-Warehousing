@@ -118,11 +118,14 @@ public sealed class ConsoleLogicTests
     {
         CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
         Assert.Equal("65,000 IQD", Fmt.Money(65_000, "IQD"));
+        Assert.Equal("65,000 SAR", Fmt.Money(65_000, "SAR"));
         Assert.Equal("$12.50", Fmt.Money(12.5m, "USD"));
         Assert.Equal("—", Fmt.Money(null, "IQD"));
 
         CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("ar-IQ");
         Assert.EndsWith("د.ع", Fmt.Money(65_000, "IQD"), StringComparison.Ordinal);
+        // The Saudi riyal shows the new riyal sign (U+20C1, Unicode 17.0) in Arabic, not the old "ر.س".
+        Assert.EndsWith("⃁", Fmt.Money(65_000, "SAR"), StringComparison.Ordinal);
     }
 
     private static ClaimsPrincipal User(string role) =>

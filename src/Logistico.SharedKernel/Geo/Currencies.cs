@@ -9,11 +9,14 @@ public static class Currencies
     /// <summary>The currency code for an operating country (IQD by default, SAR for Saudi Arabia).</summary>
     public static string For(string? country) => Countries.IsSaudi(country) ? Saudi : Iraqi;
 
-    /// <summary>The currency's display symbol: د.ع / ر.س in Arabic, the ISO code otherwise.</summary>
+    /// <summary>
+    /// The currency's display symbol: the Iraqi dinar (د.ع) and the Saudi riyal sign (U+20C1, Unicode 17.0) in Arabic,
+    /// the ISO code otherwise. The riyal sign needs a font that carries U+20C1 to render instead of a tofu box.
+    /// </summary>
     public static string Symbol(string? currency, bool arabic) => currency switch
     {
         Iraqi => arabic ? "د.ع" : "IQD",
-        Saudi => arabic ? "ر.س" : "SAR",
+        Saudi => arabic ? "⃁" : "SAR",
         "USD" => "$",
         null or "" => "",
         _ => currency,
