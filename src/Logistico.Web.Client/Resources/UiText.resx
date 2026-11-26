@@ -452,7 +452,7 @@
   <data name="HoursN_One" xml:space="preserve"><value>1 h</value></data>
   <data name="HubLine" xml:space="preserve"><value>{0} on shelves · {1} waiting for a truck · {2} coming</value></data>
   <data name="HubRadar" xml:space="preserve"><value>Hub radar</value></data>
-  <data name="HubRadarTitle" xml:space="preserve"><value>Hub radar — latest scans across Iraq</value></data>
+  <data name="HubRadarTitle" xml:space="preserve"><value>Hub radar — latest scans</value></data>
   <data name="Hubs" xml:space="preserve"><value>Hubs</value></data>
   <data name="HubsHint" xml:space="preserve"><value>Shelves, parcels waiting for a truck, and the scan station</value></data>
   <data name="HubSwitched" xml:space="preserve"><value>Hub changed to {0}</value></data>
@@ -584,7 +584,7 @@
   <data name="Nav_Finance" xml:space="preserve"><value>Finance &amp; COD</value></data>
   <data name="Nav_Fleet" xml:space="preserve"><value>Fleet &amp; GPS</value></data>
   <data name="Nav_HubsSection" xml:space="preserve"><value>Hubs &amp; trucks</value></data>
-  <data name="Nav_Network" xml:space="preserve"><value>Iraq network map</value></data>
+  <data name="Nav_Network" xml:space="preserve"><value>Network map</value></data>
   <data name="Nav_NewInternational" xml:space="preserve"><value>New international shipment</value></data>
   <data name="Nav_NewOrder" xml:space="preserve"><value>New delivery order</value></data>
   <data name="Nav_Operations" xml:space="preserve"><value>Operations</value></data>
@@ -708,9 +708,9 @@
   <data name="NeedsAttentionHint" xml:space="preserve"><value>Failed deliveries and customs holds</value></data>
   <data name="NeedsTruckNotice" xml:space="preserve"><value>At {0}; it must go by truck to {1}.</value></data>
   <data name="NetworkSubtitle" xml:space="preserve"><value>Every open parcel: where it is, what is late, and which trucks are on the road.</value></data>
-  <data name="NetworkTitle" xml:space="preserve"><value>Iraq network map</value></data>
+  <data name="NetworkTitle" xml:space="preserve"><value>Network map</value></data>
   <data name="NewCourier" xml:space="preserve"><value>New courier</value></data>
-  <data name="NewInternationalSubtitle" xml:space="preserve"><value>Freight into Iraq by sea, air or road</value></data>
+  <data name="NewInternationalSubtitle" xml:space="preserve"><value>International freight by sea, air or road</value></data>
   <data name="NewInternationalTitle" xml:space="preserve"><value>New international shipment</value></data>
   <data name="NewOrder" xml:space="preserve"><value>New order</value></data>
   <data name="NewOrderSubtitle" xml:space="preserve"><value>A shop (e.g. on Instagram) sends a parcel to its customer — we collect, store, deliver and collect the cash.</value></data>
@@ -864,7 +864,7 @@
   <data name="PrintManifest" xml:space="preserve"><value>Print manifest</value></data>
   <data name="PrintNow" xml:space="preserve"><value>Print labels (4×6")</value></data>
   <data name="PromisedBy" xml:space="preserve"><value>Promised by</value></data>
-  <data name="PublicFooter" xml:space="preserve"><value>Logistico — shipping and delivery across Iraq</value></data>
+  <data name="PublicFooter" xml:space="preserve"><value>Logistico — shipping and delivery</value></data>
   <data name="PublicPage" xml:space="preserve"><value>Customer page</value></data>
   <data name="QuickDispatchHint" xml:space="preserve"><value>Select a courier and scan or enter a tracking number to hand off the parcel immediately.</value></data>
   <data name="QuickDispatchTitle" xml:space="preserve"><value>Quick courier dispatch</value></data>
