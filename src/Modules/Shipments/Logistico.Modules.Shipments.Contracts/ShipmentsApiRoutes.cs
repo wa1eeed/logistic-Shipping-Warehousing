@@ -108,6 +108,8 @@ public static class ShipmentsApiRoutes
 
     public static string SellerCancel(Guid shipmentId) => $"{SellerOrders}/{shipmentId}/cancel";
 
+    public static string SellerComplaint(Guid shipmentId) => $"{SellerOrders}/{shipmentId}/complaint";
+
     public static string SellerStatement(Guid settlementId) => $"{Seller}/payouts/{settlementId}/statement.csv";
     public static string ShelfCheck(Guid id) => $"{ShelfChecks}/{id}";
     public static string ShelfCheckScan(Guid id) => $"{ShelfChecks}/{id}/scan";

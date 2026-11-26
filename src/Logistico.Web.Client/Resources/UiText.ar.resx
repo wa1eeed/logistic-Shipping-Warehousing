@@ -1084,6 +1084,12 @@
   <data name="Seller_CancelMessage" xml:space="preserve"><value>لم يُستلم الطلب {0} بعد. إلغاؤه يحذفه من قائمة الاستلام لدى المندوب.</value></data>
   <data name="Seller_CancelTitle" xml:space="preserve"><value>إلغاء هذا الطلب؟</value></data>
   <data name="Seller_CancelledToast" xml:space="preserve"><value>تم إلغاء الطلب {0}.</value></data>
+  <data name="Seller_Complaint" xml:space="preserve"><value>رفع شكوى</value></data>
+  <data name="Seller_ComplaintFor" xml:space="preserve"><value>بخصوص الطلب {0}</value></data>
+  <data name="Seller_ComplaintDetails" xml:space="preserve"><value>تفاصيل الشكوى</value></data>
+  <data name="Seller_ComplaintPlaceholder" xml:space="preserve"><value>اشرح ما حدث بالتفصيل حتى يتمكن فريقنا من متابعته.</value></data>
+  <data name="Seller_ComplaintSubmit" xml:space="preserve"><value>إرسال الشكوى</value></data>
+  <data name="Seller_ComplaintSent" xml:space="preserve"><value>تم استلام شكواك {0}، وسيتابعها فريق الدعم.</value></data>
   <data name="Seller_FeeN" xml:space="preserve"><value>الأجرة {0}</value></data>
   <data name="Seller_NewOrder" xml:space="preserve"><value>طلب جديد</value></data>
   <data name="Seller_NoMatches" xml:space="preserve"><value>لا شيء يطابق هذا البحث أو التصفية.</value></data>

@@ -84,10 +84,13 @@
                                     {
                                         <span class="lx-intent-warning lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_ReturnFeeN"], Fmt.MoneyLocal(returnFee))</span>
                                     }
-                                    @if (o.Status is ShipmentStatus.Draft or ShipmentStatus.Booked)
-                                    {
-                                        <Button Small="true" Minimal="true" Intent="Intent.Danger" Icon="cross" Text="@L["Seller_Cancel"]" Loading="@(busy == o.Id)" OnClick="@(() => CancelAsync(o))" />
-                                    }
+                                    <div class="lx-seller-order-actions">
+                                        <Button Small="true" Minimal="true" Icon="issue" Text="@L["Seller_Complaint"]" OnClick="@(() => OpenComplaint(o))" />
+                                        @if (o.Status is ShipmentStatus.Draft or ShipmentStatus.Booked)
+                                        {
+                                            <Button Small="true" Minimal="true" Intent="Intent.Danger" Icon="cross" Text="@L["Seller_Cancel"]" Loading="@(busy == o.Id)" OnClick="@(() => CancelAsync(o))" />
+                                        }
+                                    </div>
                                 </div>
                             </li>
                         }
@@ -214,6 +217,30 @@
     </Footer>
 </Drawer>
 
+<Drawer IsOpen="complaintOpen" IsOpenChanged="@(open => complaintOpen = open)" Title="@L["Seller_Complaint"]" Icon="issue" Width="480px">
+    <ChildContent>
+        @if (complaintOrder is { } co)
+        {
+            <p class="bp6-text-muted lx-mb">@string.Format(CultureInfo.CurrentCulture, L["Seller_ComplaintFor"], co.TrackingNumber)</p>
+            <label class="bp6-label">
+                @L["Seller_ComplaintDetails"]
+                <textarea class="bp6-input bp6-fill" rows="5" maxlength="1000" @bind="complaintText" @bind:event="oninput"
+                          placeholder="@L["Seller_ComplaintPlaceholder"]" aria-label="@L["Seller_ComplaintDetails"]"></textarea>
+            </label>
+            @if (complaintError is not null)
+            {
+                <Callout Intent="Intent.Danger" Icon="error" CssClass="lx-mt">@complaintError</Callout>
+            }
+        }
+    </ChildContent>
+    <Footer>
+        <span class="lx-spacer"></span>
+        <Button Text="@L["Cancel"]" OnClick="@(() => complaintOpen = false)" />
+        <Button Intent="Intent.Primary" Icon="send-message" Text="@L["Seller_ComplaintSubmit"]"
+                Disabled="@string.IsNullOrWhiteSpace(complaintText)" Loading="complaintSaving" OnClick="SubmitComplaintAsync" />
+    </Footer>
+</Drawer>
+
 @code {
     private SellerHome? home;
     private SellerOrderList? orders;
@@ -226,6 +253,12 @@
     private bool newOpen;
     private bool saving;
     private string? error;
+
+    private bool complaintOpen;
+    private bool complaintSaving;
+    private string complaintText = "";
+    private string? complaintError;
+    private SellerOrder? complaintOrder;
     private string pasteText = "";
     private PriceQuote? quote;
     private ServerErrors? serverErrors;
@@ -360,6 +393,39 @@
         {
             busy = null;
             await RefreshAsync();
+        }
+    }
+
+    private void OpenComplaint(SellerOrder o)
+    {
+        complaintOrder = o;
+        complaintText = "";
+        complaintError = null;
+        complaintOpen = true;
+    }
+
+    private async Task SubmitComplaintAsync()
+    {
+        if (complaintOrder is not { } o || string.IsNullOrWhiteSpace(complaintText))
+        {
+            return;
+        }
+
+        complaintSaving = true;
+        complaintError = null;
+        try
+        {
+            var receipt = await Seller.ComplaintAsync(o.Id, new SellerComplaint { Details = complaintText.Trim() });
+            complaintOpen = false;
+            Toaster.Success(string.Format(CultureInfo.CurrentCulture, L["Seller_ComplaintSent"], receipt.Number));
+        }
+        catch (ApiException ex)
+        {
+            complaintError = ex.UserMessage;
+        }
+        finally
+        {
+            complaintSaving = false;
         }
     }
 

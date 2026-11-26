@@ -152,6 +152,17 @@ public sealed class CustomerRequest : RequestFields
 
 public sealed record CustomerRequestReceipt(string Number, RequestType Type, RequestStatus Status, bool AppliedAutomatically, DateTimeOffset CreatedAt);
 
+/// <summary>A complaint a seller files from the portal about one of their own orders; the order comes from the route.</summary>
+public sealed class SellerComplaint
+{
+    [Required(ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Required))]
+    [StringLength(1000, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
+    public string? Details { get; set; }
+}
+
+/// <summary>What the portal shows back after a seller files a complaint: the request's number, so staff can be chased on it.</summary>
+public sealed record SellerComplaintReceipt(string Number);
+
 public sealed class ResolveServiceRequest
 {
     /// <summary>Resolved (apply the change) or Rejected.</summary>

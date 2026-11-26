@@ -1629,6 +1629,7 @@ tr.lx-row-busy { opacity: 0.55; }
 .lx-seller-order-name { font-weight: 700; color: var(--lx-text-strong); overflow-wrap: anywhere; }
 .lx-seller-order-side { flex: none; display: grid; justify-items: end; gap: 4px; text-align: end; }
 .lx-seller-order-side b { font-size: 16px; color: var(--lx-text-strong); font-variant-numeric: tabular-nums; }
+.lx-seller-order-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; margin-block-start: 2px; }
 .lx-seller-paid { margin-block: 12px; font-weight: 600; }
 .lx-seller-paste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .lx-seller-paste > span { flex: 1 1 200px; }
