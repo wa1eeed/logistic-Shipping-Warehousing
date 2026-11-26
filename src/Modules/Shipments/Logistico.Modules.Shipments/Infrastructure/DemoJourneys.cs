@@ -10,25 +10,10 @@ namespace Logistico.Modules.Shipments.Infrastructure;
 /// first mile, nightly line-haul trucks (21:00 Baghdad), last mile with failed attempts and automatic returns,
 /// return trucks, hand-over to sellers, and customer requests.
 /// </summary>
-internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenantId, NumberGenerator numbers)
+internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenantId, NumberGenerator numbers, DemoLocale locale)
 {
-    private static readonly Dictionary<string, string[]> CouriersByHub = new()
-    {
-        [IraqHubs.Baghdad] = ["مصطفى (Baghdad-01)", "حيدر (Baghdad-02)", "علي (Baghdad-03)"],
-        [IraqHubs.Basra] = ["كرار (South-01)"],
-        [IraqHubs.Erbil] = ["Aram (North-01)"],
-        [IraqHubs.Najaf] = ["مرتضى (Najaf-01)"],
-        [IraqHubs.Mosul] = ["يونس (Mosul-01)"],
-    };
-
-    private static readonly Dictionary<string, string> Operators = new()
-    {
-        [IraqHubs.Baghdad] = "مصطفى — مخزن بغداد",
-        [IraqHubs.Basra] = "كرار — مخزن البصرة",
-        [IraqHubs.Erbil] = "Aram — Erbil hub",
-        [IraqHubs.Najaf] = "حيدر — مخزن النجف",
-        [IraqHubs.Mosul] = "يوسف — مخزن الموصل",
-    };
+    private readonly DemoLocale L = locale;
+    private readonly HubNetwork network = locale.Network;
 
     private static readonly string[] Shelves = ["A-01-1", "A-01-2", "A-02-1", "A-03-2", "B-01-1", "B-02-3", "C-01-1", "C-04-2"];
     private static readonly string[] Plates = ["BG-10421", "BG-55102", "BA-88210", "EBL-77310", "NJ-20511", "NI-61207"];
@@ -71,7 +56,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
             return;
         }
 
-        var originHub = IraqHubs.Default.FindOrDefault(s.OriginHubCode ?? s.DestinationHubCode);
+        var originHub = network.FindOrDefault(s.OriginHubCode ?? s.DestinationHubCode);
         if (s.PickupRequired)
         {
             s.AdvanceTo(ShipmentStatus.PickedUp, j.At, new MilestoneDetails(Location: originHub.Code, CourierName: Courier(originHub.Code)), "scan", "seed", j.At);
@@ -82,7 +67,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
             }
         }
 
-        s.ReceiveAtHub(originHub, Shelf(), Actor.Scan(Operators[originHub.Code]), j.At);
+        s.ReceiveAtHub(originHub, Shelf(), Actor.Scan(L.Operators[originHub.Code]), j.At);
         if (j.Stage < 16 && !s.NeedsTransfer)
         {
             j.Done = true; // on the shelf, waiting for a courier
@@ -130,11 +115,11 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
                 transfer.Load(j.S, departs.AddMinutes(-40));
             }
 
-            var transitHours = IraqHubs.Default.TransitHours(from, to);
-            transfer.Depart(null, null, $"SEAL-{random.Next(10000, 99999)}", transitHours, Operators[from], departs);
+            var transitHours = network.TransitHours(from, to);
+            transfer.Depart(null, null, $"SEAL-{random.Next(10000, 99999)}", transitHours, L.Operators[from], departs);
             foreach (var j in bucket)
             {
-                j.S.DepartOnTransfer(transfer.Number, from, to, transitHours, Actor.Scan(Operators[from]), departs);
+                j.S.DepartOnTransfer(transfer.Number, from, to, transitHours, Actor.Scan(L.Operators[from]), departs);
                 j.At = departs;
             }
 
@@ -149,7 +134,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
                 continue;
             }
 
-            var toHub = IraqHubs.Default.FindOrDefault(to);
+            var toHub = network.FindOrDefault(to);
             var minute = 0;
             var missingOne = bucket.Count() > 3 && random.Next(25) == 0;
             foreach (var j in bucket)
@@ -162,14 +147,14 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
                 }
 
                 var at = arrives.AddMinutes(minute++);
-                transfer.Receive(j.S, Operators[to], at);
-                j.S.ReceiveAtHub(toHub, j.S.IsReturning ? "R-01" : Shelf(), Actor.Scan(Operators[to]), at);
+                transfer.Receive(j.S, L.Operators[to], at);
+                j.S.ReceiveAtHub(toHub, j.S.IsReturning ? "R-01" : Shelf(), Actor.Scan(L.Operators[to]), at);
                 j.At = at;
             }
 
             if (transfer.Status == TransferStatus.InTransit)
             {
-                foreach (var item in transfer.Close("Seal intact, one parcel not found on the truck", Operators[to], arrives.AddHours(2)))
+                foreach (var item in transfer.Close("Seal intact, one parcel not found on the truck", L.Operators[to], arrives.AddHours(2)))
                 {
                     Alerts.Add(OpsAlert.ForTransfer(transfer, AlertKind.MissingInTransfer, AlertSeverity.Critical, null, transfer.Number, arrives.AddHours(2), item.ShipmentId, item.TrackingNumber));
                 }
@@ -180,7 +165,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
     private void LastMile(Journey j)
     {
         var s = j.S;
-        var hub = IraqHubs.Default.FindOrDefault(s.DestinationHubCode);
+        var hub = network.FindOrDefault(s.DestinationHubCode);
         if (j.Stage < 30 || !j.Step(random, 2, 14, now))
         {
             j.Done = true; // on the shelf at the destination hub
@@ -190,7 +175,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
         for (var attempt = 0; attempt < 3; attempt++)
         {
             var courier = Courier(hub.Code);
-            s.DispatchToCourier(hub, courier, Actor.Scan(Operators[hub.Code]), j.At);
+            s.DispatchToCourier(hub, courier, Actor.Scan(L.Operators[hub.Code]), j.At);
             if (j.Stage < 40 || !j.Step(random, 1, 8, now))
             {
                 j.Done = true; // out for delivery now
@@ -216,7 +201,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
             }
 
             // The courier brings the parcel back to the hub at the end of the run.
-            s.ReceiveAtHub(hub, decision.FollowUp == FailureFollowUp.Return ? "R-01" : Shelf(), Actor.Scan(Operators[hub.Code]), j.At);
+            s.ReceiveAtHub(hub, decision.FollowUp == FailureFollowUp.Return ? "R-01" : Shelf(), Actor.Scan(L.Operators[hub.Code]), j.At);
             if (decision.FollowUp == FailureFollowUp.Return)
             {
                 return; // returns travel back on the return trucks
@@ -243,7 +228,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
 
             foreach (var j in group)
             {
-                j.S.HandOverToSeller(number, "مندوب المتجر", 0m, Actor.Scan(Operators[j.S.CurrentHubCode!]), at);
+                j.S.HandOverToSeller(number, "مندوب المتجر", 0m, Actor.Scan(L.Operators[j.S.CurrentHubCode!]), at);
             }
         }
     }
@@ -257,14 +242,14 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
         {
             var at = Min(s.LastStatusAt.AddHours(2), now.AddMinutes(-1));
             var request = await NewAsync(s, new CustomerRequest { Type = RequestType.Reschedule, PreferredDate = DeliveryPromise.NextWorkingDay(now), PhoneLast4 = "0000" }, RequestSource.Customer, "customer", at, ct);
-            request.ApplyTo(s, IraqHubs.Default, new Actor("customer", "system"), at);
+            request.ApplyTo(s, network, new Actor("customer", "system"), at);
             request.Resolve(null, "automation", at);
         }
 
         // Address corrections waiting for a person (the governorate changes).
         foreach (var s in candidates.Where(s => s.Status is ShipmentStatus.AtWarehouse or ShipmentStatus.Booked && s.LastFailureReason is null).Take(4))
         {
-            await NewAsync(s, new CustomerRequest { Type = RequestType.ChangeAddress, NewGovernorate = "IQ-KA", NewCity = "حي الحسين", NewAddress = "قرب مستشفى الحسين، شارع 60", PhoneLast4 = "0000" },
+            await NewAsync(s, new CustomerRequest { Type = RequestType.ChangeAddress, NewGovernorate = L.ChangeAddressSample.Place, NewCity = L.ChangeAddressSample.City, NewAddress = L.ChangeAddressSample.Address, PhoneLast4 = "0000" },
                 RequestSource.Customer, "customer", Min(s.LastStatusAt.AddHours(1), now.AddMinutes(-1)), ct);
         }
 
@@ -319,7 +304,7 @@ internal sealed class DemoJourneys(Random random, DateTimeOffset now, Guid tenan
 
     private string Courier(string hubCode)
     {
-        var couriers = CouriersByHub[hubCode];
+        var couriers = L.CouriersByHub[hubCode];
         return couriers[random.Next(couriers.Length)];
     }
 

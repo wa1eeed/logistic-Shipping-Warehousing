@@ -3,6 +3,7 @@ using Logistico.Modules.Audit;
 using Logistico.Modules.Merchants;
 using Logistico.Modules.Merchants.Contracts;
 using Logistico.Modules.Shipments;
+using Logistico.Modules.Shipments.Contracts;
 using Logistico.SharedKernel;
 using Logistico.SharedKernel.Identity;
 using Logistico.Web.Data;
@@ -65,7 +66,20 @@ internal static class DatabaseInitializer
         var demoShipments = config.GetValue<int>("Seed:DemoShipments");
         if (demoShipments > 0)
         {
-            await app.Services.SeedMerchantsDemoDataAsync();
+            string country;
+            await using (var scope = app.Services.CreateAsyncScope())
+            {
+                var operating = scope.ServiceProvider.GetRequiredService<IOperatingNetwork>();
+                // Seed:Country picks the demo's country (e.g. "SA") before the data is generated; otherwise the company's own.
+                if (config["Seed:Country"] is { Length: > 0 } seedCountry)
+                {
+                    await operating.SetCountryAsync(Tenants.Default, seedCountry, CancellationToken.None);
+                }
+
+                country = await operating.CountryAsync(Tenants.Default, CancellationToken.None);
+            }
+
+            await app.Services.SeedMerchantsDemoDataAsync(country);
             await app.Services.SeedShipmentsDemoDataAsync(demoShipments);
             if (config.GetValue<bool>("Seed:DemoTeam") && config["Seed:AdminPassword"] is { Length: > 0 } sellerPassword)
             {

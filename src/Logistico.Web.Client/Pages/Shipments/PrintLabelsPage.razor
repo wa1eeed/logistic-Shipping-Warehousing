@@ -102,7 +102,7 @@ else
                     <div class="lx-awb-consignee">@s.ConsigneeName</div>
                     @if (!string.IsNullOrWhiteSpace(s.ConsigneePhone))
                     {
-                        <div class="lx-mono" dir="ltr"><b>@IraqPhone.Display(s.ConsigneePhone)</b></div>
+                        <div class="lx-mono" dir="ltr"><b>@PhoneNumbers.Display(s.ConsigneePhone)</b></div>
                     }
                     <div><b>@Fmt.Place(s.DestinationCode)</b> @(string.IsNullOrWhiteSpace(s.DestinationCity) ? "" : $"— {s.DestinationCity}")</div>
                 </div>

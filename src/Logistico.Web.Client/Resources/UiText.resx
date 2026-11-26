@@ -817,7 +817,7 @@
   <data name="Period_7" xml:space="preserve"><value>7 days</value></data>
   <data name="Period_90" xml:space="preserve"><value>90 days</value></data>
   <data name="Period_Today" xml:space="preserve"><value>Today</value></data>
-  <data name="PhoneHelper" xml:space="preserve"><value>Iraqi mobile, e.g. 0770 123 4567</value></data>
+  <data name="PhoneHelper" xml:space="preserve"><value>Mobile, e.g. 050 123 4567</value></data>
   <data name="PhoneLast4Hint" xml:space="preserve"><value>So we know it is you</value></data>
   <data name="Pickup" xml:space="preserve"><value>We pick up</value></data>
   <data name="PlannedNotLoaded" xml:space="preserve"><value>{0} parcels planned but not scanned</value></data>

@@ -862,7 +862,7 @@
   <data name="Period_7" xml:space="preserve"><value>7 أيام</value></data>
   <data name="Period_90" xml:space="preserve"><value>90 يوماً</value></data>
   <data name="Period_Today" xml:space="preserve"><value>اليوم</value></data>
-  <data name="PhoneHelper" xml:space="preserve"><value>موبايل عراقي، مثال: ⁦0770 123 4567⁩</value></data>
+  <data name="PhoneHelper" xml:space="preserve"><value>موبايل، مثال: ⁦050 123 4567⁩</value></data>
   <data name="PhoneLast4Hint" xml:space="preserve"><value>للتأكد من هويتك</value></data>
   <data name="Pickup" xml:space="preserve"><value>نستلم من المتجر</value></data>
   <data name="PlannedNotLoaded" xml:space="preserve"><value>{0} طرد مخطط لم يُمسح</value></data>

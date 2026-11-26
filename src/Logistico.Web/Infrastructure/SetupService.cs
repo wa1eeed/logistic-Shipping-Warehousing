@@ -100,11 +100,11 @@ internal sealed class SetupService(
         gate.Completed();
         await network.SetCountryAsync(Tenants.Default, request.Company.Country, CancellationToken.None);
         logger.LogInformation("Installation set up by {Email} for {Company}", request.Email, request.Company.Name);
-        if (request.SampleData && Countries.IsIraq(request.Company.Country))
+        if (request.SampleData && (Countries.IsIraq(request.Company.Country) || Countries.IsSaudi(request.Company.Country)))
         {
             // Sample shops, orders, trucks and returns to learn with; seeding is idempotent and stays out of the audit trail.
             using var unaudited = AuditScope.Suppress();
-            await services.SeedMerchantsDemoDataAsync();
+            await services.SeedMerchantsDemoDataAsync(request.Company.Country);
             await services.SeedShipmentsDemoDataAsync(SampleOrders);
         }
 

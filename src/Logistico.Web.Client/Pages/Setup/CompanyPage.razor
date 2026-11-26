@@ -33,7 +33,7 @@ else
                     </span>
                 </FormField>
                 <FormField Label="@L["Field_Phone"]" Field="() => model.Phone">
-                    <InputText class="bp6-input bp6-fill" @bind-Value="model.Phone" type="tel" dir="ltr" maxlength="20" placeholder="@(Countries.IsIraq(model.Country) ? "0770 123 4567" : "+962 7 9000 0000")" />
+                    <InputText class="bp6-input bp6-fill" @bind-Value="model.Phone" type="tel" dir="ltr" maxlength="20" placeholder="@(Countries.IsIraq(model.Country) ? "0770 123 4567" : Countries.IsSaudi(model.Country) ? "050 123 4567" : "+962 7 9000 0000")" />
                 </FormField>
                 @if (Countries.IsIraq(model.Country))
                 {

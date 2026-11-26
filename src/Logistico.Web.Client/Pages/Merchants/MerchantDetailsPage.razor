@@ -20,7 +20,7 @@
 else
 {
     <PageHeader Title="@merchant.Name" Icon="shop" Breadcrumbs="@([(L["Nav_Sellers"].Value, "merchants")])"
-                Subtitle="@($"{merchant.ContactName} · {IraqPhone.Display(merchant.Phone)} · {Fmt.Place(merchant.Governorate)}")">
+                Subtitle="@($"{merchant.ContactName} · {PhoneNumbers.Display(merchant.Phone)} · {Fmt.Place(merchant.Governorate)}")">
         <TitleExtra>
             @if (!merchant.IsActive)
             {
@@ -129,7 +129,7 @@ else
             Name = merchant.Name,
             InstagramHandle = merchant.InstagramHandle,
             ContactName = merchant.ContactName,
-            Phone = IraqPhone.Display(merchant.Phone),
+            Phone = PhoneNumbers.Display(merchant.Phone),
             Governorate = merchant.Governorate,
             Address = merchant.Address,
             Notes = merchant.Notes,

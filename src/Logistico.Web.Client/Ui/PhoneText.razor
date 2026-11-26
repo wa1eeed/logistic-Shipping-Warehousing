@@ -5,11 +5,11 @@
 }
 else if (Link)
 {
-    <a class="lx-phone" href="@($"tel:{Value}")" dir="ltr">@IraqPhone.Display(Value)</a>
+    <a class="lx-phone" href="@($"tel:{Value}")" dir="ltr">@PhoneNumbers.Display(Value)</a>
 }
 else
 {
-    <span class="lx-phone" dir="ltr">@IraqPhone.Display(Value)</span>
+    <span class="lx-phone" dir="ltr">@PhoneNumbers.Display(Value)</span>
 }
 
 @code {

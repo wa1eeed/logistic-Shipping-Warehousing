@@ -35,9 +35,9 @@ public static class MerchantsModule
         await scope.ServiceProvider.GetRequiredService<MerchantsDbContext>().Database.MigrateAsync(ct);
     }
 
-    public static async Task SeedMerchantsDemoDataAsync(this IServiceProvider services, CancellationToken ct = default)
+    public static async Task SeedMerchantsDemoDataAsync(this IServiceProvider services, string country, CancellationToken ct = default)
     {
         await using var scope = services.CreateAsyncScope();
-        await scope.ServiceProvider.GetRequiredService<MerchantsDemoSeeder>().SeedAsync(ct);
+        await scope.ServiceProvider.GetRequiredService<MerchantsDemoSeeder>().SeedAsync(country, ct);
     }
 }

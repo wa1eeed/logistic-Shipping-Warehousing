@@ -277,7 +277,7 @@
                         <InputText class="bp6-input bp6-fill lx-mono" @bind-Value="draft.Code" dir="ltr" placeholder="Baghdad-04" />
                     </FormField>
                     <FormField Label="@L["Field_Phone"]" Required="true" Helper="@L["PhoneHelper"]" Field="() => draft.Phone">
-                        <InputText class="bp6-input bp6-fill" @bind-Value="draft.Phone" type="tel" dir="ltr" placeholder="0770 123 4567" />
+                        <InputText class="bp6-input bp6-fill" @bind-Value="draft.Phone" type="tel" dir="ltr" placeholder="050 123 4567" />
                     </FormField>
                     <FormField Label="@L["Field_Governorate"]" Required="true" Field="() => draft.Governorate">
                         <span class="bp6-html-select bp6-fill">
@@ -544,7 +544,7 @@
         {
             Code = c.Code,
             Name = c.Name,
-            Phone = IraqPhone.Display(c.Phone),
+            Phone = PhoneNumbers.Display(c.Phone),
             Governorate = c.Governorate,
             VehicleType = c.VehicleType,
             VehiclePlate = c.VehiclePlate,

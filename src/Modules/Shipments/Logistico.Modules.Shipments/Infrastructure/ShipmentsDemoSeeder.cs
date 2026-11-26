@@ -16,62 +16,18 @@ internal sealed class ShipmentsDemoSeeder(
     AutomationEngine automation,
     HubDirectory hubs,
     ITenantContext tenant,
+    IOperatingNetwork network,
     TimeProvider clock)
 {
+    private DemoLocale L = DemoLocale.Iraq;
+
     private static readonly string[] Origins = ["CNSHA", "CNNGB", "CNSZX", "CNCAN", "TRIST", "TRMER", "AEJEA", "AEDXB", "DEHAM", "INNSA"];
     private static readonly string[] Ports = ["IQUQR", "IQBGW", "IQBSR", "IQEBL", "IQISU", "IQNJF"];
     private static readonly string[] Shippers = ["Ningbo Bright Lighting Co.", "Istanbul Textile Export A.S.", "Jebel Ali Trading FZE", "Guangzhou Auto Parts Ltd.", "Hamburg Medical GmbH", "Shenzhen Mobile Accessories"];
     private static readonly string[] Importers = ["شركة النور للتجارة العامة", "Erbil Mart", "Basra Oil Services", "مؤسسة الرافدين", "Baghdad Pharma Distribution", "شركة دجلة للإلكترونيات"];
-    private static readonly string[] Customers = ["علي حسين", "زينب كاظم", "محمد جاسم", "نور الهدى", "حسن عبد الله", "مريم سعد", "Ahmed Saleh", "سجاد فلاح", "رقية عباس", "Karwan Ali", "فاطمة ناصر", "يوسف مهدي", "هبة طارق", "عمر خالد", "Dilan Omer", "سارة محمود"];
-    private static readonly Dictionary<string, string[]> Areas = new()
-    {
-        ["IQ-BG"] = ["الكرادة", "المنصور", "زيونة", "الأعظمية", "الكاظمية", "حي الجامعة", "الدورة", "البلديات", "اليرموك", "الشعب"],
-        ["IQ-BA"] = ["العشار", "الجزائر", "البراضعية", "الزبير", "الطويسة"],
-        ["IQ-AR"] = ["Ankawa", "Dream City", "100m Road", "Shaqlawa Rd"],
-        ["IQ-NA"] = ["حي الأمير", "حي الحسين", "الكوفة"],
-        ["IQ-KA"] = ["حي الحسين", "باب بغداد", "حي العامل"],
-        ["IQ-NI"] = ["الزهور", "المجموعة الثقافية", "حي الشرطة"],
-        ["IQ-SU"] = ["Salim St", "Bakhtiari", "Raparin"],
-        ["IQ-BB"] = ["الحلة - حي بابل", "الحلة - الجمعية"],
-        ["IQ-DQ"] = ["الناصرية - حي أور", "الشطرة"],
-        ["IQ-KI"] = ["حي العروبة", "رحيم آوه"],
-        ["IQ-DI"] = ["بعقوبة - حي المعلمين", "بعقوبة - التحرير"],
-        ["IQ-AN"] = ["الرمادي - حي الأندلس", "الفلوجة - حي الجولان"],
-        ["IQ-WA"] = ["الكوت - حي الحسين", "الكوت - الجعفرية"],
-        ["IQ-QA"] = ["الديوانية - حي العسكري", "الديوانية - العروبة"],
-        ["IQ-MA"] = ["العمارة - حي الحسين", "العمارة - المعلمين"],
-        ["IQ-DA"] = ["Malta", "Shindokha"],
-        ["IQ-SD"] = ["تكريت - حي القادسية", "سامراء - المعتصم"],
-    };
-
-    // Where demo customers live (weights), roughly following where online shopping happens.
-    private static readonly (string Code, int Weight)[] Demand =
-    [
-        ("IQ-BG", 40), ("IQ-BA", 9), ("IQ-AR", 7), ("IQ-NI", 7), ("IQ-SU", 5), ("IQ-NA", 5), ("IQ-KA", 4), ("IQ-BB", 4), ("IQ-DQ", 4),
-        ("IQ-KI", 3), ("IQ-DI", 3), ("IQ-AN", 2), ("IQ-WA", 2), ("IQ-QA", 2), ("IQ-MA", 1), ("IQ-DA", 1), ("IQ-SD", 1),
-    ];
-
     // Orders per hour of the day (Baghdad time): quiet mornings, busy evenings after work.
     private static readonly int[] HourWeights = [3, 2, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 7, 8, 9, 11, 13, 14, 12, 7];
 
-    // What each demo shop sells, with a price range in thousands of IQD.
-    private static readonly Dictionary<string, (string Item, int MinK, int MaxK)[]> Catalogue = new(StringComparer.Ordinal)
-    {
-        ["بوتيك لمار"] = [("فستان سهرة", 45, 160), ("عباية خليجية", 35, 120), ("فستان صيفي", 25, 70), ("طقم بيجامة نسائي", 18, 45)],
-        ["Baghdad Kicks"] = [("حذاء رياضي", 30, 110), ("سنيكرز Nike Air", 60, 180), ("حذاء جلد رجالي", 40, 120), ("نعال صيفي", 10, 25)],
-        ["زهرة للتجميل"] = [("طقم مكياج", 25, 90), ("كريم ترطيب", 10, 35), ("سيروم فيتامين سي", 15, 45), ("أحمر شفاه ×2", 8, 25)],
-        ["Erbil Gadgets"] = [("سماعات بلوتوث", 15, 75), ("شاحن سريع 20W", 10, 30), ("ساعة ذكية", 35, 160), ("باوربانك 20000", 20, 55), ("AirPods Pro", 120, 320)],
-        ["عطور الفرات"] = [("عطر 100 مل", 25, 140), ("عطر عود", 60, 260), ("بخور ومبخرة", 15, 50), ("مجموعة عطور هدية", 45, 150)],
-        ["Little Steps Kids"] = [("ملابس أطفال", 15, 55), ("ألعاب أطفال", 12, 60), ("حذاء أطفال", 15, 40), ("عربانة أطفال", 90, 240)],
-        ["مطبخ ماما"] = [("كيك عيد ميلاد", 20, 60), ("حلويات منزلية", 12, 40), ("أواني مطبخ", 25, 110), ("قدر ضغط", 35, 90)],
-        ["Mosul Handmade"] = [("سجادة يدوية", 60, 300), ("ديكور منزلي", 20, 80), ("مفرش طاولة مطرز", 25, 70), ("مسبحة يدوية", 15, 60)],
-        ["دار الأناقة"] = [("حقيبة نسائية", 25, 120), ("ساعة يد نسائية", 30, 200), ("اكسسوارات ذهبية", 40, 350), ("نظارة شمسية", 15, 60)],
-        ["Phone Case Hub"] = [("كفر موبايل ×3", 8, 25), ("كفر ايفون 15", 10, 30), ("حامي شاشة", 5, 15), ("كيبل شحن", 5, 15)],
-        ["كتب ومكتبة الرصيف"] = [("كتب ×2", 10, 35), ("رواية", 8, 20), ("دفاتر وقرطاسية", 6, 25), ("مصحف", 15, 60)],
-        ["Suli Fashion"] = [("قميص رجالي", 18, 55), ("بنطرون جينز", 22, 60), ("جاكيت شتوي", 40, 130), ("Hoodie", 25, 70)],
-    };
-    private static readonly string[] Landmarks = ["قرب جامع", "مقابل مدرسة", "خلف المول", "قرب سوق", "مقابل صيدلية", "قرب الملعب"];
-    private static readonly string[] Items = ["فستان سهرة", "حذاء رياضي", "عطر 100 مل", "سماعات بلوتوث", "طقم مكياج", "كفر موبايل ×3", "ملابس أطفال", "كتب ×2", "ساعة يد", "حقيبة نسائية"];
     private static readonly string[] Couriers = ["مصطفى (Baghdad-01)", "حيدر (Baghdad-02)", "علي (Baghdad-03)", "كرار (South-01)", "Aram (North-01)"];
     private static readonly string[] Bins = ["A-01-1", "A-01-2", "A-02-1", "A-03-2", "B-01-1", "B-02-3", "C-01-1", "C-04-2", "R-01 (returns)"];
 
@@ -87,11 +43,14 @@ internal sealed class ShipmentsDemoSeeder(
         // Demo journeys follow the standard network, so the company starts with it.
         await hubs.EnsureStandardAsync(tenant.TenantId, ct);
 
+        // The demo mirrors the company's operating country: Iraq or Saudi Arabia.
+        L = DemoLocale.For(await network.CountryAsync(tenant.TenantId, ct));
+
         var random = new Random(2026);
         await SeedCouriersAsync(ct);
         await SeedSortPlansAsync(ct);
 
-        if (!await db.Shipments.AnyAsync(s => s.ServiceType == ServiceType.International, ct))
+        if (L.SeedsInternational && !await db.Shipments.AnyAsync(s => s.ServiceType == ServiceType.International, ct))
         {
             for (var i = 0; i < count / 3; i++)
             {
@@ -113,7 +72,7 @@ internal sealed class ShipmentsDemoSeeder(
                     orders.Add(await DomesticAsync(random, shops[random.Next(shops.Count)], ct));
                 }
 
-                var journeys = new DemoJourneys(random, clock.GetUtcNow(), tenant.TenantId, numbers);
+                var journeys = new DemoJourneys(random, clock.GetUtcNow(), tenant.TenantId, numbers, L);
                 await journeys.RunAsync(orders, ct);
                 db.Shipments.AddRange(orders);
                 db.Transfers.AddRange(journeys.Transfers);
@@ -124,7 +83,11 @@ internal sealed class ShipmentsDemoSeeder(
             }
         }
 
-        await SeedCustomsDeclarationsAsync(random, ct);
+        if (L.SeedsInternational)
+        {
+            await SeedCustomsDeclarationsAsync(random, ct);
+        }
+
         await SeedCashHandoversAsync(ct);
         await SeedCodSettlementsAsync(ct);
         await SeedRatingsAsync(random, ct);
@@ -159,14 +122,14 @@ internal sealed class ShipmentsDemoSeeder(
                 db.ShelfRules.Add(ShelfRule.Create(tenant.TenantId, rule, null, "seed", now));
             }
 
-            if (hub.Code == IraqHubs.Baghdad)
+            if (hub.Code == L.PrimaryHub)
             {
                 db.ShelfRules.Add(ShelfRule.Create(tenant.TenantId, new ShelfRuleRequest
                 {
                     HubCode = hub.Code,
                     Purpose = ShelfPurpose.Deliver,
-                    Governorate = "IQ-BG",
-                    Area = "الكرادة",
+                    Governorate = L.PrimaryPlace,
+                    Area = L.PrimaryArea,
                     Shelves = ["K-01", "K-02"],
                     CapacityPerShelf = 25,
                 }, null, "seed", now));
@@ -177,21 +140,6 @@ internal sealed class ShipmentsDemoSeeder(
     }
 
     /// <summary>Customers rate about half of last fortnight's deliveries from the tracking page: mostly happy, a few not.</summary>
-    /// <summary>Approximate middles of the Baghdad demo areas, where the courier app's GPS puts demo deliveries.</summary>
-    private static readonly Dictionary<string, (double Latitude, double Longitude)> BaghdadAreaCentres = new(StringComparer.Ordinal)
-    {
-        ["الكرادة"] = (33.304, 44.426),
-        ["المنصور"] = (33.315, 44.345),
-        ["زيونة"] = (33.329, 44.456),
-        ["الأعظمية"] = (33.369, 44.379),
-        ["الكاظمية"] = (33.380, 44.340),
-        ["حي الجامعة"] = (33.312, 44.313),
-        ["الدورة"] = (33.254, 44.395),
-        ["البلديات"] = (33.345, 44.479),
-        ["اليرموك"] = (33.301, 44.336),
-        ["الشعب"] = (33.406, 44.427),
-    };
-
     /// <summary>
     /// Delivered Baghdad parcels get the proof the courier app records at the door (GPS within a few hundred metres of
     /// their area's middle), so the demo's courier-run plans know where customers are, as a company using the app does.
@@ -204,13 +152,13 @@ internal sealed class ShipmentsDemoSeeder(
         }
 
         var delivered = await db.Shipments.AsNoTracking()
-            .Where(s => s.ServiceType == ServiceType.Domestic && s.Status == ShipmentStatus.Delivered && s.DestinationCode == "IQ-BG" && s.DeliveredAt != null)
+            .Where(s => s.ServiceType == ServiceType.Domestic && s.Status == ShipmentStatus.Delivered && s.DestinationCode == L.PrimaryPlace && s.DeliveredAt != null)
             .OrderBy(s => s.DeliveredAt)
             .Select(s => new { s.Id, s.DestinationCity, s.CourierName, s.DeliveredAt })
             .ToListAsync(ct);
         foreach (var parcel in delivered)
         {
-            if (parcel.DestinationCity is not { } area || !BaghdadAreaCentres.TryGetValue(area, out var centre))
+            if (parcel.DestinationCity is not { } area || !L.AreaCentres.TryGetValue(area, out var centre))
             {
                 continue;
             }
@@ -221,7 +169,7 @@ internal sealed class ShipmentsDemoSeeder(
                 Longitude = Math.Round(centre.Longitude + (random.NextDouble() - 0.5) * 0.014, 6),
                 AccuracyMeters = 8 + random.Next(25),
             };
-            db.DeliveryProofs.Add(DeliveryProof.ForDelivery(tenant.TenantId, parcel.Id, parcel.CourierName ?? Couriers[0],
+            db.DeliveryProofs.Add(DeliveryProof.ForDelivery(tenant.TenantId, parcel.Id, parcel.CourierName ?? L.CouriersByHub[L.PrimaryHub][0],
                 new CourierDeliveryRequest { ReceivedBy = DeliveryReceiver.Customer, Location = door }, parcel.DeliveredAt!.Value));
         }
 
@@ -256,19 +204,8 @@ internal sealed class ShipmentsDemoSeeder(
     private async Task SeedCouriersAsync(CancellationToken ct)
     {
         var now = clock.GetUtcNow();
-        CourierRequest[] fleet =
-        [
-            new() { Code = "Baghdad-01", Name = "مصطفى", Phone = "07701112233", Governorate = "IQ-BG", VehicleType = VehicleType.Motorcycle, VehiclePlate = "BG-10421", Notes = "الكرخ — المنصور، اليرموك، حي الجامعة" },
-            new() { Code = "Baghdad-02", Name = "حيدر", Phone = "07802223344", Governorate = "IQ-BG", VehicleType = VehicleType.Van, VehiclePlate = "BG-44890", Notes = "الرصافة — الكرادة، زيونة، الأعظمية" },
-            new() { Code = "Baghdad-03", Name = "علي", Phone = "07713334455", Governorate = "IQ-BG", VehicleType = VehicleType.Motorcycle, VehiclePlate = "BG-31902", Notes = "بغداد — الكاظمية، الشعب، البلديات" },
-            new() { Code = "South-01", Name = "كرار", Phone = "07814445566", Governorate = "IQ-BA", VehicleType = VehicleType.LightTruck, VehiclePlate = "BA-88210", Notes = "البصرة والجنوب — العشار، الجزائر، الزبير" },
-            new() { Code = "North-01", Name = "Aram", Phone = "07505556677", Governorate = "IQ-AR", VehicleType = VehicleType.Van, VehiclePlate = "EBL-77310", Notes = "Erbil & Sulaymaniyah — Ankawa, Dream City" },
-            new() { Code = "Najaf-01", Name = "مرتضى", Phone = "07806667788", Governorate = "IQ-NA", VehicleType = VehicleType.Motorcycle, VehiclePlate = "NJ-20511", Notes = "النجف وكربلاء وبابل" },
-            new() { Code = "Mosul-01", Name = "يونس", Phone = "07707778899", Governorate = "IQ-NI", VehicleType = VehicleType.Van, VehiclePlate = "NI-61207", Notes = "الموصل — الجانب الأيسر والأيمن" },
-        ];
-
         var existing = await db.Couriers.Select(c => c.Code).ToListAsync(ct);
-        foreach (var req in fleet.Where(f => !existing.Contains(f.Code)))
+        foreach (var req in L.Couriers.Where(f => !existing.Contains(f.Code)))
         {
             db.Couriers.Add(Courier.Create(tenant.TenantId, req, now));
         }
@@ -367,10 +304,10 @@ internal sealed class ShipmentsDemoSeeder(
             var parcels = day.ToList();
             var expected = parcels.Sum(p => p.CodAmount ?? 0m);
             var at = parcels.Max(p => p.DeliveredAt)!.Value.AddHours(2);
-            var shortBy = first ? 5_000m : 0m;
+            var shortBy = first ? 5m * L.PriceScale : 0m;
             first = false;
             db.CashHandovers.Add(CashHandover.Create(tenant.TenantId, await numbers.CashHandoverNumberAsync(ct), courier, parcels, expected - shortBy,
-                shortBy > 0 ? "نقص 5,000 د.ع — يُخصم من المندوب" : null, "seed", at));
+                shortBy > 0 ? $"نقص {shortBy:N0} {L.CodCurrency} — يُخصم من المندوب" : null, "seed", at));
         }
 
         await db.SaveChangesAsync(ct);
@@ -391,7 +328,7 @@ internal sealed class ShipmentsDemoSeeder(
             .ToListAsync(ct);
 
         var seq = 0;
-        var methods = new[] { PayoutMethod.ZainCash, PayoutMethod.QiCard, PayoutMethod.Cash, PayoutMethod.BankTransfer };
+        var methods = L.PayoutMethods;
         foreach (var group in olderDelivered.GroupBy(s => new { MerchantId = s.MerchantId!.Value, MerchantName = s.MerchantName ?? "—" }).Take(4))
         {
             var batch = group.ToList();
@@ -497,11 +434,11 @@ internal sealed class ShipmentsDemoSeeder(
         customers ??= Enumerable.Range(0, 900)
             .Select(_ =>
             {
-                var governorate = Demand[Weighted(random, Demand.Select(d => d.Weight).ToArray())].Code;
-                var areas = Areas[governorate];
-                return (Name: Customers[random.Next(Customers.Length)], Phone: $"07{random.Next(5, 10)}{random.Next(10_000_000, 99_999_999)}",
+                var governorate = L.Demand[Weighted(random, L.Demand.Select(d => d.Weight).ToArray())].Code;
+                var areas = L.Areas[governorate];
+                return (Name: L.Customers[random.Next(L.Customers.Length)], Phone: L.ConsigneePhone(random),
                     Governorate: governorate, Area: areas[random.Next(areas.Length)],
-                    Address: $"محلة {random.Next(100, 999)}، زقاق {random.Next(1, 60)}، دار {random.Next(1, 120)}");
+                    Address: L.AddressLine(random));
             })
             .ToArray();
         var customer = customers[(int)(customers.Length * Math.Pow(random.NextDouble(), 1.5))];
@@ -517,7 +454,7 @@ internal sealed class ShipmentsDemoSeeder(
             bookedAt = now.AddMinutes(-random.Next(5, 600));
         }
 
-        var products = Catalogue.TryGetValue(shop.Name, out var sold) ? sold : Items.Select(i => (Item: i, MinK: 12, MaxK: 120)).ToArray();
+        var products = L.Catalogue.TryGetValue(shop.Name, out var sold) ? sold : L.Items.Select(i => (Item: i, MinK: 12, MaxK: 120)).ToArray();
         var product = products[random.Next(products.Length)];
         var request = new CreateShipmentRequest
         {
@@ -531,17 +468,17 @@ internal sealed class ShipmentsDemoSeeder(
             DestinationCode = customer.Governorate,
             DestinationCity = customer.Area,
             DeliveryAddress = customer.Address,
-            Landmark = Landmarks[random.Next(Landmarks.Length)],
+            Landmark = L.Landmarks[random.Next(L.Landmarks.Length)],
             ItemsDescription = product.Item,
             PickupRequired = random.Next(4) != 0,
             Pieces = random.Next(1, 4),
             GrossWeightKg = Math.Round((decimal)(random.NextDouble() * 4) + 0.2m, 3),
-            CodAmount = random.Next(5) == 0 ? null : random.Next(product.MinK, product.MaxK + 1) * 1_000m,
-            CodCurrency = "IQD",
-            DeliveryFee = customer.Governorate == shop.Governorate ? 5_000m : 8_000m,
+            CodAmount = random.Next(5) == 0 ? null : random.Next(product.MinK, product.MaxK + 1) * L.PriceScale,
+            CodCurrency = L.CodCurrency,
+            DeliveryFee = customer.Governorate == shop.Governorate ? L.LocalFee : L.CrossFee,
         };
 
-        return Shipment.Book(tenant.TenantId, await numbers.TrackingNumberAsync(ct), request, new MerchantSnapshot(shop.Id, shop.Name, shop.Governorate), "seed", bookedAt, IraqHubs.Default);
+        return Shipment.Book(tenant.TenantId, await numbers.TrackingNumberAsync(ct), request, new MerchantSnapshot(shop.Id, shop.Name, shop.Governorate), "seed", bookedAt, L.Network);
     }
 
     /// <summary>An index picked with probability proportional to its weight.</summary>

@@ -79,7 +79,7 @@ internal sealed class CodSettlement
             SettlementNumber = settlementNumber,
             MerchantId = merchantId,
             MerchantName = merchantName,
-            Currency = "IQD",
+            Currency = shipments.FirstOrDefault()?.CodCurrency ?? "IQD",
             ShipmentCount = shipments.Count,
             GrossCodAmount = gross,
             DeliveryFeesAmount = fees,

@@ -316,7 +316,7 @@
     {
         RequestType.Reschedule => string.Format(CultureInfo.CurrentCulture, L["RescheduleTo"], Fmt.Date(r.PreferredDate)),
         RequestType.ChangeAddress => $"{Fmt.Place(r.NewGovernorate)} {r.NewCity} — {r.NewAddress}".Trim(' ', '—'),
-        RequestType.ChangePhone => IraqPhone.Display(r.NewPhone),
+        RequestType.ChangePhone => PhoneNumbers.Display(r.NewPhone),
         _ => r.Details ?? "—",
     };
 

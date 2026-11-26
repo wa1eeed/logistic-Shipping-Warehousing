@@ -169,9 +169,9 @@ internal sealed class Shipment
         {
             throw Rule("shipment.cod_currency", "Cash-on-delivery amount and currency must be given together.");
         }
-        if (codAmount is not null && !string.Equals(request.CodCurrency, "IQD", StringComparison.Ordinal))
+        if (codAmount is not null && request.CodCurrency is not ("IQD" or "SAR"))
         {
-            throw Rule("shipment.cod_currency", "Cash-on-delivery is settled in IQD only.");
+            throw Rule("shipment.cod_currency", "Cash-on-delivery is settled in IQD or SAR.");
         }
 
         if (request.DeclaredValue is > 0 && string.IsNullOrWhiteSpace(request.DeclaredCurrency))
@@ -579,7 +579,7 @@ internal sealed class Shipment
         EnsureChangeable();
         ConsigneePhone = PhoneNumbers.Normalize(phone) ?? throw Rule("shipment.domestic_address", "Domestic deliveries need governorate, address and mobile number.");
         UpdatedAt = now;
-        Note(IraqPhone.Display(ConsigneePhone), actor, now);
+        Note(PhoneNumbers.Display(ConsigneePhone), actor, now);
     }
 
     /// <summary>
@@ -616,7 +616,7 @@ internal sealed class Shipment
         var cod = request.CodAmount is > 0 ? request.CodAmount : null;
         var fee = request.DeliveryFee is > 0 ? request.DeliveryFee : null;
         Track("Name", ConsigneeName, request.ConsigneeName.Trim());
-        Track("Phone", ConsigneePhone, phone, p => IraqPhone.Display(p));
+        Track("Phone", ConsigneePhone, phone, p => PhoneNumbers.Display(p));
         Track("Governorate", DestinationCode, governorate, IraqGovernorates.NameOrCode);
         Track("Address", (DestinationCity, DeliveryAddress, Landmark), (Clean(request.DestinationCity), request.DeliveryAddress.Trim(), Clean(request.Landmark)));
         Track("Items", (ItemsDescription, Pieces, GrossWeightKg), (Clean(request.ItemsDescription), request.Pieces, request.GrossWeightKg));

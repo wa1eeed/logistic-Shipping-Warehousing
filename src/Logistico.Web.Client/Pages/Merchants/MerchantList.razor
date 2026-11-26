@@ -36,7 +36,7 @@
             <td class="lx-strong">@m.Name</td>
             <td dir="ltr">@(m.InstagramHandle is null ? "—" : "@" + m.InstagramHandle)</td>
             <td>@m.ContactName</td>
-            <td dir="ltr">@IraqPhone.Display(m.Phone)</td>
+            <td dir="ltr">@PhoneNumbers.Display(m.Phone)</td>
             <td>@Fmt.Place(m.Governorate)</td>
             <td><Tag Intent="@(m.IsActive ? Intent.Success : Intent.None)">@(m.IsActive ? L["Active"] : L["Inactive"])</Tag></td>
         </Row>
