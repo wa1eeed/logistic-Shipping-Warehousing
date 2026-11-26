@@ -28,7 +28,7 @@ internal sealed class HubDirectory(ShipmentsDbContext db, OperatingPlaces places
         }
 
         var hubs = await LoadAsync(tenantId, ct);
-        if (hubs is null && Countries.IsIraq(await places.CountryAsync(tenantId, ct)))
+        if (hubs is null && HasStandardNetwork(await places.CountryAsync(tenantId, ct)))
         {
             await EnsureStandardAsync(tenantId, ct);
             hubs = await LoadAsync(tenantId, ct);
@@ -52,14 +52,16 @@ internal sealed class HubDirectory(ShipmentsDbContext db, OperatingPlaces places
     /// <summary>Creates the standard hubs for a company that has no warehouses yet (safe when two requests race).</summary>
     public async Task EnsureStandardAsync(Guid tenantId, CancellationToken ct)
     {
-        if (!Countries.IsIraq(await places.CountryAsync(tenantId, ct)))
+        var country = await places.CountryAsync(tenantId, ct);
+        if (!HasStandardNetwork(country))
         {
             return;
         }
 
+        var standard = StandardFor(country);
         if (db.Database.CurrentTransaction is not null)
         {
-            await CreateStandardIfMissingAsync(tenantId, ct);
+            await CreateStandardIfMissingAsync(tenantId, standard, ct);
             return;
         }
 
@@ -67,12 +69,18 @@ internal sealed class HubDirectory(ShipmentsDbContext db, OperatingPlaces places
         await strategy.ExecuteAsync(async () =>
         {
             await using var transaction = await db.Database.BeginTransactionAsync(ct);
-            await CreateStandardIfMissingAsync(tenantId, ct);
+            await CreateStandardIfMissingAsync(tenantId, standard, ct);
             await transaction.CommitAsync(ct);
         });
     }
 
-    private async Task CreateStandardIfMissingAsync(Guid tenantId, CancellationToken ct)
+    /// <summary>Countries that ship with a built-in hub network: Iraq and Saudi Arabia.</summary>
+    private static bool HasStandardNetwork(string country) => Countries.IsIraq(country) || Countries.IsSaudi(country);
+
+    /// <summary>The built-in hubs for a country (Iraq by default).</summary>
+    private static IReadOnlyList<HubInfo> StandardFor(string country) => Countries.IsSaudi(country) ? SaudiHubs.Standard : IraqHubs.Standard;
+
+    private async Task CreateStandardIfMissingAsync(Guid tenantId, IReadOnlyList<HubInfo> standard, CancellationToken ct)
     {
         // Serialises the check-then-insert per company until the transaction ends.
         await db.Database.ExecuteSqlInterpolatedAsync(
@@ -80,7 +88,7 @@ internal sealed class HubDirectory(ShipmentsDbContext db, OperatingPlaces places
         if (!await db.Warehouses.IgnoreQueryFilters().AnyAsync(w => w.TenantId == tenantId, ct))
         {
             var now = clock.GetUtcNow();
-            db.Warehouses.AddRange(IraqHubs.Standard.Select((hub, index) => Warehouse.FromStandard(tenantId, hub, index == 0, now)));
+            db.Warehouses.AddRange(standard.Select((hub, index) => Warehouse.FromStandard(tenantId, hub, index == 0, now)));
             await db.SaveChangesAsync(ct);
         }
     }

@@ -88,6 +88,8 @@ public static class Countries
 
     public static bool IsIraq(string? code) => string.Equals(Normalize(code), Iraq, StringComparison.Ordinal);
 
+    public static bool IsSaudi(string? code) => string.Equals(Normalize(code), Saudi, StringComparison.Ordinal);
+
     /// <summary>Any ISO-style two-letter code, so a country that is not in the short list can still be typed.</summary>
     public static bool IsKnown(string? code)
     {
