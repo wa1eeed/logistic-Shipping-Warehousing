@@ -486,7 +486,7 @@
   <data name="HoursN_Two" xml:space="preserve"><value>ساعتان</value></data>
   <data name="HubLine" xml:space="preserve"><value>{0} على الرفوف · {1} بانتظار شاحنة · {2} قادمة</value></data>
   <data name="HubRadar" xml:space="preserve"><value>رادار المراكز</value></data>
-  <data name="HubRadarTitle" xml:space="preserve"><value>رادار المراكز — آخر عمليات المسح في العراق</value></data>
+  <data name="HubRadarTitle" xml:space="preserve"><value>رادار المراكز — آخر عمليات المسح</value></data>
   <data name="Hubs" xml:space="preserve"><value>المراكز</value></data>
   <data name="HubsHint" xml:space="preserve"><value>الرفوف، والطرود بانتظار شاحنة، ومحطة المسح</value></data>
   <data name="HubSwitched" xml:space="preserve"><value>تم تغيير المركز إلى {0}</value></data>
@@ -618,7 +618,7 @@
   <data name="Nav_Finance" xml:space="preserve"><value>المالية والتحصيل</value></data>
   <data name="Nav_Fleet" xml:space="preserve"><value>الأسطول والتتبع</value></data>
   <data name="Nav_HubsSection" xml:space="preserve"><value>المراكز والنقل</value></data>
-  <data name="Nav_Network" xml:space="preserve"><value>خريطة شبكة العراق</value></data>
+  <data name="Nav_Network" xml:space="preserve"><value>خريطة الشبكة</value></data>
   <data name="Nav_NewInternational" xml:space="preserve"><value>شحنة دولية جديدة</value></data>
   <data name="Nav_NewOrder" xml:space="preserve"><value>طلب توصيل جديد</value></data>
   <data name="Nav_Operations" xml:space="preserve"><value>العمليات</value></data>
@@ -742,9 +742,9 @@
   <data name="NeedsAttentionHint" xml:space="preserve"><value>تسليمات فاشلة وشحنات محتجزة</value></data>
   <data name="NeedsTruckNotice" xml:space="preserve"><value>في {0}، ويجب نقلها بالشاحنة إلى {1}.</value></data>
   <data name="NetworkSubtitle" xml:space="preserve"><value>كل الطرود المفتوحة: أين هي، وما المتأخر، وأي الشاحنات في الطريق.</value></data>
-  <data name="NetworkTitle" xml:space="preserve"><value>خريطة شبكة العراق</value></data>
+  <data name="NetworkTitle" xml:space="preserve"><value>خريطة الشبكة</value></data>
   <data name="NewCourier" xml:space="preserve"><value>مندوب جديد</value></data>
-  <data name="NewInternationalSubtitle" xml:space="preserve"><value>شحن إلى العراق بحراً أو جواً أو براً</value></data>
+  <data name="NewInternationalSubtitle" xml:space="preserve"><value>شحن دولي بحراً أو جواً أو براً</value></data>
   <data name="NewInternationalTitle" xml:space="preserve"><value>شحنة دولية جديدة</value></data>
   <data name="NewOrder" xml:space="preserve"><value>طلب جديد</value></data>
   <data name="NewOrderSubtitle" xml:space="preserve"><value>متجر (مثلاً على انستغرام) يرسل طرداً لزبونه — نستلمه، نخزنه، نوصله ونستلم المبلغ.</value></data>
@@ -912,7 +912,7 @@
   <data name="PrintManifest" xml:space="preserve"><value>طباعة الكشف</value></data>
   <data name="PrintNow" xml:space="preserve"><value>طباعة الملصقات (⁦4×6⁩)</value></data>
   <data name="PromisedBy" xml:space="preserve"><value>موعد التسليم</value></data>
-  <data name="PublicFooter" xml:space="preserve"><value>لوجستيكو — الشحن والتوصيل في كل العراق</value></data>
+  <data name="PublicFooter" xml:space="preserve"><value>لوجستيكو — الشحن والتوصيل</value></data>
   <data name="PublicPage" xml:space="preserve"><value>صفحة الزبون</value></data>
   <data name="QuickDispatchHint" xml:space="preserve"><value>اختر المندوب وامسح أو اكتب رقم التتبع لتسليمه الطرد فوراً.</value></data>
   <data name="QuickDispatchTitle" xml:space="preserve"><value>إرسال سريع مع المندوب</value></data>
