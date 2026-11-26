@@ -17,7 +17,7 @@
 else
 {
     <NonIdealState Icon="lock" Title="@L["NoAccess_Title"]" Description="@string.Format(CultureInfo.CurrentCulture, L["NoAccess_Text"], L["Role_" + (User.StaffRole() ?? "None")])">
-        <LinkButton Href="" Icon="home" Text="@L["Nav_Dashboard"]" Intent="Intent.Primary" />
+        <LinkButton Href="admin" Icon="home" Text="@L["Nav_Dashboard"]" Intent="Intent.Primary" />
     </NonIdealState>
 }
 

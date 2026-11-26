@@ -17,7 +17,7 @@
             {
                 <Button Minimal="true" Icon="@(menuOpen ? "cross" : "menu")" CssClass="lx-menu-toggle" Title="@L["Menu"]" OnClick="@(() => menuOpen = !menuOpen)" />
             }
-            <a class="lx-brand" href="">
+            <a class="lx-brand" href="admin">
                 <span class="lx-logo" aria-hidden="true"></span>
                 <span class="lx-brand-name">@L["AppName"]</span>
                 @if (Company.Name is { } companyName)
