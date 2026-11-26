@@ -65,7 +65,7 @@ else
                             <tbody>
                                 @foreach (var hub in HubCatalog.All)
                                 {
-                                    var governorates = IraqGovernorates.All.Where(g => HubCatalog.ResolveDestinationHub(g.Code).Code == hub.Code).OrderBy(g => g.Name, StringComparer.CurrentCulture).ToList();
+                                    var governorates = HubCatalog.Destinations.Where(g => HubCatalog.ResolveDestinationHub(g.Code).Code == hub.Code).OrderBy(g => g.Name, StringComparer.CurrentCulture).ToList();
                                     if (governorates.Count == 0)
                                     {
                                         continue;
@@ -83,7 +83,7 @@ else
                                     @foreach (var g in governorates)
                                     {
                                         var fee = card.GovernorateFees.GetValueOrDefault(g.Code, card.DefaultFee);
-                                        var standard = RateCard.DefaultGovernorateFees().GetValueOrDefault(g.Code);
+                                        var standard = RateCard.DefaultGovernorateFees().GetValueOrDefault(g.Code, card.DefaultFee);
                                         <tr>
                                             <td>@g.Name</td>
                                             <td><span class="bp6-text-muted lx-small">@hub.RoutingTag</span></td>
@@ -91,7 +91,7 @@ else
                                             <td class="lx-num">
                                                 @if (fee != standard)
                                                 {
-                                                    <span class="@(fee > standard ? "lx-text-danger" : "lx-text-success")">@(fee > standard ? "+" : "")@Fmt.Money(fee - standard, "IQD")</span>
+                                                    <span class="@(fee > standard ? "lx-text-danger" : "lx-text-success")">@(fee > standard ? "+" : "")@Fmt.MoneyLocal(fee - standard)</span>
                                                 }
                                             </td>
                                         </tr>
@@ -147,7 +147,7 @@ else
             <Section Title="@L["Pricing_Calculator"]" Subtitle="@L["Pricing_CalculatorHint"]" Icon="calculator">
                 <FormField TValue="string" Label="@L["Pricing_From"]">
                     <HtmlSelect Value="@from" ValueChanged="@(v => from = v ?? from)" Fill="true" Label="@L["Pricing_From"]">
-                        @foreach (var g in IraqGovernorates.All.OrderBy(g => g.Name, StringComparer.CurrentCulture))
+                        @foreach (var g in HubCatalog.Destinations.OrderBy(g => g.Name, StringComparer.CurrentCulture))
                         {
                             <option value="@g.Code">@g.Name</option>
                         }
@@ -155,7 +155,7 @@ else
                 </FormField>
                 <FormField TValue="string" Label="@L["Pricing_To"]">
                     <HtmlSelect Value="@to" ValueChanged="@(v => to = v ?? to)" Fill="true" Label="@L["Pricing_To"]">
-                        @foreach (var g in IraqGovernorates.All.OrderBy(g => g.Name, StringComparer.CurrentCulture))
+                        @foreach (var g in HubCatalog.Destinations.OrderBy(g => g.Name, StringComparer.CurrentCulture))
                         {
                             <option value="@g.Code">@g.Name</option>
                         }
@@ -177,17 +177,17 @@ else
                 </div>
                 @{ var quote = card.Quote(from, to, weight, quoteSeller); }
                 <dl class="lx-props">
-                    <dt>@L[quote.SameGovernorate ? "Pricing_SameGovernorate" : "Pricing_Price"]</dt><dd>@Fmt.Money(quote.BaseFee, "IQD")</dd>
+                    <dt>@L[quote.SameGovernorate ? "Pricing_SameGovernorate" : "Pricing_Price"]</dt><dd>@Fmt.MoneyLocal(quote.BaseFee)</dd>
                     @if (quote.WeightCharge > 0)
                     {
-                        <dt>@L["Pricing_WeightCharge"]</dt><dd>@Fmt.Money(quote.WeightCharge, "IQD")</dd>
+                        <dt>@L["Pricing_WeightCharge"]</dt><dd>@Fmt.MoneyLocal(quote.WeightCharge)</dd>
                     }
                     @if (quote.DiscountPercent > 0)
                     {
                         <dt>@L["Pricing_Discount"]</dt><dd>@Fmt.Number(quote.DiscountPercent, 0)%</dd>
                     }
                 </dl>
-                <div class="lx-summary-total"><span>@L["Field_DeliveryFee"]</span><span>@Fmt.Money(quote.Fee, "IQD")</span></div>
+                <div class="lx-summary-total"><span>@L["Field_DeliveryFee"]</span><span>@Fmt.MoneyLocal(quote.Fee)</span></div>
             </Section>
             @if (card.UpdatedAt is { } changed)
             {
@@ -202,8 +202,8 @@ else
     private IReadOnlyList<MerchantLookupItem> merchants = [];
     private Guid? newSeller;
     private Guid? quoteSeller;
-    private string from = "IQ-BG";
-    private string to = "IQ-BA";
+    private string from = "";
+    private string to = "";
     private decimal weight = 1;
     private bool saving;
     private string? error;
@@ -213,15 +213,20 @@ else
         var merchantsTask = Merchants.LookupAsync();
         card = await Shipments.GetPricingAsync();
         merchants = await merchantsTask;
+
+        // Seed the calculator with the company's own regions (Saudi regions for a Saudi company), not Iraqi defaults.
+        var places = HubCatalog.Destinations;
+        from = places.ElementAtOrDefault(0)?.Code ?? from;
+        to = places.FirstOrDefault(p => p.Code != from)?.Code ?? from;
     }
 
-    private decimal CommonFee(IReadOnlyList<Governorate> governorates)
+    private decimal CommonFee(IReadOnlyList<PlaceInfo> governorates)
     {
         var fees = governorates.Select(g => card!.GovernorateFees.GetValueOrDefault(g.Code, card.DefaultFee)).Distinct().ToList();
         return fees.Count == 1 ? fees[0] : 0;
     }
 
-    private void SetAll(IReadOnlyList<Governorate> governorates, decimal fee)
+    private void SetAll(IReadOnlyList<PlaceInfo> governorates, decimal fee)
     {
         foreach (var g in governorates)
         {
