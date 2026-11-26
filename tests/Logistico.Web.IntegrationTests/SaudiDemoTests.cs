@@ -1,8 +1,11 @@
 using System.Globalization;
+using System.Net;
 using System.Net.Http.Json;
+using Logistico.Modules.Merchants.Contracts;
 using Logistico.Modules.Shipments.Contracts;
 using Logistico.Modules.Shipments.Contracts.Rules;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Identity;
 
 namespace Logistico.Web.IntegrationTests;
 
@@ -53,6 +56,35 @@ public sealed class SaudiDemoTests(SaudiDemoFactory factory) : IClassFixture<Sau
         Assert.NotEmpty(fleet);
         var finance = (await Admin.GetFromJsonAsync<FinanceSummary>("/" + ShipmentsApiRoutes.FinanceSummary))!;
         Assert.NotEmpty(finance.SellerBalances);
+    }
+
+    [Fact]
+    public async Task A_saudi_shop_books_to_saudi_regions_in_riyals()
+    {
+        // Link a seller account to one of the Saudi demo shops.
+        var merchants = (await Admin.GetFromJsonAsync<PagedResult<MerchantListItem>>("/api/v1/merchants?pageSize=1"))!;
+        var shop = Assert.Single(merchants.Items);
+        var seller = factory.CreateUserClient("saudi-seller@logistico.test", Tenants.Default, StaffRoles.Seller, merchantId: shop.Id);
+
+        // The order form's destination list is the company's own regions — every one Saudi, none Iraqi.
+        var places = (await seller.GetFromJsonAsync<NetworkHubs>("/" + ShipmentsApiRoutes.SellerPlaces))!;
+        Assert.Equal("SA", places.Country);
+        Assert.NotEmpty(places.Places!);
+        Assert.All(places.Places!, p => Assert.StartsWith("SA-", p.Code, StringComparison.Ordinal));
+
+        // Booking to one of those regions succeeds (no "needs governorate" rejection) and settles cash on delivery in riyals.
+        var order = ApiTestHelpers.DomesticOrder(Guid.Empty, "عميل سعودي");
+        order.DestinationCode = places.Places![0].Code;
+        order.ConsigneePhone = "0501234567";
+        order.CodAmount = 450;
+        var created = await seller.PostAsJsonAsync("/" + ShipmentsApiRoutes.SellerOrders, order);
+        Assert.True(created.StatusCode == HttpStatusCode.Created, await created.Content.ReadAsStringAsync());
+        var booked = (await created.Content.ReadFromJsonAsync<CreateShipmentResponse>())!;
+
+        var all = (await Admin.GetFromJsonAsync<ShipmentListResult>("/" + ShipmentsApiRoutes.Shipments + "?pageSize=200"))!;
+        var mine = all.Items.Single(s => s.TrackingNumber == booked.TrackingNumber);
+        Assert.Equal("SAR", mine.CodCurrency);
+        Assert.StartsWith("SA-", mine.DestinationCode, StringComparison.Ordinal);
     }
 
     [Theory]

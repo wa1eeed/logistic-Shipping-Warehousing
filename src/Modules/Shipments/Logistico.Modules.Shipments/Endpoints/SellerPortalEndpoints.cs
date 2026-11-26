@@ -6,8 +6,8 @@ using Logistico.Modules.Shipments.Contracts.Rules;
 using Logistico.Modules.Shipments.Domain;
 using Logistico.Modules.Shipments.Infrastructure;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Geo;
 using Logistico.SharedKernel.Identity;
-using Logistico.SharedKernel.Iraq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -34,6 +34,7 @@ internal static class SellerPortalEndpoints
         seller.MapGet("/orders", OrdersAsync).WithSummary("The shop's own orders, newest first.");
         seller.MapPost("/orders", BookAsync).WithSummary("Books a delivery from the shop's governorate; the fee comes from the company's prices.");
         seller.MapGet("/quote", QuoteAsync).WithSummary("The company's delivery fee for this shop to a governorate.");
+        seller.MapGet("/places", PlacesAsync).WithSummary("The regions this company delivers to, for the shop's order form.");
         seller.MapPost("/orders/{id:guid}/cancel", CancelAsync).WithSummary("Cancels an order that has not been picked up yet.");
         seller.MapPost("/orders/{id:guid}/complaint", ComplaintAsync).WithSummary("Files a complaint about one of the shop's own orders; staff pick it up from the requests inbox.");
         seller.MapGet("/payouts/{id:guid}/statement.csv", StatementAsync).WithSummary("Parcel-by-parcel CSV statement of one of the shop's payouts.");
@@ -106,7 +107,7 @@ internal static class SellerPortalEndpoints
         return TypedResults.Ok(new SellerOrderList(items, total, search.EffectivePage, search.EffectivePageSize));
     }
 
-    private static async Task<IResult> BookAsync(CreateShipmentRequest request, ClaimsPrincipal user, IMerchantDirectory merchants, OrderDesk orders, CancellationToken ct)
+    private static async Task<IResult> BookAsync(CreateShipmentRequest request, ClaimsPrincipal user, IMerchantDirectory merchants, OrderDesk orders, OperatingPlaces places, ITenantContext tenant, CancellationToken ct)
     {
         if (await ShopOfAsync(user, merchants, ct) is not { } shop)
         {
@@ -118,7 +119,7 @@ internal static class SellerPortalEndpoints
         request.Mode = TransportMode.Road;
         request.MerchantId = shop.Id;
         request.OriginCode = shop.Governorate;
-        request.CodCurrency = "IQD";
+        request.CodCurrency = Currencies.For(await places.CountryAsync(tenant.TenantId, ct));
         request.DeliveryFee = null;
         request.PromisedAt = null;
         request.HouseBillNumber = null;
@@ -139,20 +140,33 @@ internal static class SellerPortalEndpoints
         }
     }
 
-    private static async Task<IResult> QuoteAsync(string? destination, decimal? weightKg, ClaimsPrincipal user, IMerchantDirectory merchants, Pricing pricing, ITenantContext tenant, CancellationToken ct)
+    private static async Task<IResult> QuoteAsync(string? destination, decimal? weightKg, ClaimsPrincipal user, IMerchantDirectory merchants, Pricing pricing, OperatingPlaces places, ITenantContext tenant, CancellationToken ct)
     {
         if (await ShopOfAsync(user, merchants, ct) is not { } shop)
         {
             return NotLinked();
         }
 
-        if (!IraqGovernorates.IsKnown(destination))
+        var catalog = await places.PlacesAsync(tenant.TenantId, ct);
+        if (destination is null || !catalog.Any(place => string.Equals(place.Code, destination, StringComparison.OrdinalIgnoreCase)))
         {
             return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["destination"] = [ValidationText.Governorate] });
         }
 
         var weight = Math.Clamp(weightKg ?? 1m, 0.001m, 1_000_000m);
         return TypedResults.Ok((await pricing.GetAsync(tenant.TenantId, ct)).Quote(shop.Governorate, destination, weight, shop.Id));
+    }
+
+    private static async Task<IResult> PlacesAsync(ClaimsPrincipal user, IMerchantDirectory merchants, OperatingPlaces places, ITenantContext tenant, CancellationToken ct)
+    {
+        if (await ShopOfAsync(user, merchants, ct) is null)
+        {
+            return NotLinked();
+        }
+
+        var country = await places.CountryAsync(tenant.TenantId, ct);
+        var catalog = await places.PlacesAsync(tenant.TenantId, ct);
+        return TypedResults.Ok(new NetworkHubs([], DateTimeOffset.MinValue, country, catalog));
     }
 
     private static async Task<IResult> CancelAsync(Guid id, ClaimsPrincipal user, IMerchantDirectory merchants, ShipmentsDbContext db, TimeProvider clock, CancellationToken ct)

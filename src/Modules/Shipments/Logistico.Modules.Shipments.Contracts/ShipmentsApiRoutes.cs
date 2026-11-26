@@ -64,6 +64,7 @@ public static class ShipmentsApiRoutes
     public const string Seller = "api/v1/seller";
     public const string SellerOrders = Seller + "/orders";
     public const string SellerQuote = Seller + "/quote";
+    public const string SellerPlaces = Seller + "/places";
     public const string Finance = "api/v1/finance";
     public const string FinanceSummary = Finance + "/summary";
     public const string ShelfChecks = "api/v1/shelf-checks";

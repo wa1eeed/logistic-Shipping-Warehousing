@@ -15,7 +15,7 @@
   <data name="ActiveSeller" xml:space="preserve"><value>متجر فعّال (يمكن إنشاء طلبات له)</value></data>
   <data name="ActivityLog" xml:space="preserve"><value>سجل النشاط</value></data>
   <data name="Add" xml:space="preserve"><value>إضافة</value></data>
-  <data name="AddressPlaceholder" xml:space="preserve"><value>المحلة، الزقاق، رقم الدار</value></data>
+  <data name="AddressPlaceholder" xml:space="preserve"><value>الحي، الشارع، رقم المبنى</value></data>
   <data name="AddWarehouse" xml:space="preserve"><value>إضافة مخزن</value></data>
   <data name="Ago_Days" xml:space="preserve"><value>قبل {0} يوم</value></data>
   <data name="Ago_Days_Few" xml:space="preserve"><value>قبل {0} أيام</value></data>
@@ -45,7 +45,7 @@
   <data name="AnySeller" xml:space="preserve"><value>أي متجر</value></data>
   <data name="ApplyAndResolve" xml:space="preserve"><value>تطبيق على الطلب</value></data>
   <data name="AppName" xml:space="preserve"><value>لوجستيكو</value></data>
-  <data name="AreaPlaceholder" xml:space="preserve"><value>مثال: الكرادة، المنصور</value></data>
+  <data name="AreaPlaceholder" xml:space="preserve"><value>مثال: العليا، النخيل</value></data>
   <data name="Arrived" xml:space="preserve"><value>وصلت</value></data>
   <data name="ArrivedAt" xml:space="preserve"><value>وصلت {0}</value></data>
   <data name="AtOurHubIn" xml:space="preserve"><value>في مركزنا في {0}</value></data>
@@ -566,7 +566,7 @@
   <data name="Kpi_TrucksPlanned" xml:space="preserve"><value>طرود أُضيفت لشاحنات</value></data>
   <data name="Kpi_Uncovered" xml:space="preserve"><value>محافظات بلا مخزن</value></data>
   <data name="Kpi_UnsettledCod" xml:space="preserve"><value>تم تحصيلها (بانتظار التسوية)</value></data>
-  <data name="LandmarkPlaceholder" xml:space="preserve"><value>مثال: قرب مول المنصور</value></data>
+  <data name="LandmarkPlaceholder" xml:space="preserve"><value>مثال: قرب برج المملكة</value></data>
   <data name="LaneTip" xml:space="preserve"><value>شاحنات: {0} · طرود في الطريق: {1} · قيد التحميل: {2}</value></data>
   <data name="LastRun" xml:space="preserve"><value>آخر تشغيل {0}</value></data>
   <data name="Late" xml:space="preserve"><value>متأخرة</value></data>

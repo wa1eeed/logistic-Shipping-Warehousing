@@ -15,7 +15,7 @@
   <data name="ActiveSeller" xml:space="preserve"><value>Active seller (can receive new orders)</value></data>
   <data name="ActivityLog" xml:space="preserve"><value>Activity log</value></data>
   <data name="Add" xml:space="preserve"><value>Add</value></data>
-  <data name="AddressPlaceholder" xml:space="preserve"><value>Mahalla, zuqaq, house number</value></data>
+  <data name="AddressPlaceholder" xml:space="preserve"><value>District, street, building number</value></data>
   <data name="AddWarehouse" xml:space="preserve"><value>Add warehouse</value></data>
   <data name="Ago_Days" xml:space="preserve"><value>{0} days ago</value></data>
   <data name="Ago_Days_One" xml:space="preserve"><value>1 day ago</value></data>
@@ -38,7 +38,7 @@
   <data name="AnySeller" xml:space="preserve"><value>Any seller</value></data>
   <data name="ApplyAndResolve" xml:space="preserve"><value>Apply to the order</value></data>
   <data name="AppName" xml:space="preserve"><value>Logistico</value></data>
-  <data name="AreaPlaceholder" xml:space="preserve"><value>e.g. Karrada, Mansour</value></data>
+  <data name="AreaPlaceholder" xml:space="preserve"><value>e.g. Al Olaya, Al Nakheel</value></data>
   <data name="Arrived" xml:space="preserve"><value>Arrived</value></data>
   <data name="ArrivedAt" xml:space="preserve"><value>Arrived {0}</value></data>
   <data name="AtOurHubIn" xml:space="preserve"><value>At our hub in {0}</value></data>
@@ -532,7 +532,7 @@
   <data name="Kpi_TrucksPlanned" xml:space="preserve"><value>Parcels planned on trucks</value></data>
   <data name="Kpi_Uncovered" xml:space="preserve"><value>Governorates without a warehouse</value></data>
   <data name="Kpi_UnsettledCod" xml:space="preserve"><value>Collected (unsettled)</value></data>
-  <data name="LandmarkPlaceholder" xml:space="preserve"><value>e.g. near Al-Mansour Mall</value></data>
+  <data name="LandmarkPlaceholder" xml:space="preserve"><value>e.g. near Kingdom Tower</value></data>
   <data name="LaneTip" xml:space="preserve"><value>Trucks: {0} · parcels on the road: {1} · loading: {2}</value></data>
   <data name="LastRun" xml:space="preserve"><value>Last run {0}</value></data>
   <data name="Late" xml:space="preserve"><value>Late</value></data>
