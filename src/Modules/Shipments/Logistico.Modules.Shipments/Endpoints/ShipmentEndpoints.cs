@@ -8,6 +8,7 @@ using Logistico.Modules.Shipments.Contracts.Rules;
 using Logistico.Modules.Shipments.Domain;
 using Logistico.Modules.Shipments.Infrastructure;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Geo;
 using Logistico.SharedKernel.Identity;
 using Logistico.SharedKernel.Iraq;
 using Microsoft.AspNetCore.Builder;
@@ -184,7 +185,7 @@ internal static class ShipmentEndpoints
         {
             csv.AppendJoin(',',
                 Api.Csv(r.TrackingNumber), Api.Csv(ShipmentTexts.Of(r.ServiceType)), Api.Csv(ShipmentTexts.Of(r.Status)), Api.Csv(r.MerchantName), Api.Csv(r.ShipperName),
-                Api.Csv(r.ConsigneeName), Api.Csv(IraqPhone.Display(r.ConsigneePhone)), Api.Csv(TradeLocations.Name(r.OriginCode)), Api.Csv(TradeLocations.Name(r.DestinationCode)),
+                Api.Csv(r.ConsigneeName), Api.Csv(PhoneNumbers.Display(r.ConsigneePhone)), Api.Csv(TradeLocations.Name(r.OriginCode)), Api.Csv(TradeLocations.Name(r.DestinationCode)),
                 Api.Csv(r.DestinationCity), Api.Csv(IraqHubs.TagOf(r.CurrentHubCode)), Api.Csv(IraqHubs.TagOf(r.DestinationHubCode)),
                 r.Pieces.ToString(CultureInfo.InvariantCulture), r.ChargeableWeightKg.ToString(CultureInfo.InvariantCulture),
                 r.CodAmount?.ToString(CultureInfo.InvariantCulture) ?? "", Api.Csv(r.CodCurrency), Api.Csv(r.WarehouseBin), Api.Csv(r.CourierName),

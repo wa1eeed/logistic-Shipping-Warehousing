@@ -579,7 +579,7 @@ internal sealed class Shipment
         EnsureChangeable();
         ConsigneePhone = PhoneNumbers.Normalize(phone) ?? throw Rule("shipment.domestic_address", "Domestic deliveries need governorate, address and mobile number.");
         UpdatedAt = now;
-        Note(IraqPhone.Display(ConsigneePhone), actor, now);
+        Note(PhoneNumbers.Display(ConsigneePhone), actor, now);
     }
 
     /// <summary>
@@ -616,7 +616,7 @@ internal sealed class Shipment
         var cod = request.CodAmount is > 0 ? request.CodAmount : null;
         var fee = request.DeliveryFee is > 0 ? request.DeliveryFee : null;
         Track("Name", ConsigneeName, request.ConsigneeName.Trim());
-        Track("Phone", ConsigneePhone, phone, p => IraqPhone.Display(p));
+        Track("Phone", ConsigneePhone, phone, p => PhoneNumbers.Display(p));
         Track("Governorate", DestinationCode, governorate, IraqGovernorates.NameOrCode);
         Track("Address", (DestinationCity, DeliveryAddress, Landmark), (Clean(request.DestinationCity), request.DeliveryAddress.Trim(), Clean(request.Landmark)));
         Track("Items", (ItemsDescription, Pieces, GrossWeightKg), (Clean(request.ItemsDescription), request.Pieces, request.GrossWeightKg));
