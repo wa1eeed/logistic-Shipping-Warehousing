@@ -269,6 +269,14 @@ modules.MapAuditModule();
 modules.MapMerchantsModule();
 modules.MapShipmentsModule();
 
+// The public landing page at the site root; signed-in staff go straight to the console.
+app.MapGet("/", (HttpContext http) =>
+    http.User.Identity?.IsAuthenticated == true
+        ? Results.Redirect("/admin")
+        : Results.File(System.IO.Path.Combine(app.Environment.WebRootPath, "home", "index.html"), "text/html; charset=utf-8"))
+    .AllowAnonymous()
+    .ExcludeFromDescription();
+
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Logistico.Web.Client._Imports).Assembly);

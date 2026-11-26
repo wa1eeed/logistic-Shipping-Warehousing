@@ -17,7 +17,7 @@ public static class AppNavigation
     [
         new("Nav_Operations",
         [
-            new("", "Nav_Dashboard", "dashboard", "d", "home overview لوحة", Exact: true),
+            new("admin", "Nav_Dashboard", "dashboard", "d", "home overview لوحة", Exact: true),
             new("network", "Nav_Network", "map", "i", "iraq map hubs خريطة العراق شبكة"),
             new("shipments", "Nav_Shipments", "th", "s", "orders parcels list الشحنات الطلبات", Exact: true),
             new("orders/new", "Nav_NewOrder", "add", null, "instagram new order طلب جديد", Policy: StaffPolicies.Operate),
