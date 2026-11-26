@@ -1,4 +1,5 @@
 using System.Globalization;
+using Logistico.SharedKernel.Geo;
 using Microsoft.Extensions.Localization;
 
 namespace Logistico.Web.Client.Ui;
@@ -6,6 +7,17 @@ namespace Logistico.Web.Client.Ui;
 /// <summary>Culture-aware display formatting (Arabic/English) used across pages.</summary>
 public static class Fmt
 {
+    private static bool Arabic => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar";
+
+    /// <summary>The signed-in company's own currency code (IQD or SAR), from its operating country.</summary>
+    public static string CompanyCurrency => Currencies.For(HubCatalog.Country);
+
+    /// <summary>The company's currency symbol (د.ع / ر.س), for hints and labels.</summary>
+    public static string CurrencyUnit() => Currencies.Symbol(CompanyCurrency, Arabic);
+
+    /// <summary>A money amount in the company's own currency.</summary>
+    public static string MoneyLocal(decimal? amount) => Money(amount, CompanyCurrency);
+
     public static string Money(decimal? amount, string? currency)
     {
         if (amount is null)
@@ -13,15 +25,9 @@ public static class Fmt
             return "—";
         }
 
-        var format = currency is "IQD" ? "N0" : "N2";
+        var format = Currencies.IsWhole(currency) ? "N0" : "N2";
         var number = amount.Value.ToString(format, CultureInfo.CurrentCulture);
-        var symbol = currency switch
-        {
-            "IQD" => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? "د.ع" : "IQD",
-            "USD" => "$",
-            null => "",
-            _ => currency,
-        };
+        var symbol = Currencies.Symbol(currency, Arabic);
         return currency == "USD" ? $"{symbol}{number}" : $"{number} {symbol}".Trim();
     }
 
@@ -54,13 +60,7 @@ public static class Fmt
         }
 
         var number = (amount.Value / scale.Value.Divisor).ToString("#,0.#", CultureInfo.CurrentCulture) + scale.Value.Suffix;
-        var symbol = currency switch
-        {
-            "IQD" => arabic ? "د.ع" : "IQD",
-            "USD" => "$",
-            null => "",
-            _ => currency,
-        };
+        var symbol = Currencies.Symbol(currency, arabic);
         return currency == "USD" ? $"{symbol}{number}" : $"{number} {symbol}".Trim();
     }
 
@@ -139,7 +139,7 @@ public static class Fmt
         var list = totals.OrderBy(t => t.Currency == "IQD" ? 0 : 1).ToList();
         if (list.Count == 0)
         {
-            return ("0", CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? "د.ع" : "IQD");
+            return ("0", CurrencyUnit());
         }
 
         var (number, unit) = CompactParts(list[0].Amount, list[0].Currency);

@@ -67,7 +67,7 @@
   <data name="SetupCompanyNamePlaceholder" xml:space="preserve"><value>Al-Rafidain Express</value></data>
   <data name="SetupCompanyPhone" xml:space="preserve"><value>Company phone</value></data>
   <data name="SetupCountry" xml:space="preserve"><value>Country</value></data>
-  <data name="SetupCountryHelp" xml:space="preserve"><value>Iraq starts with its governorates and hubs. Any other country starts empty: you add the regions and warehouses you deliver to.</value></data>
+  <data name="SetupCountryHelp" xml:space="preserve"><value>Some countries start with built-in regions and hubs; others start empty — you add the regions and warehouses you deliver to.</value></data>
   <data name="SetupGovernorate" xml:space="preserve"><value>Head office governorate</value></data>
   <data name="Optional" xml:space="preserve"><value>optional</value></data>
   <data name="SetupAdmin" xml:space="preserve"><value>First administrator</value></data>

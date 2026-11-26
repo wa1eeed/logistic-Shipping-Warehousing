@@ -67,7 +67,7 @@
   <data name="SetupCompanyNamePlaceholder" xml:space="preserve"><value>الرافدين للتوصيل</value></data>
   <data name="SetupCompanyPhone" xml:space="preserve"><value>هاتف الشركة</value></data>
   <data name="SetupCountry" xml:space="preserve"><value>البلد</value></data>
-  <data name="SetupCountryHelp" xml:space="preserve"><value>العراق يبدأ بمحافظاته ومراكزه. أي بلد آخر يبدأ فارغًا: تضيف المناطق والمخازن التي توصل إليها.</value></data>
+  <data name="SetupCountryHelp" xml:space="preserve"><value>بعض الدول تبدأ بمناطقها ومراكزها الجاهزة؛ غيرها يبدأ فارغًا، فتضيف المناطق والمخازن التي توصل إليها.</value></data>
   <data name="SetupGovernorate" xml:space="preserve"><value>محافظة المكتب الرئيسي</value></data>
   <data name="Optional" xml:space="preserve"><value>اختياري</value></data>
   <data name="SetupAdmin" xml:space="preserve"><value>أول مدير</value></data>

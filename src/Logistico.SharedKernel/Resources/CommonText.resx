@@ -14,7 +14,7 @@
   <data name="Validation_Email" xml:space="preserve"><value>Enter a valid email address.</value></data>
   <data name="Validation_Governorate" xml:space="preserve"><value>Choose a governorate.</value></data>
   <data name="Validation_Incoterm" xml:space="preserve"><value>Unknown Incoterm.</value></data>
-  <data name="Validation_InsideIraq" xml:space="preserve"><value>Choose a location inside Iraq (click the map).</value></data>
+  <data name="Validation_InsideIraq" xml:space="preserve"><value>Choose a location on the map (click the map).</value></data>
   <data name="Validation_InstagramHandle" xml:space="preserve"><value>Instagram handles use letters, numbers, dots and underscores (max 30).</value></data>
   <data name="Validation_IraqiMobile" xml:space="preserve"><value>Enter a valid mobile number, e.g. 050 123 4567.</value></data>
   <data name="Validation_LocationCode" xml:space="preserve"><value>Use a 3–5 letter location code (UN/LOCODE or IATA), e.g. CNSHA.</value></data>
