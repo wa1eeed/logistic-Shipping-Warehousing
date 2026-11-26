@@ -2209,3 +2209,81 @@ body.bp6-dark { color: var(--lx-text); background: var(--lx-bg); color-scheme: d
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 .lx-setup-page .lx-setup-card button[type="submit"]:hover { transform: translateY(-1px); filter: brightness(1.03); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Account gateway (/Account/Start): the premium, on-brand entry that bridges
+   the public site and the console. It carries the public brand's emerald/gold
+   rather than the console accent, scoped to the page so nothing else shifts.
+   ────────────────────────────────────────────────────────────────────────── */
+.lx-start-page {
+    --lx-primary: #12A67A;
+    --lx-primary-soft: color-mix(in srgb, #12A67A 12%, var(--lx-surface));
+    --lx-primary-text: color-mix(in srgb, #12A67A 72%, var(--lx-text-strong));
+    --lx-primary-border: color-mix(in srgb, #12A67A 34%, var(--lx-border));
+    --lx-selected: #12A67A;
+    --lx-on-selected: #FFFFFF;
+    --lx-gold: #D8992F;
+}
+
+.lx-start { inline-size: 100%; max-inline-size: 468px; }
+.lx-start-title { margin: 0; font-size: clamp(24px, 2.4vw, 30px); font-weight: 800; letter-spacing: -0.01em; color: var(--lx-text-strong); }
+.lx-start-sub { margin: 7px 0 22px; color: var(--lx-muted); font-size: 15px; }
+.lx-start-choices { display: grid; gap: 14px; }
+
+.lx-start-choice {
+    display: flex; align-items: center; gap: 15px; text-align: start; text-decoration: none;
+    padding: 17px 18px; border-radius: var(--lx-radius-card);
+    background: var(--lx-surface); color: var(--lx-text);
+    box-shadow: inset 0 0 0 1px var(--lx-border);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+.lx-start-choice:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lx-primary) 55%, var(--lx-border)),
+        0 20px 42px -26px color-mix(in srgb, var(--lx-primary) 85%, transparent);
+}
+.lx-start-choice:focus-visible { outline: 2px solid var(--lx-primary); outline-offset: 2px; }
+
+.lx-start-choice-icon {
+    flex: none; display: grid; place-items: center; inline-size: 52px; block-size: 52px;
+    border-radius: 14px; font-size: 22px; color: var(--lx-on-selected);
+    background: linear-gradient(140deg, var(--lx-primary), color-mix(in srgb, var(--lx-primary) 52%, #06120d));
+    box-shadow: 0 10px 22px -12px color-mix(in srgb, var(--lx-primary) 90%, transparent);
+}
+.lx-start-choice-body { flex: 1 1 auto; min-inline-size: 0; }
+.lx-start-choice-title { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 16px; color: var(--lx-text-strong); }
+.lx-start-choice-text { margin: 4px 0 0; color: var(--lx-muted); font-size: 13.5px; line-height: 1.55; }
+.lx-start-choice-arrow { flex: none; font-size: 18px; color: var(--lx-muted); transition: transform 0.16s ease, color 0.16s ease; }
+.lx-start-choice:hover .lx-start-choice-arrow { color: var(--lx-primary); transform: translateX(-4px); }
+.lx-start-page:dir(ltr) .lx-start-choice:hover .lx-start-choice-arrow { transform: translateX(4px); }
+
+/* The featured create-account choice: a filled brand wash. */
+.lx-start-choice-primary {
+    background: linear-gradient(140deg, color-mix(in srgb, var(--lx-primary) 15%, var(--lx-surface)), var(--lx-surface) 72%);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lx-primary) 42%, var(--lx-border));
+}
+.lx-start-badge {
+    margin-inline-start: auto; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    color: var(--lx-primary-text); background: color-mix(in srgb, var(--lx-primary) 16%, var(--lx-surface));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lx-primary) 30%, transparent);
+}
+
+/* The tracking choice wears the gold accent so it reads as the lighter path. */
+.lx-start-choice-track .lx-start-choice-icon {
+    background: linear-gradient(140deg, var(--lx-gold), color-mix(in srgb, var(--lx-gold) 52%, #1a1203));
+    box-shadow: 0 10px 22px -12px color-mix(in srgb, var(--lx-gold) 85%, transparent);
+}
+.lx-start-choice-track:hover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lx-gold) 55%, var(--lx-border)), 0 20px 42px -26px color-mix(in srgb, var(--lx-gold) 80%, transparent); }
+.lx-start-choice-track:hover .lx-start-choice-arrow { color: var(--lx-gold); }
+
+.lx-start-or { display: flex; align-items: center; gap: 12px; margin: 18px 2px; color: var(--lx-muted); font-size: 12.5px; }
+.lx-start-or::before, .lx-start-or::after { content: ""; flex: 1; block-size: 1px; background: var(--lx-border); }
+.lx-start-foot { margin: 20px 0 0; text-align: center; font-size: 13px; color: var(--lx-muted); }
+.lx-start-foot a { color: var(--lx-primary-text); font-weight: 600; text-decoration: none; }
+.lx-start-foot a:hover { text-decoration: underline; }
+
+@media (max-width: 720px) {
+    .lx-start { max-inline-size: none; }
+    .lx-start-choice { padding: 15px 15px; gap: 13px; }
+    .lx-start-choice-icon { inline-size: 46px; block-size: 46px; font-size: 20px; }
+}
