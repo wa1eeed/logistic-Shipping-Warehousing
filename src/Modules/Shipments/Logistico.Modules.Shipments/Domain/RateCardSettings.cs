@@ -25,6 +25,9 @@ internal sealed class RateCardSettings
     /// <summary>Seller discounts as JSON ([{ "merchantId": …, "merchantName": …, "percent": 10 }]).</summary>
     public string SellerDiscounts { get; private set; } = "[]";
 
+    /// <summary>Cities under regions, with optional per-city prices, as JSON.</summary>
+    public string Cities { get; private set; } = "[]";
+
     public DateTimeOffset UpdatedAt { get; private set; }
     public string? UpdatedBy { get; private set; }
     public uint Version { get; private set; }
@@ -46,6 +49,7 @@ internal sealed class RateCardSettings
         GovernorateFees = JsonSerializer.Serialize(
             card.GovernorateFees.ToDictionary(f => f.Key.ToUpperInvariant(), f => f.Value), Json);
         SellerDiscounts = JsonSerializer.Serialize(card.SellerDiscounts.Where(d => d.Percent > 0).ToList(), Json);
+        Cities = JsonSerializer.Serialize(card.Cities, Json);
         UpdatedAt = now;
         UpdatedBy = by;
     }
@@ -62,6 +66,7 @@ internal sealed class RateCardSettings
             ReturnFeePercent = ReturnFeePercent,
             GovernorateFees = new Dictionary<string, decimal>(fees, StringComparer.OrdinalIgnoreCase),
             SellerDiscounts = JsonSerializer.Deserialize<List<SellerDiscount>>(SellerDiscounts, Json) ?? [],
+            Cities = JsonSerializer.Deserialize<List<CityRate>>(Cities, Json) ?? [],
             Version = Version,
             UpdatedAt = UpdatedAt,
             UpdatedBy = UpdatedBy,

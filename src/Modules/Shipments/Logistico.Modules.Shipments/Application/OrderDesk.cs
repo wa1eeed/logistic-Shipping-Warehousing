@@ -43,7 +43,7 @@ internal sealed class OrderDesk(
         {
             // No fee typed: the company's price list decides.
             request.DeliveryFee = (await pricing.GetAsync(tenant.TenantId, ct))
-                .Quote(merchant?.Governorate ?? request.OriginCode, request.DestinationCode, request.GrossWeightKg, merchant?.Id).Fee;
+                .Quote(merchant?.Governorate ?? request.OriginCode, request.DestinationCode, request.GrossWeightKg, merchant?.Id, request.DestinationCityCode).Fee;
         }
 
         var shipment = Shipment.Book(tenant.TenantId, await numbers.TrackingNumberAsync(ct), request, merchant, bookedBy, clock.GetUtcNow(), network);

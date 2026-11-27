@@ -96,7 +96,7 @@
                         </div>
                         <FormField Label="@L["Field_Governorate"]" Required="true" Field="() => model.DestinationCode">
                             <span class="bp6-html-select bp6-fill">
-                                <InputSelect @bind-Value="model.DestinationCode" @bind-Value:after="RecalculateTariff">
+                                <InputSelect @bind-Value="model.DestinationCode" @bind-Value:after="OnDestinationChanged">
                                     <option value="">@L["ChooseGovernorate"]</option>
                                     @foreach (var g in HubCatalog.Destinations.OrderBy(g => g.Name, StringComparer.CurrentCulture))
                                     {
@@ -106,6 +106,22 @@
                                 <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
                             </span>
                         </FormField>
+                        @{ var regionCities = prices.Cities.Where(c => c.RegionCode == model.DestinationCode).OrderBy(c => c.Name, StringComparer.CurrentCulture).ToList(); }
+                        @if (regionCities.Count > 0)
+                        {
+                            <FormField Label="@L["Field_City"]" Field="() => model.DestinationCityCode">
+                                <span class="bp6-html-select bp6-fill">
+                                    <InputSelect @bind-Value="model.DestinationCityCode" @bind-Value:after="RecalculateTariff">
+                                        <option value="">@L["ChooseCity"]</option>
+                                        @foreach (var c in regionCities)
+                                        {
+                                            <option value="@c.Code">@c.Name</option>
+                                        }
+                                    </InputSelect>
+                                    <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
+                                </span>
+                            </FormField>
+                        }
                         <FormField Label="@L["Field_Area"]" Field="() => model.DestinationCity">
                             <InputText class="bp6-input bp6-fill" @bind-Value="model.DestinationCity" placeholder="@L["AreaPlaceholder"]" />
                         </FormField>
@@ -370,7 +386,7 @@ else
     private RateCard prices = new();
 
     /// <summary>The company's price for this seller and destination (the standard prices until the list has loaded).</summary>
-    private PriceQuote Quote(string? destination, decimal weightKg) => prices.Quote(model.OriginCode, destination, weightKg, model.MerchantId);
+    private PriceQuote Quote(string? destination, decimal weightKg) => prices.Quote(model.OriginCode, destination, weightKg, model.MerchantId, model.DestinationCityCode);
 
     private PriceQuote CurrentQuote => Quote(string.IsNullOrWhiteSpace(model.DestinationCode) ? model.OriginCode : model.DestinationCode, model.GrossWeightKg);
 
@@ -420,6 +436,17 @@ else
     {
         var dest = string.IsNullOrWhiteSpace(model.DestinationCode) ? model.OriginCode : model.DestinationCode;
         model.DeliveryFee = Quote(dest, model.GrossWeightKg).Fee;
+    }
+
+    // Switching region drops a city that belonged to the old one, then re-prices.
+    private void OnDestinationChanged()
+    {
+        if (!prices.Cities.Any(c => c.Code == model.DestinationCityCode && c.RegionCode == model.DestinationCode))
+        {
+            model.DestinationCityCode = null;
+        }
+
+        RecalculateTariff();
     }
 
     private string PriceBreakdown(PriceQuote quote)

@@ -87,6 +87,7 @@ internal sealed class ShipmentsDbContext(DbContextOptions<ShipmentsDbContext> op
             e.Property(x => x.OriginCode).HasMaxLength(5);
             e.Property(x => x.DestinationCode).HasMaxLength(5);
             e.Property(x => x.DestinationCity).HasMaxLength(80);
+            e.Property(x => x.DestinationCityCode).HasMaxLength(20);
             e.Property(x => x.DeliveryAddress).HasMaxLength(300);
             e.Property(x => x.Landmark).HasMaxLength(200);
             e.Property(x => x.ItemsDescription).HasMaxLength(500);
@@ -538,6 +539,7 @@ internal sealed class ShipmentsDbContext(DbContextOptions<ShipmentsDbContext> op
             e.Property(x => x.ReturnFeePercent).HasPrecision(5, 2);
             e.Property(x => x.GovernorateFees).HasColumnType("jsonb");
             e.Property(x => x.SellerDiscounts).HasColumnType("jsonb");
+            e.Property(x => x.Cities).HasColumnType("jsonb");
             e.Property(x => x.UpdatedBy).HasMaxLength(256);
             e.Property(x => x.Version).IsRowVersion();
             e.HasQueryFilter(x => x.TenantId == CurrentTenantId);

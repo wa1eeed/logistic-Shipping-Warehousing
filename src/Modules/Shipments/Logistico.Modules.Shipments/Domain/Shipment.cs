@@ -56,6 +56,9 @@ internal sealed class Shipment
     public string OriginCode { get; private set; } = "";
     public string DestinationCode { get; private set; } = "";
     public string? DestinationCity { get; private set; }
+
+    /// <summary>The structured city under the destination region, when the shop picked one (drives city-level pricing).</summary>
+    public string? DestinationCityCode { get; private set; }
     public string? DeliveryAddress { get; private set; }
     public string? Landmark { get; private set; }
     public string? ItemsDescription { get; private set; }
@@ -221,6 +224,7 @@ internal sealed class Shipment
             OriginCode = origin,
             DestinationCode = destination,
             DestinationCity = Clean(request.DestinationCity),
+            DestinationCityCode = Clean(request.DestinationCityCode),
             DeliveryAddress = Clean(request.DeliveryAddress),
             Landmark = Clean(request.Landmark),
             ItemsDescription = Clean(request.ItemsDescription),

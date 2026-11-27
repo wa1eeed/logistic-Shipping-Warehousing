@@ -41,6 +41,7 @@ public static class ShipmentsApiRoutes
     public const string CustomerLookup = "api/v1/customers/lookup";
     public const string Confirmations = "api/v1/confirmations";
     public const string Pricing = "api/v1/pricing";
+    public const string PricingCities = Pricing + "/cities";
 
     public const string Planning = "api/v1/planning";
     public const string PlanningPolicy = Planning + "/policy";

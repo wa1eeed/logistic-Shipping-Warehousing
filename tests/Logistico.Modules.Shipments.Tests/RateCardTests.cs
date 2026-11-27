@@ -38,6 +38,25 @@ public class RateCardTests
         Assert.Equal(9_000m, card.Quote("IQ-BG", "IQ-MU", 1).Fee);
     }
 
+    [Fact]
+    public void City_prices_override_their_region_otherwise_inherit_it()
+    {
+        var card = new RateCard
+        {
+            DefaultFee = 9_000m,
+            GovernorateFees = new() { ["IQ-BA"] = 7_000m },
+            Cities =
+            [
+                new CityRate("IQ-BA-C1", "IQ-BA", "Qurna", "القرنة", 10_000m),
+                new CityRate("IQ-BA-C2", "IQ-BA", "Zubair", "الزبير", null),
+            ],
+        };
+
+        Assert.Equal(10_000m, card.Quote("IQ-BG", "IQ-BA", 1, cityCode: "IQ-BA-C1").Fee); // the city's own price wins
+        Assert.Equal(7_000m, card.Quote("IQ-BG", "IQ-BA", 1, cityCode: "IQ-BA-C2").Fee);  // no city price → the region's
+        Assert.Equal(7_000m, card.Quote("IQ-BG", "IQ-BA", 1).Fee);                        // no city at all → the region's
+    }
+
     [Theory]
     [InlineData(0, 5_000, ReturnReason.CustomerRefused, 0)]
     [InlineData(50, 5_000, ReturnReason.CustomerRefused, 2_500)]
