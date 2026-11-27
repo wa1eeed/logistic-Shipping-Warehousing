@@ -20,8 +20,8 @@
         <KpiCard Icon="endorsed" Label="@L["Kpi_InClearance"]" Value="@Fmt.Number(summary.InClearance)" Intent="Intent.Primary" />
         <KpiCard Icon="warning-sign" Label="@L["Kpi_CustomsHold"]" Value="@Fmt.Number(summary.OnHold)" Intent="Intent.Danger" />
         <KpiCard Icon="tick-circle" Label="@L["Kpi_ReleasedCustoms"]" Value="@Fmt.Number(summary.ReleasedCount)" Intent="Intent.Success" />
-        @* Customs duties are assessed by the Iraqi tariff in dinars; keep IQD regardless of the company's own currency. *@
-        <KpiCard Icon="bank-account" Label="@L["Kpi_AssessedDuties"]" Amount="summary.TotalAssessedDutiesIqd" Currency="IQD" />
+        @* Duties and tax are assessed in the operating country's own currency (IQD for Iraq, SAR for Saudi Arabia). *@
+        <KpiCard Icon="bank-account" Label="@L["Kpi_AssessedDuties"]" Amount="summary.TotalAssessedDutiesIqd" Currency="@Fmt.CompanyCurrency" />
     </div>
 }
 
@@ -36,7 +36,7 @@
         <span class="bp6-html-select">
             <select @bind="officeFilter" @bind:after="FilterAsync" aria-label="@L["Col_Office"]">
                 <option value="">@L["AllOffices"]</option>
-                @foreach (var o in CustomsDutyCalculator.Offices)
+                @foreach (var o in CustomsDutyCalculator.OfficesFor(HubCatalog.Country))
                 {
                     <option value="@o.Code">@o.Code — @o.Name</option>
                 }
@@ -70,7 +70,7 @@
             <th>@L["Col_Lane"]</th>
             <th>@L["Col_Compliance"]</th>
             <th>@L["Field_Consignee"]</th>
-            <th class="lx-num">@L["Col_DutiesIqd"]</th>
+            <th class="lx-num">@DutiesColumnLabel</th>
         </Header>
         <Row Context="item">
             <td><Cell CssClass="lx-cell-narrow" Sub="@($"{Fmt.Place(item.OriginCode)} {Bidi.Arrow} {Fmt.Place(item.DestinationCode)}")"><TitleContent><span class="lx-code">@item.TrackingNumber</span></TitleContent></Cell></td>
@@ -87,7 +87,7 @@
                 }
             </td>
             <td><Cell Title="@item.ConsigneeName" Sub="@item.ShipperName" /></td>
-            <td class="lx-num">@Fmt.Money(item.AssessedDutyIqd + item.TaxAndFeesIqd, "IQD")</td>
+            <td class="lx-num">@Fmt.MoneyLocal(item.AssessedDutyIqd + item.TaxAndFeesIqd)</td>
         </Row>
     </DataTable>
     @if (summary is not null)
@@ -104,12 +104,12 @@
                 <DataAnnotationsValidator />
 
                 <EditableBy Policy="@StaffPolicies.Operate">
-                    <h6 class="bp6-heading lx-mb">@L["Sec_AsycudaHeader"]</h6>
+                    <h6 class="bp6-heading lx-mb">@DeclarationHeaderLabel</h6>
                     <div class="lx-form-grid">
                         <FormField Label="@L["Field_CustomsOffice"]" Required="true" Field="() => draft.CustomsOfficeCode">
                             <span class="bp6-html-select bp6-fill">
                                 <InputSelect @bind-Value="draft.CustomsOfficeCode">
-                                    @foreach (var o in CustomsDutyCalculator.Offices)
+                                    @foreach (var o in CustomsDutyCalculator.OfficesFor(HubCatalog.Country))
                                     {
                                         <option value="@o.Code">@o.Code — @o.Name</option>
                                     }
@@ -120,7 +120,7 @@
                         <FormField Label="@L["Field_Regime"]" Required="true" Field="() => draft.Regime">
                             <span class="bp6-html-select bp6-fill">
                                 <InputSelect @bind-Value="draft.Regime">
-                                    @foreach (var r in CustomsDutyCalculator.Regimes)
+                                    @foreach (var r in CustomsDutyCalculator.RegimesFor(HubCatalog.Country))
                                     {
                                         <option value="@r">@r</option>
                                     }
@@ -129,7 +129,7 @@
                             </span>
                         </FormField>
                         <FormField Label="@L["Field_DeclarationNo"]" Field="() => draft.DeclarationNumber">
-                            <InputText class="bp6-input bp6-fill lx-mono lx-upper" @bind-Value="draft.DeclarationNumber" dir="ltr" placeholder="2026-IQUQR-IM4-10421" />
+                            <InputText class="bp6-input bp6-fill lx-mono lx-upper" @bind-Value="draft.DeclarationNumber" dir="ltr" placeholder="@DeclarationNumberPlaceholder" />
                         </FormField>
                         <FormField Label="@L["Field_SelectivityLane"]" Field="() => draft.SelectivityLane">
                             <span class="bp6-html-select bp6-fill">
@@ -153,7 +153,7 @@
                         </FormField>
                     </div>
 
-                    <h6 class="bp6-heading lx-mt lx-mb">@L["Sec_IraqCompliance"]</h6>
+                    <h6 class="bp6-heading lx-mt lx-mb">@ComplianceHeaderLabel</h6>
                     <div class="lx-form-grid">
                         <FormField Label="@L["Field_CooNumber"]" Field="() => draft.CooNumber">
                             <InputText class="bp6-input bp6-fill lx-mono lx-upper" @bind-Value="draft.CooNumber" dir="ltr" placeholder="COO-CN-2026-10421" />
@@ -171,8 +171,8 @@
                             <span class="bp6-control-indicator"></span>
                             @L["Field_InvoiceEVerified"]
                         </label>
-                        <FormField Label="@L["Field_CocNumber"]" Hint="@L["Optional"]" Field="() => draft.CocNumber">
-                            <InputText class="bp6-input bp6-fill lx-mono lx-upper" @bind-Value="draft.CocNumber" dir="ltr" placeholder="COC-IQ-10421" />
+                        <FormField Label="@CocFieldLabel" Hint="@L["Optional"]" Field="() => draft.CocNumber">
+                            <InputText class="bp6-input bp6-fill lx-mono lx-upper" @bind-Value="draft.CocNumber" dir="ltr" placeholder="@CocPlaceholder" />
                         </FormField>
                         <FormField Label="@L["Field_BrokerName"]" Hint="@L["Optional"]" Field="() => draft.BrokerName">
                             <InputText class="bp6-input bp6-fill" @bind-Value="draft.BrokerName" />
@@ -188,10 +188,10 @@
                         <FormField Label="@L["Field_DutyRate"]" Field="() => draft.DutyRatePercent">
                             <InputNumber class="bp6-input bp6-fill" @bind-Value="draft.DutyRatePercent" @bind-Value:after="RecalculateDuties" dir="ltr" step="0.5" />
                         </FormField>
-                        <FormField Label="@L["Field_AssessedDutyIqd"]" Field="() => draft.AssessedDutyIqd">
+                        <FormField Label="@AssessedDutyLabel" Field="() => draft.AssessedDutyIqd">
                             <InputNumber class="bp6-input bp6-fill" @bind-Value="draft.AssessedDutyIqd" dir="ltr" step="1000" />
                         </FormField>
-                        <FormField Label="@L["Field_TaxAndFeesIqd"]" Field="() => draft.TaxAndFeesIqd">
+                        <FormField Label="@TaxAndFeesLabel" Field="() => draft.TaxAndFeesIqd">
                             <InputNumber class="bp6-input bp6-fill" @bind-Value="draft.TaxAndFeesIqd" dir="ltr" step="1000" />
                         </FormField>
                         <FormField Label="@L["Field_AssessmentNo"]" Hint="@L["Optional"]" Field="() => draft.AssessmentNumber">
@@ -217,12 +217,16 @@
         @if (selected is not null)
         {
             <LinkButton Href="@($"shipments/{selected.ShipmentId}")" Icon="globe" Text="@L["OpenShipment"]" Minimal="true" />
-            <LinkButton Href="@Shipments.SadXmlUrl(selected.ShipmentId)" Target="_blank" Icon="download" Text="@L["DownloadSadXml"]" />
+            @* The ASYCUDA SAD XML is an Iraqi single-window document; Saudi clearance goes through FASAH instead. *@
+            @if (Countries.IsIraq(HubCatalog.Country))
+            {
+                <LinkButton Href="@Shipments.SadXmlUrl(selected.ShipmentId)" Target="_blank" Icon="download" Text="@L["DownloadSadXml"]" />
+            }
             <Allowed Policy="@StaffPolicies.Operate">
                 <Button Text="@L["Action_SaveDeclaration"]" Icon="floppy-disk" Loading="saving" OnClick="@(() => TriggerSubmitAsync(CustomsAction.Save))" />
                 @if (selected.ShipmentStatus is ShipmentStatus.ArrivedPortOfEntry or ShipmentStatus.CustomsHold)
                 {
-                    <Button Text="@L["Action_RegisterAsycuda"]" Icon="endorsed" Intent="Intent.Primary" Loading="saving" OnClick="@(() => TriggerSubmitAsync(CustomsAction.Register))" />
+                    <Button Text="@RegisterActionLabel" Icon="endorsed" Intent="Intent.Primary" Loading="saving" OnClick="@(() => TriggerSubmitAsync(CustomsAction.Register))" />
                 }
                 @if (selected.ShipmentStatus is ShipmentStatus.ArrivedPortOfEntry or ShipmentStatus.CustomsPending)
                 {
@@ -238,10 +242,24 @@
 </Dialog>
 
 @code {
-    /// <summary>What the shipper declared, when it was not in dollars: dinars are converted at the official rate, other currencies are for the clerk.</summary>
+    // Customs offices, regimes, currency and compliance all follow the company's operating country (Iraq or Saudi Arabia).
+    private static bool Saudi => Countries.IsSaudi(HubCatalog.Country);
+
+    private string DutiesColumnLabel => Saudi ? L["Col_Duties_SA"] : L["Col_DutiesIqd"];
+    private string DeclarationHeaderLabel => Saudi ? L["Sec_FasahHeader"] : L["Sec_AsycudaHeader"];
+    private string ComplianceHeaderLabel => Saudi ? L["Sec_SaudiCompliance"] : L["Sec_IraqCompliance"];
+    private string AssessedDutyLabel => Saudi ? L["Field_AssessedDuty_SA"] : L["Field_AssessedDutyIqd"];
+    private string TaxAndFeesLabel => Saudi ? L["Field_TaxAndFees_SA"] : L["Field_TaxAndFeesIqd"];
+    private string CocFieldLabel => Saudi ? L["Field_SaberNumber"] : L["Field_CocNumber"];
+    private string RegisterActionLabel => Saudi ? L["Action_RegisterFasah"] : L["Action_RegisterAsycuda"];
+    private string DeclarationNumberPlaceholder => Saudi ? "2026-SAJED-IMP-10421" : "2026-IQUQR-IM4-10421";
+    private string CocPlaceholder => Saudi ? "SABER-SA-10421" : "COC-IQ-10421";
+
+    /// <summary>What the shipper declared, when it was not in dollars: dinars and riyals are converted at the official rate, other currencies are for the clerk.</summary>
     private string? DeclaredValueHelper(CustomsQueueItem item) => (item.DeclaredValue, item.DeclaredCurrency) switch
     {
         ( > 0, "IQD") => string.Format(CultureInfo.CurrentCulture, L["Customs_DeclaredInDinars"], Fmt.Money(item.DeclaredValue, "IQD"), Fmt.Number(CustomsDutyCalculator.OfficialUsdToIqdRate, 0)),
+        ( > 0, "SAR") => string.Format(CultureInfo.CurrentCulture, L["Customs_DeclaredInRiyals"], Fmt.Money(item.DeclaredValue, "SAR"), Fmt.Number(CustomsDutyCalculator.OfficialUsdToSarRate, 2)),
         ( > 0, not "USD") => string.Format(CultureInfo.CurrentCulture, L["Customs_DeclaredAs"], Fmt.Money(item.DeclaredValue, item.DeclaredCurrency)),
         _ => null,
     };
@@ -340,8 +358,8 @@
 
     private void RecalculateDuties()
     {
-        draft.AssessedDutyIqd = CustomsDutyCalculator.CalculateDutyIqd(draft.CustomsValueUsd, draft.DutyRatePercent);
-        draft.TaxAndFeesIqd = CustomsDutyCalculator.CalculateStampAndPortFeesIqd(draft.CustomsValueUsd);
+        draft.AssessedDutyIqd = CustomsDutyCalculator.CalculateDuty(draft.CustomsValueUsd, draft.DutyRatePercent, HubCatalog.Country);
+        draft.TaxAndFeesIqd = CustomsDutyCalculator.CalculateTaxAndFees(draft.CustomsValueUsd, draft.DutyRatePercent, HubCatalog.Country);
     }
 
     private async Task TriggerSubmitAsync(CustomsAction action)

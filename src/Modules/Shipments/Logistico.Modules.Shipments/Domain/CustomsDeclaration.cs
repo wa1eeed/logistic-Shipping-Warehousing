@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using Logistico.Modules.Shipments.Contracts;
 using Logistico.Modules.Shipments.Contracts.Rules;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Geo;
 
 namespace Logistico.Modules.Shipments.Domain;
 
@@ -46,7 +47,7 @@ internal sealed class CustomsDeclaration
     public string? UpdatedBy { get; private set; }
     public uint Version { get; private set; }
 
-    public static CustomsDeclaration CreateFor(Shipment shipment, DateTimeOffset now)
+    public static CustomsDeclaration CreateFor(Shipment shipment, DateTimeOffset now, string country = Countries.Iraq)
     {
         if (shipment.ServiceType != ServiceType.International)
         {
@@ -55,28 +56,32 @@ internal sealed class CustomsDeclaration
 
         var originCountry = shipment.OriginCode.Length >= 2 ? shipment.OriginCode[..2].ToUpperInvariant() : "CN";
         var customsValueUsd = CustomsDutyCalculator.CustomsValueUsd(shipment.DeclaredValue, shipment.DeclaredCurrency);
-        var dutyIqd = CustomsDutyCalculator.CalculateDutyIqd(customsValueUsd, 5m);
-        var feesIqd = CustomsDutyCalculator.CalculateStampAndPortFeesIqd(customsValueUsd);
+
+        // Duty and tax/fees are stored in the operating country's settlement currency (IQD or SAR).
+        var duty = CustomsDutyCalculator.CalculateDuty(customsValueUsd, 5m, country);
+        var taxAndFees = CustomsDutyCalculator.CalculateTaxAndFees(customsValueUsd, 5m, country);
 
         return new CustomsDeclaration
         {
             Id = Guid.CreateVersion7(now),
             TenantId = shipment.TenantId,
             ShipmentId = shipment.Id,
-            CustomsOfficeCode = CustomsDutyCalculator.Offices.Any(o => o.Code == shipment.DestinationCode) ? shipment.DestinationCode : "IQUQR",
-            Regime = "IM4",
+            CustomsOfficeCode = CustomsDutyCalculator.OfficesFor(country).Any(o => o.Code == shipment.DestinationCode)
+                ? shipment.DestinationCode
+                : CustomsDutyCalculator.DefaultOfficeCode(country),
+            Regime = CustomsDutyCalculator.RegimesFor(country)[0],
             SelectivityLane = CustomsLane.Unassigned,
             CountryOfOrigin = originCountry,
             GoodsDescription = shipment.ItemsDescription,
             CustomsValueUsd = customsValueUsd,
             DutyRatePercent = 5m,
-            AssessedDutyIqd = dutyIqd,
-            TaxAndFeesIqd = feesIqd,
+            AssessedDutyIqd = duty,
+            TaxAndFeesIqd = taxAndFees,
             UpdatedAt = now,
         };
     }
 
-    public void Apply(UpsertCustomsDeclarationRequest request, Shipment shipment, string? user, DateTimeOffset now)
+    public void Apply(UpsertCustomsDeclarationRequest request, Shipment shipment, string? user, DateTimeOffset now, string country = Countries.Iraq)
     {
         if (shipment.ServiceType != ServiceType.International)
         {
@@ -100,8 +105,8 @@ internal sealed class CustomsDeclaration
         CocNumber = Clean(request.CocNumber)?.ToUpperInvariant();
         CustomsValueUsd = request.CustomsValueUsd;
         DutyRatePercent = request.DutyRatePercent;
-        AssessedDutyIqd = request.AssessedDutyIqd ?? CustomsDutyCalculator.CalculateDutyIqd(request.CustomsValueUsd, request.DutyRatePercent);
-        TaxAndFeesIqd = request.TaxAndFeesIqd ?? CustomsDutyCalculator.CalculateStampAndPortFeesIqd(request.CustomsValueUsd);
+        AssessedDutyIqd = request.AssessedDutyIqd ?? CustomsDutyCalculator.CalculateDuty(request.CustomsValueUsd, request.DutyRatePercent, country);
+        TaxAndFeesIqd = request.TaxAndFeesIqd ?? CustomsDutyCalculator.CalculateTaxAndFees(request.CustomsValueUsd, request.DutyRatePercent, country);
         HoldReason = Clean(request.HoldReason);
         BrokerName = Clean(request.BrokerName);
         UpdatedAt = now;

@@ -6,6 +6,14 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="Action_PlaceHold" xml:space="preserve"><value>حجز جمركي</value></data>
   <data name="Action_RegisterAsycuda" xml:space="preserve"><value>تسجيل ونقل إلى «في الجمارك»</value></data>
+  <data name="Action_RegisterFasah" xml:space="preserve"><value>تسجيل في فسح ونقل إلى «في الجمارك»</value></data>
+  <data name="Col_Duties_SA" xml:space="preserve"><value>الرسوم وضريبة القيمة المضافة (ر.س)</value></data>
+  <data name="Sec_FasahHeader" xml:space="preserve"><value>بيان فسح الجمركي</value></data>
+  <data name="Sec_SaudiCompliance" xml:space="preserve"><value>امتثال زاتكا / فسح</value></data>
+  <data name="Field_AssessedDuty_SA" xml:space="preserve"><value>الرسم الجمركي المحتسب (ر.س)</value></data>
+  <data name="Field_TaxAndFees_SA" xml:space="preserve"><value>ضريبة القيمة المضافة 15% (ر.س)</value></data>
+  <data name="Field_SaberNumber" xml:space="preserve"><value>شهادة المطابقة سابر</value></data>
+  <data name="Customs_DeclaredInRiyals" xml:space="preserve"><value>صرّح الشاحن بـ {0}، محوّلة بالسعر الرسمي {1} ريال للدولار.</value></data>
   <data name="Action_ReleaseCustoms" xml:space="preserve"><value>إفراج جمركي عن الشحنة</value></data>
   <data name="Action_SaveDeclaration" xml:space="preserve"><value>حفظ البيانات</value></data>
   <data name="ActionBarcodesSubtitle" xml:space="preserve"><value>اطبع هذه الورقة على طاولة الفرز لتبديل وضع الاستلام والتسليم والمحطة والرف بمجرد مسح الباركود</value></data>

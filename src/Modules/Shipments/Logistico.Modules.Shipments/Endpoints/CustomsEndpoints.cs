@@ -43,12 +43,15 @@ internal static class CustomsEndpoints
         int? page,
         int? pageSize,
         ShipmentsDbContext db,
+        ITenantContext tenant,
+        IOperatingNetwork network,
         TimeProvider clock,
         CancellationToken ct)
     {
         var size = Math.Clamp(pageSize ?? 50, 1, 200);
         var number = Paging.Page(page);
-        var knownOffices = CustomsDutyCalculator.Offices.Select(o => o.Code).ToArray();
+        var country = await network.CountryAsync(tenant.TenantId, ct);
+        var knownOffices = CustomsDutyCalculator.OfficesFor(country).Select(o => o.Code).ToArray();
 
         // Everything below runs in PostgreSQL: international shipments left-joined to their declarations.
         var queue =
@@ -92,9 +95,9 @@ internal static class CustomsEndpoints
 
         if (!string.IsNullOrWhiteSpace(office))
         {
-            // Undeclared cargo is expected at its destination office when that is a customs office, otherwise at Umm Qasr (see CustomsDeclaration.CreateFor).
+            // Undeclared cargo is expected at its destination office when that is a customs office, otherwise at the default office (see CustomsDeclaration.CreateFor).
             var code = office.Trim().ToUpperInvariant();
-            queue = code == "IQUQR"
+            queue = code == CustomsDutyCalculator.DefaultOfficeCode(country)
                 ? queue.Where(r => r.Declaration != null ? r.Declaration.CustomsOfficeCode == code : r.Shipment.DestinationCode == code || !knownOffices.Contains(r.Shipment.DestinationCode))
                 : knownOffices.Contains(code)
                     ? queue.Where(r => r.Declaration != null ? r.Declaration.CustomsOfficeCode == code : r.Shipment.DestinationCode == code)
@@ -131,13 +134,13 @@ internal static class CustomsEndpoints
             kpis?.OnHold ?? 0,
             kpis?.Released ?? 0,
             kpis?.Duties ?? 0m,
-            rows.Select(r => ToQueueItem(r.Shipment, r.Declaration, now)).ToList(),
+            rows.Select(r => ToQueueItem(r.Shipment, r.Declaration, now, country)).ToList(),
             total,
             number,
             size));
     }
 
-    private static async Task<IResult> GetByShipmentAsync(Guid shipmentId, ShipmentsDbContext db, TimeProvider clock, CancellationToken ct)
+    private static async Task<IResult> GetByShipmentAsync(Guid shipmentId, ShipmentsDbContext db, ITenantContext tenant, IOperatingNetwork network, TimeProvider clock, CancellationToken ct)
     {
         var shipment = await db.Shipments.AsNoTracking().FirstOrDefaultAsync(s => s.Id == shipmentId, ct);
         if (shipment is null)
@@ -150,8 +153,9 @@ internal static class CustomsEndpoints
             return Api.Rule(new DomainException("customs.domestic_not_supported", "Customs declarations apply only to international shipments."));
         }
 
+        var country = await network.CountryAsync(tenant.TenantId, ct);
         var declaration = await db.CustomsDeclarations.AsNoTracking().FirstOrDefaultAsync(d => d.ShipmentId == shipmentId, ct);
-        return TypedResults.Ok(ToQueueItem(shipment, declaration, clock.GetUtcNow()));
+        return TypedResults.Ok(ToQueueItem(shipment, declaration, clock.GetUtcNow(), country));
     }
 
     private static async Task<IResult> UpsertAsync(
@@ -160,6 +164,8 @@ internal static class CustomsEndpoints
         HttpRequest httpRequest,
         ClaimsPrincipal user,
         ShipmentsDbContext db,
+        ITenantContext tenant,
+        IOperatingNetwork network,
         TimeProvider clock,
         CancellationToken ct)
     {
@@ -170,6 +176,7 @@ internal static class CustomsEndpoints
         }
 
         var now = clock.GetUtcNow();
+        var country = await network.CountryAsync(tenant.TenantId, ct);
         var declaration = await db.CustomsDeclarations.FirstOrDefaultAsync(d => d.ShipmentId == shipmentId, ct);
         var isNew = declaration is null;
         if (declaration is not null)
@@ -192,11 +199,11 @@ internal static class CustomsEndpoints
         {
             if (declaration is null)
             {
-                declaration = CustomsDeclaration.CreateFor(shipment, now);
+                declaration = CustomsDeclaration.CreateFor(shipment, now, country);
                 db.CustomsDeclarations.Add(declaration);
             }
 
-            declaration.Apply(request, shipment, user.UserName(), now);
+            declaration.Apply(request, shipment, user.UserName(), now, country);
             await db.SaveChangesAsync(ct);
         }
         catch (DomainException ex)
@@ -213,7 +220,7 @@ internal static class CustomsEndpoints
             return Api.Stale("customs.stale");
         }
 
-        return TypedResults.Ok(ToQueueItem(shipment, declaration, now));
+        return TypedResults.Ok(ToQueueItem(shipment, declaration, now, country));
     }
 
     private static async Task<IResult> ExportSadXmlAsync(Guid shipmentId, HttpResponse response, ShipmentsDbContext db, TimeProvider clock, CancellationToken ct)
@@ -239,9 +246,9 @@ internal static class CustomsEndpoints
         return TypedResults.Empty;
     }
 
-    private static CustomsQueueItem ToQueueItem(Shipment s, CustomsDeclaration? d, DateTimeOffset now)
+    private static CustomsQueueItem ToQueueItem(Shipment s, CustomsDeclaration? d, DateTimeOffset now, string country)
     {
-        var x = d ?? CustomsDeclaration.CreateFor(s, now);
+        var x = d ?? CustomsDeclaration.CreateFor(s, now, country);
         return new CustomsQueueItem(
             s.Id, s.TrackingNumber, s.Status, s.Mode, s.OriginCode, s.DestinationCode, s.ShipperName, s.ConsigneeName, s.Pieces, s.GrossWeightKg,
             s.DeclaredValue, s.DeclaredCurrency, x.CustomsOfficeCode, x.Regime, x.DeclarationNumber, x.AssessmentNumber, x.ReceiptNumber,
