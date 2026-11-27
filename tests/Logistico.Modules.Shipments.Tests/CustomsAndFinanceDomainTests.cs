@@ -3,6 +3,7 @@ using Logistico.Modules.Shipments.Contracts;
 using Logistico.Modules.Shipments.Contracts.Rules;
 using Logistico.Modules.Shipments.Domain;
 using Logistico.SharedKernel;
+using Logistico.SharedKernel.Geo;
 
 namespace Logistico.Modules.Shipments.Tests;
 
@@ -46,10 +47,42 @@ public class CustomsAndFinanceDomainTests
     [Theory]
     [InlineData(10_000, "USD", 10_000)]
     [InlineData(13_100_000, "IQD", 10_000)]
+    [InlineData(37_500, "SAR", 10_000)] // declared riyals valued at the SAMA peg of 3.75
     [InlineData(10_000, "EUR", 0)] // no official rate: the clerk enters dollars from the invoice
     [InlineData(null, "USD", 0)]
     public void The_customs_value_is_in_dollars_whatever_currency_was_declared(int? declared, string currency, int usd) =>
         Assert.Equal((decimal)usd, CustomsDutyCalculator.CustomsValueUsd((decimal?)declared, currency));
+
+    [Fact]
+    public void Saudi_customs_assesses_duty_and_15_percent_vat_in_riyals_at_the_sama_peg()
+    {
+        // 10,000 USD at the 3.75 peg is 37,500 SAR; 5% duty is 1,875 SAR; VAT is 15% of (value + duty).
+        var duty = CustomsDutyCalculator.CalculateDuty(10_000m, 5m, Countries.Saudi);
+        var vat = CustomsDutyCalculator.CalculateTaxAndFees(10_000m, 5m, Countries.Saudi);
+
+        Assert.Equal(1_875m, duty);
+        Assert.Equal(5_906m, vat); // (37,500 + 1,875) × 15% = 5,906.25, rounded
+
+        // Iraq is unchanged: duty in dinars at the CBI rate, stamp and port fees.
+        Assert.Equal(655_000m, CustomsDutyCalculator.CalculateDuty(10_000m, 5m, Countries.Iraq));
+        Assert.Equal(65_500m, CustomsDutyCalculator.CalculateTaxAndFees(10_000m, 5m, Countries.Iraq));
+    }
+
+    [Fact]
+    public void A_saudi_declaration_defaults_to_a_saudi_office_regime_and_riyal_amounts()
+    {
+        var shipment = BookedInternational();
+
+        var saudi = CustomsDeclaration.CreateFor(shipment, Now.AddDays(1), Countries.Saudi);
+        Assert.Equal("SAJED", saudi.CustomsOfficeCode); // destination is not a Saudi office, so the default port
+        Assert.Equal("IMP", saudi.Regime);
+        Assert.Equal(1_875m, saudi.AssessedDutyIqd); // stored in the company's currency (SAR)
+        Assert.Equal(5_906m, saudi.TaxAndFeesIqd);
+
+        var iraq = CustomsDeclaration.CreateFor(shipment, Now.AddDays(1));
+        Assert.Equal("IQUQR", iraq.CustomsOfficeCode);
+        Assert.Equal("IM4", iraq.Regime);
+    }
 
     [Fact]
     public void Customs_releases_only_valued_and_paid_declarations_and_keeps_the_first_release()

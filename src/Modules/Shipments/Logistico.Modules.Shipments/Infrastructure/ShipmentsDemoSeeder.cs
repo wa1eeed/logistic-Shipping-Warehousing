@@ -229,6 +229,8 @@ internal sealed class ShipmentsDemoSeeder(
             .Where(s => s.ServiceType == ServiceType.International)
             .ToListAsync(ct);
 
+        var country = await network.CountryAsync(tenant.TenantId, ct);
+        var regime = CustomsDutyCalculator.RegimesFor(country)[0];
         var seq = 10400;
         foreach (var s in shipments)
         {
@@ -239,7 +241,7 @@ internal sealed class ShipmentsDemoSeeder(
 
             seq++;
             var now = s.UpdatedAt;
-            var decl = CustomsDeclaration.CreateFor(s, now);
+            var decl = CustomsDeclaration.CreateFor(s, now, country);
             var isHold = s.Status == ShipmentStatus.CustomsHold;
             var isReleased = s.Status is ShipmentStatus.Released or ShipmentStatus.AtDestinationWarehouse or ShipmentStatus.ReadyForDispatch or ShipmentStatus.OutForDelivery or ShipmentStatus.Delivered;
             var isAwaiting = s.Status is ShipmentStatus.DepartedOrigin or ShipmentStatus.InTransit or ShipmentStatus.ArrivedPortOfEntry;
@@ -248,9 +250,9 @@ internal sealed class ShipmentsDemoSeeder(
 
             var req = new UpsertCustomsDeclarationRequest
             {
-                CustomsOfficeCode = CustomsDutyCalculator.Offices.Any(o => o.Code == s.DestinationCode) ? s.DestinationCode : "IQUQR",
-                Regime = "IM4",
-                DeclarationNumber = isAwaiting ? null : $"2026-{s.DestinationCode}-IM4-{seq}",
+                CustomsOfficeCode = CustomsDutyCalculator.OfficesFor(country).Any(o => o.Code == s.DestinationCode) ? s.DestinationCode : CustomsDutyCalculator.DefaultOfficeCode(country),
+                Regime = regime,
+                DeclarationNumber = isAwaiting ? null : $"2026-{s.DestinationCode}-{regime}-{seq}",
                 AssessmentNumber = isAwaiting ? null : $"ASM-2026-{seq}",
                 ReceiptNumber = isReleased ? $"RCP-2026-{seq}" : null,
                 ReleaseOrderNumber = isReleased ? $"REL-2026-{seq}" : null,
@@ -262,7 +264,7 @@ internal sealed class ShipmentsDemoSeeder(
                 CooEVerified = !isHold && !isAwaiting,
                 CommercialInvoiceNumber = $"INV-2026-{seq}",
                 InvoiceEVerified = !isAwaiting,
-                CocNumber = $"COC-IQ-{seq}",
+                CocNumber = $"COC-{country}-{seq}",
                 CustomsValueUsd = s.DeclaredValue ?? 12_500m,
                 DutyRatePercent = rate,
                 HoldReason = isHold ? "Certificate of Origin pending electronic verification in Iraqi single window" : null,
@@ -270,7 +272,7 @@ internal sealed class ShipmentsDemoSeeder(
                 Action = CustomsAction.Save,
             };
 
-            decl.Apply(req, s, "seed", now);
+            decl.Apply(req, s, "seed", now, country);
             db.CustomsDeclarations.Add(decl);
         }
 

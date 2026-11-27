@@ -6,6 +6,14 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="Action_PlaceHold" xml:space="preserve"><value>Place on customs hold</value></data>
   <data name="Action_RegisterAsycuda" xml:space="preserve"><value>Register &amp; move to In Customs</value></data>
+  <data name="Action_RegisterFasah" xml:space="preserve"><value>Register in FASAH &amp; move to In Customs</value></data>
+  <data name="Col_Duties_SA" xml:space="preserve"><value>Duties &amp; VAT (SAR)</value></data>
+  <data name="Sec_FasahHeader" xml:space="preserve"><value>FASAH declaration</value></data>
+  <data name="Sec_SaudiCompliance" xml:space="preserve"><value>ZATCA / FASAH compliance</value></data>
+  <data name="Field_AssessedDuty_SA" xml:space="preserve"><value>Assessed duty (SAR)</value></data>
+  <data name="Field_TaxAndFees_SA" xml:space="preserve"><value>VAT 15% (SAR)</value></data>
+  <data name="Field_SaberNumber" xml:space="preserve"><value>SABER Certificate of Conformity</value></data>
+  <data name="Customs_DeclaredInRiyals" xml:space="preserve"><value>The shipper declared {0}, converted at the official rate of {1} riyals per dollar.</value></data>
   <data name="Action_ReleaseCustoms" xml:space="preserve"><value>Verify &amp; release shipment</value></data>
   <data name="Action_SaveDeclaration" xml:space="preserve"><value>Save declaration</value></data>
   <data name="ActionBarcodesSubtitle" xml:space="preserve"><value>Print this sheet at the packing bench so operators can switch modes, hubs, and bins with their barcode gun</value></data>
