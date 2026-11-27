@@ -2072,7 +2072,12 @@ body.bp6-dark { color: var(--lx-text); background: var(--lx-bg); color-scheme: d
 
 /* Comments on an order: who and when above the note, the form under the list. */
 .lx-comment { align-items: flex-start; }
-.lx-comment-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--lx-text-strong); margin-block-start: 2px; }
+.lx-comment-text {
+    white-space: pre-wrap; overflow-wrap: anywhere; color: var(--lx-text-strong); margin-block-start: 5px;
+    display: inline-block; max-width: 100%; padding: 8px 12px; line-height: 1.55;
+    background: var(--lx-surface-2); border: 1px solid var(--lx-border-subtle);
+    border-radius: var(--lx-radius); border-start-start-radius: var(--lx-radius-sm);
+}
 .lx-comment-form { display: flex; gap: 8px; align-items: flex-end; padding: 12px 16px; border-block-start: 1px solid var(--lx-border); }
 .lx-comment-form textarea { resize: vertical; min-height: 40px; }
 .lx-comment-form .bp6-button { flex: none; white-space: nowrap; }
