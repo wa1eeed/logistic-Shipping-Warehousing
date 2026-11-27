@@ -40,7 +40,7 @@
   <data name="SignInSubtitle" xml:space="preserve"><value>Sign in to your store or company account.</value></data>
   <data name="SignInTitle" xml:space="preserve"><value>Sign in</value></data>
   <data name="SignInWithPasskey" xml:space="preserve"><value>Sign in with a passkey</value></data>
-  <data name="Tagline" xml:space="preserve"><value>Open-source logistics software</value></data>
+  <data name="Tagline" xml:space="preserve"><value>Shipping and delivery platform for business</value></data>
   <data name="TrackShipment" xml:space="preserve"><value>Track a shipment</value></data>
   <data name="Forbidden" xml:space="preserve"><value>Your role does not allow this. Ask an administrator for access.</value></data>
   <data name="Problem_team.self" xml:space="preserve"><value>You cannot change or lock your own account here.</value></data>
@@ -50,9 +50,9 @@
   <data name="SignInPoint1" xml:space="preserve"><value>Track every shipment from pickup to delivery</value></data>
   <data name="SignInPoint2" xml:space="preserve"><value>Cash on delivery, settled to you parcel by parcel</value></data>
   <data name="SignInPoint3" xml:space="preserve"><value>Coverage across every region of the Kingdom</value></data>
-  <data name="OpenSourceLine" xml:space="preserve"><value>Open source · Apache-2.0</value></data>
-  <data name="SeoTitle" xml:space="preserve"><value>Logistico — open-source logistics software</value></data>
-  <data name="SeoDescription" xml:space="preserve"><value>Open-source logistics software for delivery companies: orders, warehouses, trucks, couriers, returns and cash on delivery. Arabic and English. Self-hosted. Apache-2.0.</value></data>
+  <data name="OpenSourceLine" xml:space="preserve"><value>Logistico · shipping and delivery platform</value></data>
+  <data name="SeoTitle" xml:space="preserve"><value>Logistico — shipping and delivery platform</value></data>
+  <data name="SeoDescription" xml:space="preserve"><value>A complete logistics platform for delivery companies and stores: orders, warehouses, trucks, couriers, returns and cash on delivery. Arabic and English.</value></data>
   <data name="SetupTitle" xml:space="preserve"><value>Set up Logistico</value></data>
   <data name="SetupSubtitle" xml:space="preserve"><value>Create your company and its first administrator. This page works once.</value></data>
   <data name="SetupHeroTitle" xml:space="preserve"><value>Your delivery company, ready in a minute</value></data>

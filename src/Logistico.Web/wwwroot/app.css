@@ -137,10 +137,10 @@
     --lx-control-border-focus: var(--gl-color-neutral-900);
     --lx-control-disabled: var(--gl-color-neutral-10);
     --lx-placeholder: var(--gl-color-neutral-500);
-    --lx-selected: var(--gl-color-neutral-800);           /* button-confirm-primary, checked controls */
-    --lx-selected-hover: var(--gl-color-neutral-950);
-    --lx-selected-active: var(--gl-color-neutral-1000);
-    --lx-on-selected: var(--gl-color-neutral-0);
+    --lx-selected: #12A67A;                               /* brand: primary action, checked controls */
+    --lx-selected-hover: #0E8C68;
+    --lx-selected-active: #0B7355;
+    --lx-on-selected: #FFFFFF;
     --lx-button-border: var(--gl-color-neutral-200);
     --lx-button-border-hover: var(--gl-color-neutral-400);
     --lx-button-hover: var(--gl-color-neutral-50);
@@ -322,8 +322,21 @@ code, kbd, samp { font-family: var(--lx-font-mono); }
 .lx-intent-danger { color: var(--lx-danger); }
 .lx-intent-primary { color: var(--lx-primary); }
 .lx-boot { min-height: 60vh; display: flex; align-items: center; justify-content: center; }
-.lx-boot-splash { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.lx-boot-splash { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
 body:has(.lx-app, .lx-public, .lx-boot, .lx-account) .lx-boot-splash { display: none !important; }
+/* Branded loader: the mark at a hub, a route orbit around it, and a parcel running the lane below. */
+.lx-boot-hub { position: relative; width: 88px; height: 88px; display: grid; place-items: center; }
+.lx-boot-ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0 62%, var(--lx-primary) 88%, transparent 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px)); mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+    animation: lx-boot-spin 1s linear infinite; }
+.lx-boot-logo { animation: lx-boot-pulse 1.7s ease-in-out infinite; }
+.lx-boot-route { position: relative; width: 158px; height: 4px; border-radius: var(--lx-radius-pill); background: var(--lx-primary-soft); overflow: hidden; }
+.lx-boot-parcel { position: absolute; inset-block: 0; inline-size: 34%; inset-inline-start: -34%; border-radius: var(--lx-radius-pill); background: linear-gradient(90deg, transparent, var(--lx-primary), transparent); animation: lx-boot-run 1.15s ease-in-out infinite; }
+.lx-boot-word { font-size: 15px; font-weight: 700; color: var(--lx-muted); letter-spacing: 0.02em; }
+@keyframes lx-boot-spin { to { transform: rotate(360deg); } }
+@keyframes lx-boot-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.88); opacity: 0.85; } }
+@keyframes lx-boot-run { 0% { inset-inline-start: -34%; } 100% { inset-inline-start: 100%; } }
+@media (prefers-reduced-motion: reduce) { .lx-boot-ring, .lx-boot-logo, .lx-boot-parcel { animation: none; } .lx-boot-ring { background: var(--lx-primary-soft); } }
 .lx-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Tooltip (Pajamas: strong feedback surface): <span class="lx-tip" data-tip="…"> */
@@ -611,7 +624,7 @@ a.bp6-breadcrumb:hover { color: var(--lx-link); }
    white panel with rounded corners beside them. */
 .lx-logo {
     width: 22px; height: 22px; flex: none; display: inline-block;
-    background: linear-gradient(135deg, var(--gl-color-blue-400), var(--gl-color-blue-600) 50%, var(--gl-color-green-500));
+    background: linear-gradient(135deg, #2ECF9E, #12A67A 55%, #0B7355);
     clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
 }
 .lx-logo-large { width: 44px; height: 44px; }
@@ -667,7 +680,7 @@ html[lang^="en"] .lx-brand-name { letter-spacing: 0.01em; }
 /* The menu scrolls on its own; the collapse button stays below it and never covers an item. */
 .lx-sidebar-inner > nav { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 8px 12px; scrollbar-width: thin; }
 .lx-nav { list-style: none; margin: 0; padding: 0; }
-.lx-nav-header { padding: 16px 10px 4px; font-size: var(--lx-font-size-sm); font-weight: 700; color: var(--lx-muted); white-space: nowrap; overflow: hidden; }
+.lx-nav-header { padding: 18px 12px 6px; font-size: 11px; font-weight: 700; color: var(--lx-faint); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; }
 .lx-nav-item {
     display: flex; align-items: center; gap: 10px; min-height: var(--lx-control-height); padding-inline: 10px 8px; margin-block-end: 1px;
     border-radius: var(--lx-radius); color: var(--lx-text) !important; text-decoration: none !important;
@@ -675,8 +688,8 @@ html[lang^="en"] .lx-brand-name { letter-spacing: 0.01em; }
 }
 .lx-nav-item:hover { background: var(--lx-surface-hover); color: var(--lx-text-strong) !important; }
 .lx-nav-item .bp6-icon-standard { color: var(--lx-muted); flex: none; }
-.lx-nav-item.active { background: var(--lx-nav-active, rgba(5, 5, 6, 0.08)); color: var(--lx-text-strong) !important; font-weight: 700; }
-.lx-nav-item.active .bp6-icon-standard { color: var(--lx-text-strong); }
+.lx-nav-item.active { background: var(--lx-primary-soft); color: var(--lx-primary-text) !important; font-weight: 700; }
+.lx-nav-item.active .bp6-icon-standard { color: var(--lx-primary); }
 .lx-nav-item.active::before {
     content: ""; position: absolute; inset-inline-start: 2px; inset-block: 8px; width: 3px; border-radius: var(--lx-radius-pill);
     background: var(--lx-primary);
@@ -1694,7 +1707,11 @@ tr.lx-row-busy { opacity: 0.55; }
     position: relative; overflow: hidden; isolation: isolate;
     display: flex; flex-direction: column; justify-content: center; gap: 14px;
     padding: 56px clamp(28px, 5vw, 72px); color: var(--lx-text);
-    background: var(--lx-chrome); border-inline-end: 1px solid var(--lx-border);
+    background:
+        radial-gradient(130% 95% at 100% 0%, color-mix(in srgb, var(--lx-primary) 14%, transparent), transparent 55%),
+        radial-gradient(90% 70% at 0% 100%, color-mix(in srgb, var(--lx-gold) 10%, transparent), transparent 50%),
+        var(--lx-chrome);
+    border-inline-end: 1px solid var(--lx-border);
 }
 .lx-signin-hero-brand { display: flex; align-items: center; gap: 12px; }
 .lx-signin-hero .lx-signin-app { color: var(--lx-text-strong); }
@@ -1704,7 +1721,7 @@ tr.lx-row-busy { opacity: 0.55; }
 .lx-signin-points li { display: flex; gap: 12px; align-items: center; font-size: 15px; color: var(--lx-text); }
 .lx-signin-points .bp6-icon-standard {
     flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: var(--lx-radius);
-    color: var(--lx-text-strong); background: var(--lx-surface); box-shadow: 0 0 0 1px var(--lx-border);
+    color: var(--lx-primary); background: var(--lx-primary-soft); box-shadow: 0 0 0 1px var(--lx-primary-border);
 }
 .lx-signin-map { position: absolute; z-index: -1; inset-block-end: -6%; inset-inline-end: -10%; width: min(52%, 400px); opacity: 0.9; }
 .lx-signin-hero-foot { margin-block-start: 26px; font-size: 12.5px; color: var(--lx-muted); }
@@ -1758,10 +1775,10 @@ tr.lx-row-busy { opacity: 0.55; }
     --lx-control-border-focus: var(--gl-color-neutral-50);
     --lx-control-disabled: rgba(255, 255, 255, 0.04);
     --lx-placeholder: var(--gl-color-neutral-400);
-    --lx-selected: var(--gl-color-neutral-50);
-    --lx-selected-hover: var(--gl-color-neutral-10);
-    --lx-selected-active: var(--gl-color-neutral-0);
-    --lx-on-selected: var(--gl-color-neutral-950);
+    --lx-selected: #2ECF9E;
+    --lx-selected-hover: #55DCB2;
+    --lx-selected-active: #86E7C9;
+    --lx-on-selected: #04251B;
     --lx-button-border: rgba(255, 255, 255, 0.1);
     --lx-button-border-hover: rgba(255, 255, 255, 0.2);
     --lx-button-hover: rgba(137, 136, 141, 0.32);
