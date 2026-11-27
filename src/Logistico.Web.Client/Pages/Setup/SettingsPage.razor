@@ -10,9 +10,8 @@
         <CompanySettings />
     </Tab>
     <Tab Id="pricing" Title="@L["Settings_Tab_Pricing"]" Icon="tag">
-        <div class="lx-settings-grid">
-            @Card("pricing", "tag", "Nav_Pricing", "Settings_PricingDesc", StaffPolicies.Staff)
-        </div>
+        @* The pricing page embeds its regions, cities and calculator here; its own /pricing page stays for quick access. *@
+        <Logistico.Web.Client.Pages.Pricing.PricingPage Embedded="true" />
     </Tab>
     <Tab Id="operations" Title="@L["Settings_Tab_Operations"]" Icon="cog">
         <div class="lx-settings-grid">
