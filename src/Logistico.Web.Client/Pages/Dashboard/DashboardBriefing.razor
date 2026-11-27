@@ -1,23 +1,37 @@
-@* A one-line, plain-language read of the period — orders, delivered, success rate and what needs attention.
-   Built entirely from data the dashboard already loaded: no extra request and no business logic. *@
-<section class="lx-briefing lx-card" aria-label="@L["Dashboard_Briefing_Lead"]">
-    <span class="lx-briefing-icon" aria-hidden="true"><Icon Name="lightbulb" /></span>
-    <div class="lx-briefing-copy">
-        <span class="lx-briefing-lead">@L["Dashboard_Briefing_Lead"]</span>
-        <p class="lx-briefing-text">@Sentence</p>
+@* A calm summary of the period: a plain-language sentence beside three headline figures that count up on load.
+   Built from data the dashboard already loaded — no extra request, no business logic. *@
+@inject IJSRuntime JS
+
+<section class="lx-brief lx-card lx-rise" aria-label="@L["Dashboard_Briefing_Lead"]">
+    <div class="lx-brief-copy">
+        <span class="lx-brief-lead"><span class="lx-brief-pulse" aria-hidden="true"></span> @L["Dashboard_Briefing_Lead"]</span>
+        <p class="lx-brief-text">@Sentence</p>
+        @if (AttentionCount > 0)
+        {
+            <a class="lx-brief-flag" href="automation">
+                <Icon Name="warning-sign" />
+                <span>@L.Count("Dashboard_Briefing_Attention", AttentionCount)</span>
+                <Icon Name="@Bidi.ChevronForward" />
+            </a>
+        }
     </div>
-    @if (AttentionCount > 0)
-    {
-        <a class="lx-briefing-flag" href="automation">
-            <Icon Name="warning-sign" />
-            <span>@L.Count("Dashboard_Briefing_Attention", AttentionCount)</span>
-            <Icon Name="@Bidi.ChevronForward" CssClass="lx-briefing-chevron" />
-        </a>
-    }
-    else
-    {
-        <span class="lx-briefing-ok"><Icon Name="tick-circle" /> @L["NothingNeedsAttention"]</span>
-    }
+    <div class="lx-brief-stats">
+        <div class="lx-brief-stat">
+            <span class="lx-brief-n" @ref="bookedRef">@Fmt.Number((int)Overview.Booked.Value)</span>
+            <span class="lx-brief-l">@L["Kpi_Booked"]</span>
+            <MetricDelta Change="Overview.Booked.ChangePercent" Compact="true" />
+        </div>
+        <div class="lx-brief-stat">
+            <span class="lx-brief-n" @ref="rateRef">@Fmt.Percent(Overview.SuccessRate.Value)</span>
+            <span class="lx-brief-l">@L["Kpi_SuccessRate"]</span>
+            <MetricDelta Change="Overview.SuccessRate.ChangePoints" ChangeInPoints="true" Compact="true" />
+        </div>
+        <div class="lx-brief-stat lx-brief-stat-gold">
+            <span class="lx-brief-n">@Fmt.Compact(Overview.CodCollectedIqd.Value, Fmt.CompanyCurrency)</span>
+            <span class="lx-brief-l">@L["Kpi_CodCollectedPeriod"]</span>
+            <MetricDelta Change="Overview.CodCollectedIqd.ChangePercent" Compact="true" />
+        </div>
+    </div>
 </section>
 
 @code {
@@ -26,6 +40,9 @@
 
     /// <summary>How many things on the dashboard currently need a human to look at them.</summary>
     [Parameter] public int AttentionCount { get; set; }
+
+    private ElementReference bookedRef;
+    private ElementReference rateRef;
 
     private string Sentence => string.Format(
         CultureInfo.CurrentCulture,
@@ -44,4 +61,24 @@
             90 => L["Period_90"].Value,
             _ => L.Count("DaysN", Days),
         });
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        try
+        {
+            var rate = Overview.SuccessRate.Value;
+            var rateDecimals = rate == Math.Round(rate) ? 0 : 1;
+            await JS.InvokeVoidAsync("lx.countUp", bookedRef, (double)Overview.Booked.Value, 0, "");
+            await JS.InvokeVoidAsync("lx.countUp", rateRef, (double)rate, rateDecimals, "%");
+        }
+        catch (JSException)
+        {
+            // The figures are already rendered; the count-up is a nicety, not required.
+        }
+    }
 }

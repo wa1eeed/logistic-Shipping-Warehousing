@@ -60,6 +60,23 @@ window.lx = {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
     },
+    // Animate a number from 0 to `to` (Western digits, thousands grouping). Honours reduced motion.
+    countUp: (el, to, decimals, suffix) => {
+        if (!el) return;
+        decimals = decimals || 0; suffix = suffix || "";
+        const fmt = (n) => n.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+        let reduce = false;
+        try { reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch { /* ignore */ }
+        if (reduce || to <= 0) { el.textContent = fmt(to); return; }
+        const dur = 900, start = performance.now();
+        const step = (now) => {
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = fmt(to * eased);
+            if (t < 1) requestAnimationFrame(step); else el.textContent = fmt(to);
+        };
+        requestAnimationFrame(step);
+    },
     print: () => {
         try { window.print(); } catch { /* ignore */ }
     },
