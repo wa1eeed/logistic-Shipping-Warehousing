@@ -42,8 +42,17 @@ public sealed class CompanyProfile : IValidatableObject
     [StringLength(300, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
     public string? Address { get; set; }
 
+    /// <summary>The platform's brand colour as a hex value (#RRGGBB); empty keeps the default emerald.</summary>
+    [RegularExpression("^#(?:[0-9a-fA-F]{6})$", ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Format))]
+    public string? BrandColor { get; set; }
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
+        if (string.IsNullOrWhiteSpace(BrandColor))
+        {
+            BrandColor = null;
+        }
+
         Country = Countries.Normalize(Country);
         if (!Countries.IsKnown(Country))
         {
@@ -66,7 +75,7 @@ public sealed class CompanyProfile : IValidatableObject
         }
     }
 
-    public CompanyProfile Clone() => new() { Name = Name, Phone = Phone, Country = Country, Governorate = Governorate, Address = Address };
+    public CompanyProfile Clone() => new() { Name = Name, Phone = Phone, Country = Country, Governorate = Governorate, Address = Address, BrandColor = BrandColor };
 }
 
 public sealed record CompanyProfileView(CompanyProfile Profile, bool IsSet, DateTimeOffset? UpdatedAt, string? UpdatedBy, uint Version);

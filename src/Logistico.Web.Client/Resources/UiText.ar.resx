@@ -1844,4 +1844,8 @@
   <data name="Company_Currency" xml:space="preserve"><value>العملة</value></data>
   <data name="Company_CurrencyHint" xml:space="preserve"><value>تُحدَّد تلقائياً من دولة التشغيل</value></data>
   <data name="Company_CountryChangeWarning" xml:space="preserve"><value>تغيير الدولة إلى {0} سيحوّل عملة المنصّة ومناطقها إلى {1}. الشحنات السابقة تحتفظ بعملتها الأصلية.</value></data>
+  <data name="Company_BrandColor" xml:space="preserve"><value>لون الهوية</value></data>
+  <data name="Company_BrandColorHint" xml:space="preserve"><value>يُطبَّق على كل المنصّة؛ الافتراضي الأخضر</value></data>
+  <data name="Company_BrandDefault" xml:space="preserve"><value>الافتراضي</value></data>
+  <data name="Company_BrandCustom" xml:space="preserve"><value>لون مخصّص</value></data>
 </root>

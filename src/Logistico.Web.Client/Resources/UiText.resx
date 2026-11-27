@@ -1773,4 +1773,8 @@
   <data name="Company_Currency" xml:space="preserve"><value>Currency</value></data>
   <data name="Company_CurrencyHint" xml:space="preserve"><value>Set automatically by the operating country</value></data>
   <data name="Company_CountryChangeWarning" xml:space="preserve"><value>Changing the country to {0} switches the platform's currency and regions to {1}. Existing shipments keep their original currency.</value></data>
+  <data name="Company_BrandColor" xml:space="preserve"><value>Brand colour</value></data>
+  <data name="Company_BrandColorHint" xml:space="preserve"><value>Applied across the whole platform; default is emerald</value></data>
+  <data name="Company_BrandDefault" xml:space="preserve"><value>Default</value></data>
+  <data name="Company_BrandCustom" xml:space="preserve"><value>Custom colour</value></data>
 </root>

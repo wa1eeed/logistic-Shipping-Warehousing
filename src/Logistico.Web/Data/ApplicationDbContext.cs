@@ -34,6 +34,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.Property(x => x.Country).HasMaxLength(2).IsFixedLength().HasDefaultValue("IQ");
             e.Property(x => x.Governorate).HasMaxLength(5);
             e.Property(x => x.Address).HasMaxLength(300);
+            e.Property(x => x.BrandColor).HasMaxLength(7);
             e.Property(x => x.SkippedSteps).HasColumnType("text[]");
             e.Property(x => x.UpdatedBy).HasMaxLength(256);
             e.Property(x => x.Version).IsRowVersion();

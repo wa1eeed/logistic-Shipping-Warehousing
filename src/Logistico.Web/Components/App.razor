@@ -1,8 +1,12 @@
 @using System.Globalization
 @using System.Text.Json
+@using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Localization
+@using Logistico.SharedKernel
+@using Logistico.Web.Data
 @using Logistico.Web.Infrastructure
 @inject IStringLocalizer<ServerText> T
+@inject ApplicationDbContext Db
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.Name" dir="@(Rtl ? "rtl" : "ltr")">
 
@@ -39,6 +43,7 @@
     {
         <link rel="stylesheet" href="@Assets["account.css"]" />
     }
+    @BrandStyle
     <ImportMap nonce="@HttpContext.CspNonce()" />
     <link rel="icon" type="image/png" href="favicon.png" />
     @* Installable on a phone's home screen (the courier app, the hub station). *@
@@ -99,6 +104,46 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     private static bool Rtl => CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+
+    private string? brandColor;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            brandColor = await Db.CompanyProfiles
+                .Where(p => p.TenantId == Tenants.Default)
+                .Select(p => p.BrandColor)
+                .FirstOrDefaultAsync();
+        }
+        catch
+        {
+            // Branding is cosmetic; a database still being set up on first run just uses the default emerald.
+        }
+    }
+
+    // The company's chosen brand colour overrides the emerald tokens in both light and dark; emitted after app.css.
+    // The value is a validated #RRGGBB, so it is safe to place inside the stylesheet.
+    private MarkupString BrandStyle
+    {
+        get
+        {
+            var c = brandColor;
+            if (c is not { Length: 7 } || !System.Text.RegularExpressions.Regex.IsMatch(c, "^#[0-9a-fA-F]{6}$"))
+            {
+                return default;
+            }
+
+            var css = $":root,body.bp6-dark{{--lx-primary:{c};"
+                + $"--lx-primary-soft:color-mix(in srgb,{c} 12%,var(--lx-surface));"
+                + $"--lx-primary-text:color-mix(in srgb,{c} 68%,var(--lx-text-strong));"
+                + $"--lx-primary-border:color-mix(in srgb,{c} 32%,var(--lx-border));"
+                + $"--lx-selected:{c};--lx-selected-hover:color-mix(in srgb,{c} 84%,#000);--lx-selected-active:color-mix(in srgb,{c} 70%,#000);"
+                + $"--bp-intent-primary-rest:{c};--bp-intent-primary-hover:color-mix(in srgb,{c} 85%,#000);--bp-intent-primary-active:color-mix(in srgb,{c} 72%,#000);"
+                + "--lx-link:var(--lx-primary-text);}";
+            return new MarkupString($"<style nonce=\"{HttpContext.CspNonce()}\">{css}</style>");
+        }
+    }
 
     // Account pages (login, register, 2FA…) opt out and render statically on the server.
     private IComponentRenderMode? PageRenderMode =>
