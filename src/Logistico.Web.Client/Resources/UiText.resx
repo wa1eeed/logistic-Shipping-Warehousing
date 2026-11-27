@@ -861,6 +861,8 @@
   <data name="Pricing_NoCities" xml:space="preserve"><value>No cities for this region</value></data>
   <data name="Pricing_NoCitiesHint" xml:space="preserve"><value>Add a city to show it on the order form, with its own price if you like.</value></data>
   <data name="Pricing_InheritsRegion" xml:space="preserve"><value>Inherits region</value></data>
+  <data name="Pricing_AddStandardCities" xml:space="preserve"><value>Add the Kingdom's main cities</value></data>
+  <data name="Pricing_CityNameBulk" xml:space="preserve"><value>City name (or several, comma-separated)</value></data>
   <data name="Pricing_SetAll" xml:space="preserve"><value>All:</value></data>
   <data name="Pricing_To" xml:space="preserve"><value>Customer in</value></data>
   <data name="Pricing_WeightCharge" xml:space="preserve"><value>Extra weight</value></data>
