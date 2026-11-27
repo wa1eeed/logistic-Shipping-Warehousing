@@ -40,7 +40,7 @@
   <data name="SignInSubtitle" xml:space="preserve"><value>دخول أصحاب المتاجر والشركات إلى حساباتهم.</value></data>
   <data name="SignInTitle" xml:space="preserve"><value>تسجيل الدخول</value></data>
   <data name="SignInWithPasskey" xml:space="preserve"><value>الدخول بمفتاح المرور (Passkey)</value></data>
-  <data name="Tagline" xml:space="preserve"><value>برنامج لوجستي مفتوح المصدر</value></data>
+  <data name="Tagline" xml:space="preserve"><value>منصّة الشحن والتوصيل للأعمال</value></data>
   <data name="TrackShipment" xml:space="preserve"><value>تتبع شحنة</value></data>
   <data name="Forbidden" xml:space="preserve"><value>صلاحياتك لا تسمح بهذا الإجراء. اطلب الصلاحية من مدير النظام.</value></data>
   <data name="Problem_team.self" xml:space="preserve"><value>لا يمكنك تغيير صلاحيات حسابك أو قفله من هنا.</value></data>
@@ -50,9 +50,9 @@
   <data name="SignInPoint1" xml:space="preserve"><value>تتبّع كل شحنة من الاستلام حتى التسليم</value></data>
   <data name="SignInPoint2" xml:space="preserve"><value>دفع عند الاستلام وتسوية مبالغك شحنةً بشحنة</value></data>
   <data name="SignInPoint3" xml:space="preserve"><value>تغطية تشمل كل مناطق المملكة</value></data>
-  <data name="OpenSourceLine" xml:space="preserve"><value>مفتوح المصدر · Apache-2.0</value></data>
-  <data name="SeoTitle" xml:space="preserve"><value>لوجستيكو — برنامج لوجستي مفتوح المصدر</value></data>
-  <data name="SeoDescription" xml:space="preserve"><value>برنامج لوجستي مفتوح المصدر لشركات التوصيل: الطلبات والمخازن والشاحنات والمندوبون والمرتجعات والدفع عند الاستلام. العربية والإنجليزية. تستضيفه بنفسك.</value></data>
+  <data name="OpenSourceLine" xml:space="preserve"><value>لوجستيكو · منصّة الشحن والتوصيل</value></data>
+  <data name="SeoTitle" xml:space="preserve"><value>لوجستيكو — منصّة الشحن والتوصيل في السعودية</value></data>
+  <data name="SeoDescription" xml:space="preserve"><value>منصّة لوجستية متكاملة لشركات التوصيل والمتاجر في السعودية: الطلبات والمخازن والشاحنات والمندوبون والمرتجعات والدفع عند الاستلام، بالعربية والإنجليزية.</value></data>
   <data name="SetupTitle" xml:space="preserve"><value>إعداد لوجستيكو</value></data>
   <data name="SetupSubtitle" xml:space="preserve"><value>أنشئ شركتك وأول مدير لها. تعمل هذه الصفحة مرة واحدة.</value></data>
   <data name="SetupHeroTitle" xml:space="preserve"><value>شركة التوصيل الخاصة بك جاهزة خلال دقيقة</value></data>

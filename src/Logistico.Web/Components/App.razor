@@ -55,15 +55,12 @@
     @if (!IsAccountPage)
     {
         <div class="lx-boot-splash" aria-hidden="true">
-            <span class="lx-logo lx-logo-large"></span>
-            <div class="bp6-spinner bp6-intent-primary">
-                <div class="bp6-spinner-animation">
-                    <svg width="40" height="40" stroke-width="6.00" viewBox="2.00 2.00 96.00 96.00">
-                        <path class="bp6-spinner-track" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90"></path>
-                        <path class="bp6-spinner-head" d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90" pathLength="280" stroke-dasharray="280 280" stroke-dashoffset="210"></path>
-                    </svg>
-                </div>
+            <div class="lx-boot-hub">
+                <span class="lx-boot-ring"></span>
+                <span class="lx-logo lx-logo-large lx-boot-logo"></span>
             </div>
+            <div class="lx-boot-route"><span class="lx-boot-parcel"></span></div>
+            <span class="lx-boot-word">لوجستيكو</span>
         </div>
         <div id="lx-boot-failed" class="lx-boot-splash" style="display:none">
             <p>لم يكتمل فتح لوجستيكو. أعد تحميل الصفحة.</p>
