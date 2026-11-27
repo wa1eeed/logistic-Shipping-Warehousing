@@ -20,7 +20,8 @@
         <KpiCard Icon="endorsed" Label="@L["Kpi_InClearance"]" Value="@Fmt.Number(summary.InClearance)" Intent="Intent.Primary" />
         <KpiCard Icon="warning-sign" Label="@L["Kpi_CustomsHold"]" Value="@Fmt.Number(summary.OnHold)" Intent="Intent.Danger" />
         <KpiCard Icon="tick-circle" Label="@L["Kpi_ReleasedCustoms"]" Value="@Fmt.Number(summary.ReleasedCount)" Intent="Intent.Success" />
-        <KpiCard Icon="bank-account" Label="@L["Kpi_AssessedDuties"]" Amount="summary.TotalAssessedDutiesIqd" />
+        @* Customs duties are assessed by the Iraqi tariff in dinars; keep IQD regardless of the company's own currency. *@
+        <KpiCard Icon="bank-account" Label="@L["Kpi_AssessedDuties"]" Amount="summary.TotalAssessedDutiesIqd" Currency="IQD" />
     </div>
 }
 

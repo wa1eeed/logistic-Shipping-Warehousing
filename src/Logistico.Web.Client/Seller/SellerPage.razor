@@ -78,8 +78,8 @@
                                     </div>
                                 </div>
                                 <div class="lx-seller-order-side">
-                                    <b>@Fmt.Money(o.CodAmount ?? 0, "IQD")</b>
-                                    <span class="bp6-text-muted lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_FeeN"], Fmt.Money(o.DeliveryFee ?? 0, "IQD"))</span>
+                                    <b>@Fmt.MoneyLocal(o.CodAmount ?? 0)</b>
+                                    <span class="bp6-text-muted lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_FeeN"], Fmt.MoneyLocal(o.DeliveryFee ?? 0))</span>
                                     @if (o.ReturnFee is { } returnFee)
                                     {
                                         <span class="lx-intent-warning lx-small">@string.Format(CultureInfo.CurrentCulture, L["Seller_ReturnFeeN"], Fmt.MoneyLocal(returnFee))</span>
@@ -99,7 +99,7 @@
                 }
             </Tab>
             <Tab Id="payouts" Title="@L["Seller_Payouts"]" Icon="bank-account" Count="home.Payouts.Count">
-                <p class="lx-seller-paid">@string.Format(CultureInfo.CurrentCulture, L["Seller_PaidSoFar"], Fmt.Money(home.PaidIqd, "IQD"))</p>
+                <p class="lx-seller-paid">@string.Format(CultureInfo.CurrentCulture, L["Seller_PaidSoFar"], Fmt.MoneyLocal(home.PaidIqd))</p>
                 @if (home.Payouts.Count == 0)
                 {
                     <NonIdealState Icon="bank-account" Title="@L["Seller_NoPayoutsTitle"]" Description="@L["Seller_NoPayoutsText"]" />
@@ -117,11 +117,11 @@
                                     </div>
                                     <div class="bp6-text-muted lx-small">
                                         @Fmt.Date(p.SettledAt) · @L.Count("Seller_OrdersN", p.ShipmentCount) ·
-                                        @string.Format(CultureInfo.CurrentCulture, L["Seller_PayoutBreakdown"], Fmt.Money(p.GrossCodAmount, "IQD"), Fmt.Money(p.DeliveryFeesAmount, "IQD"))
+                                        @string.Format(CultureInfo.CurrentCulture, L["Seller_PayoutBreakdown"], Fmt.MoneyLocal(p.GrossCodAmount), Fmt.MoneyLocal(p.DeliveryFeesAmount))
                                     </div>
                                 </div>
                                 <div class="lx-seller-order-side">
-                                    <b>@Fmt.Money(p.NetPayoutAmount, "IQD")</b>
+                                    <b>@Fmt.MoneyLocal(p.NetPayoutAmount)</b>
                                     <LinkButton Href="@Seller.StatementUrl(p.Id)" Target="_blank" Small="true" Minimal="true" Icon="download" Text="@L["DownloadStatement"]" />
                                 </div>
                             </li>
@@ -217,11 +217,11 @@
 
             <dl class="lx-props lx-seller-price">
                 <dt>@L["CustomerPays"]</dt>
-                <dd>@Fmt.Money(draft.CodAmount ?? 0, "IQD")</dd>
+                <dd>@Fmt.MoneyLocal(draft.CodAmount ?? 0)</dd>
                 <dt>@L["Field_DeliveryFee"]</dt>
-                <dd>@(quote is null ? "—" : Fmt.Money(quote.Fee, "IQD"))</dd>
+                <dd>@(quote is null ? "—" : Fmt.MoneyLocal(quote.Fee))</dd>
                 <dt>@L["Seller_YouReceive"]</dt>
-                <dd class="lx-strong">@(quote is null ? "—" : Fmt.Money((draft.CodAmount ?? 0) - quote.Fee, "IQD"))</dd>
+                <dd class="lx-strong">@(quote is null ? "—" : Fmt.MoneyLocal((draft.CodAmount ?? 0) - quote.Fee))</dd>
             </dl>
             @if (error is not null)
             {

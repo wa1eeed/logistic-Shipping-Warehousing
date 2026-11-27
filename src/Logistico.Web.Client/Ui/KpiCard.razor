@@ -14,7 +14,9 @@ else
 
     /// <summary>A money amount: shown compact ("131.9" + "مليون د.ع") with the exact amount on hover.</summary>
     [Parameter] public decimal? Amount { get; set; }
-    [Parameter] public string Currency { get; set; } = "IQD";
+
+    /// <summary>The amount's currency; unset means the company's own currency (IQD or SAR).</summary>
+    [Parameter] public string? Currency { get; set; }
 
     /// <summary>Show every dinar (money owed to someone) instead of the rounded 1.7M.</summary>
     [Parameter] public bool ExactAmount { get; set; }
@@ -44,8 +46,9 @@ else
     {
         if (Amount is { } amount)
         {
-            (Value, Unit) = ExactAmount ? Fmt.MoneyParts(amount, Currency) : Fmt.CompactParts(amount, Currency);
-            Exact ??= Fmt.Money(amount, Currency);
+            var currency = Currency ?? Fmt.CompanyCurrency;
+            (Value, Unit) = ExactAmount ? Fmt.MoneyParts(amount, currency) : Fmt.CompactParts(amount, currency);
+            Exact ??= Fmt.Money(amount, currency);
         }
         else if (Totals is not null)
         {

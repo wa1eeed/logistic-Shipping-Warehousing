@@ -375,11 +375,11 @@ else
                     </dd>
                     @if (s.DeliveryFee is not null)
                     {
-                        <dt>@L["Field_DeliveryFee"]</dt><dd>@Fmt.Money(s.DeliveryFee, "IQD")</dd>
+                        <dt>@L["Field_DeliveryFee"]</dt><dd>@Fmt.MoneyLocal(s.DeliveryFee)</dd>
                     }
                     @if (s.ReturnFee is { } returnFee)
                     {
-                        <dt>@L["Col_ReturnFee"]</dt><dd>@Fmt.Money(returnFee, "IQD")</dd>
+                        <dt>@L["Col_ReturnFee"]</dt><dd>@Fmt.MoneyLocal(returnFee)</dd>
                     }
                     @if (s.CodCollectedAt is not null && s.MerchantId is not null)
                     {

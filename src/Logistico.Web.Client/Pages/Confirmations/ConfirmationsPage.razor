@@ -89,7 +89,7 @@
                                     <div class="lx-cell-sub">@string.Format(CultureInfo.CurrentCulture, L["HistoryShort"], Fmt.Number(item.PreviousDelivered), Fmt.Number(item.PreviousReturned))</div>
                                 }
                             </td>
-                            <td class="lx-num">@Fmt.Money(item.CodAmount, "IQD")</td>
+                            <td class="lx-num">@Fmt.MoneyLocal(item.CodAmount)</td>
                             <td>
                                 <span class="@Bp.Cls(Bp.When(overdue, "lx-text-warning"))">@(item.RequestedAt is { } r ? Fmt.Ago(r, L) : "—")</span>
                                 @if (item.Attempts > 0)
@@ -231,7 +231,7 @@
         }
 
         var link = Navigation.ToAbsoluteUri($"track/{item.TrackingNumber}").ToString();
-        var text = string.Format(CultureInfo.CurrentCulture, L["ConfirmWhatsApp"], item.ConsigneeName.Split(' ')[0], item.MerchantName ?? "", Fmt.Money(item.CodAmount, "IQD"), link);
+        var text = string.Format(CultureInfo.CurrentCulture, L["ConfirmWhatsApp"], item.ConsigneeName.Split(' ')[0], item.MerchantName ?? "", Fmt.MoneyLocal(item.CodAmount), link);
         return $"https://wa.me/{digits}?text={Uri.EscapeDataString(text)}";
     }
 }
