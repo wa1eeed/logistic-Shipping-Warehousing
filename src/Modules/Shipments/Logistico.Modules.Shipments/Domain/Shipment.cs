@@ -162,7 +162,8 @@ internal sealed class Shipment
         MerchantSnapshot? merchant,
         string? bookedBy,
         DateTimeOffset now,
-        HubNetwork network)
+        HubNetwork network,
+        string? destinationHubOverride = null)
     {
         var service = request.ServiceType ?? ServiceType.International;
         var mode = request.Mode ?? (service == ServiceType.Domestic ? TransportMode.Road : throw Rule("shipment.mode_required", "Transport mode is required."));
@@ -242,7 +243,10 @@ internal sealed class Shipment
             EtaAt = promised,
             Notes = Clean(request.Notes),
             OriginHubCode = network.OriginHubFor(origin)?.Code,
-            DestinationHubCode = network.ResolveDestinationHub(destination).Code,
+            // A city may be sorted through a hub other than its region's default; an unknown override falls back to the region.
+            DestinationHubCode = destinationHubOverride is { Length: > 0 } over && network.Find(over) is { } cityHub
+                ? cityHub.Code
+                : network.ResolveDestinationHub(destination).Code,
             CreatedAt = now,
             UpdatedAt = now,
             LastStatusAt = now,
