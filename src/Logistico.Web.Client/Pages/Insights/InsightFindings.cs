@@ -83,9 +83,9 @@ internal static class InsightFindings
     {
         var (low, high) = BasketBands.Range(band);
         return band == BasketBands.NoCod ? L["Basket_NoCod"]
-            : low is 0 ? Format(L["Basket_Under"], Fmt.Money(high, "IQD"))
-            : high is null ? Format(L["Basket_Over"], Fmt.Money(low, "IQD"))
-            : Format(L["Basket_Between"], Fmt.Number(low!.Value, 0), Fmt.Money(high, "IQD"));
+            : low is 0 ? Format(L["Basket_Under"], Fmt.MoneyLocal(high))
+            : high is null ? Format(L["Basket_Over"], Fmt.MoneyLocal(low))
+            : Format(L["Basket_Between"], Fmt.Number(low!.Value, 0), Fmt.MoneyLocal(high));
     }
 
     private static string Format(string format, params object?[] args) => string.Format(CultureInfo.CurrentCulture, format, args);

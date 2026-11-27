@@ -82,11 +82,11 @@
             <td class="lx-num">@if (c.OutForDeliveryCount > 0) { <Tag Intent="Intent.Primary">@Fmt.Number(c.OutForDeliveryCount)</Tag> } else { <span class="bp6-text-muted">0</span> }</td>
             <td class="lx-num">@Fmt.Number(c.DeliveredTodayCount)</td>
             <td class="lx-num">@SuccessRate(c)</td>
-            <td class="lx-num">@Fmt.Money(c.CashOnRunIqd, "IQD")</td>
+            <td class="lx-num">@Fmt.MoneyLocal(c.CashOnRunIqd)</td>
             <td class="lx-num">
                 @if (c.CashToHandInIqd > 0)
                 {
-                    <span class="lx-strong">@Fmt.Money(c.CashToHandInIqd, "IQD")</span>
+                    <span class="lx-strong">@Fmt.MoneyLocal(c.CashToHandInIqd)</span>
                     <div class="lx-cell-sub">@L.Count("ParcelsN", c.ParcelsToHandIn)</div>
                 }
                 else
@@ -124,8 +124,8 @@
             <td><span class="lx-code">@h.Number</span></td>
             <td><Cell Title="@h.CourierName" Sub="@h.ReceivedBy" /></td>
             <td class="lx-num">@Fmt.Number(h.ParcelCount)</td>
-            <td class="lx-num">@Fmt.Money(h.ExpectedIqd, "IQD")</td>
-            <td class="lx-num lx-strong">@Fmt.Money(h.ReceivedIqd, "IQD")</td>
+            <td class="lx-num">@Fmt.MoneyLocal(h.ExpectedIqd)</td>
+            <td class="lx-num lx-strong">@Fmt.MoneyLocal(h.ReceivedIqd)</td>
             <td class="lx-num">
                 @if (h.DifferenceIqd == 0)
                 {
@@ -133,7 +133,7 @@
                 }
                 else
                 {
-                    <Tag Intent="@(h.DifferenceIqd < 0 ? Intent.Danger : Intent.Warning)">@Fmt.Money(h.DifferenceIqd, "IQD")</Tag>
+                    <Tag Intent="@(h.DifferenceIqd < 0 ? Intent.Danger : Intent.Warning)">@Fmt.MoneyLocal(h.DifferenceIqd)</Tag>
                 }
             </td>
             <td><Cell Title="@Fmt.DateTime(h.ReceivedAt)" Sub="@h.Notes" /></td>
@@ -157,7 +157,7 @@
             @if (cash.ShortageIqd > 0)
             {
                 <Callout Intent="Intent.Warning" Icon="warning-sign" CssClass="lx-mb">
-                    @string.Format(CultureInfo.CurrentCulture, L[cash.Parcels.Count == 0 ? "Cash_RepayShortage" : "Cash_StillShort"], Fmt.Money(cash.ShortageIqd, "IQD"))
+                    @string.Format(CultureInfo.CurrentCulture, L[cash.Parcels.Count == 0 ? "Cash_RepayShortage" : "Cash_StillShort"], Fmt.MoneyLocal(cash.ShortageIqd))
                 </Callout>
             }
             <p class="bp6-text-muted lx-mb">@L["ReceiveCashHelper"]</p>
@@ -170,7 +170,7 @@
                             <tr>
                                 <td><span class="lx-code">@p.TrackingNumber</span></td>
                                 <td><Cell Title="@p.ConsigneeName" Sub="@p.MerchantName" /></td>
-                                <td class="lx-num">@Fmt.Money(p.CodAmount, "IQD")</td>
+                                <td class="lx-num">@Fmt.MoneyLocal(p.CodAmount)</td>
                                 <td class="bp6-text-muted">@Fmt.DateTime(p.DeliveredAt)</td>
                             </tr>
                         }
@@ -179,7 +179,7 @@
             </div>
             <div class="lx-form-grid">
                 <FormField TValue="string" Label="@L["Col_Expected"]">
-                    <div class="lx-strong" style="font-size:20px">@Fmt.Money(cash.ExpectedIqd, "IQD")</div>
+                    <div class="lx-strong" style="font-size:20px">@Fmt.MoneyLocal(cash.ExpectedIqd)</div>
                 </FormField>
                 <FormField TValue="string" Label="@L["Field_CashCounted"]" Required="true" For="lx-cash-counted">
                     <div class="bp6-input-group bp6-fill">
@@ -191,7 +191,7 @@
             @if (counted is { } amount && amount != cash.ExpectedIqd)
             {
                 <Callout Intent="@(amount < cash.ExpectedIqd ? Intent.Danger : Intent.Warning)" Icon="warning-sign" CssClass="lx-mb">
-                    @string.Format(CultureInfo.CurrentCulture, L[amount < cash.ExpectedIqd ? "CashShortBy" : "CashOverBy"], Fmt.Money(Math.Abs(amount - cash.ExpectedIqd), "IQD"))
+                    @string.Format(CultureInfo.CurrentCulture, L[amount < cash.ExpectedIqd ? "CashShortBy" : "CashOverBy"], Fmt.MoneyLocal(Math.Abs(amount - cash.ExpectedIqd)))
                 </Callout>
             }
             <FormField TValue="string" Label="@L["Field_Notes"]" Hint="@L["Optional"]" For="lx-cash-notes">
@@ -220,7 +220,7 @@
         {
             <div class="lx-summary-total lx-mb" style="margin-block-start:0;border:0">
                 <span>@L.Count("ParcelsN", runsheetItems.Count)</span>
-                <span>@Fmt.Money(runsheetItems.Where(s => s.Status == ShipmentStatus.OutForDelivery).Sum(s => s.CodAmount ?? 0), "IQD")</span>
+                <span>@Fmt.MoneyLocal(runsheetItems.Where(s => s.Status == ShipmentStatus.OutForDelivery).Sum(s => s.CodAmount ?? 0))</span>
             </div>
             <ul class="lx-list lx-card">
                 @foreach (var s in runsheetItems)
@@ -433,7 +433,7 @@
                 ParcelIds = [.. cash?.Parcels.Select(p => p.Id) ?? []],
                 RepaysShortage = cash is { Parcels.Count: 0, ShortageIqd: > 0 },
             });
-            Toaster.Show(string.Format(CultureInfo.CurrentCulture, L["CashReceivedToast"], handover.Number, Fmt.Money(handover.ReceivedIqd, "IQD")),
+            Toaster.Show(string.Format(CultureInfo.CurrentCulture, L["CashReceivedToast"], handover.Number, Fmt.MoneyLocal(handover.ReceivedIqd)),
                 handover.DifferenceIqd < 0 ? Intent.Warning : Intent.Success, "bank-account");
             cashFor = null;
             await Task.WhenAll(LoadAsync(), LoadHandoversAsync());

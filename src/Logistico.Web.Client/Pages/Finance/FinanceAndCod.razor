@@ -41,16 +41,16 @@ else
             <Row Context="b">
                 <td><a class="lx-strong" href="@($"merchants/{b.MerchantId}")">@b.MerchantName</a></td>
                 <td class="lx-num">@Fmt.Number(b.DeliveredUnsettledCount)</td>
-                <td class="lx-num">@Fmt.Money(b.GrossCodIqd, "IQD")</td>
+                <td class="lx-num">@Fmt.MoneyLocal(b.GrossCodIqd)</td>
                 <td class="lx-num bp6-text-muted">
-                    @Fmt.Money(b.DeliveryFeesIqd, "IQD")
+                    @Fmt.MoneyLocal(b.DeliveryFeesIqd)
                     @if (b.ReturnCount > 0)
                     {
-                        <div class="lx-small lx-intent-warning">@string.Format(CultureInfo.CurrentCulture, L["ReturnFeesLine"], Fmt.Money(b.ReturnFeesIqd, "IQD"), Fmt.Number(b.ReturnCount))</div>
+                        <div class="lx-small lx-intent-warning">@string.Format(CultureInfo.CurrentCulture, L["ReturnFeesLine"], Fmt.MoneyLocal(b.ReturnFeesIqd), Fmt.Number(b.ReturnCount))</div>
                     }
                 </td>
-                <td class="lx-num lx-strong">@Fmt.Money(b.NetPayableIqd, "IQD")</td>
-                <td class="lx-num bp6-text-muted">@Fmt.Money(b.InProgressCodIqd, "IQD") (@Fmt.Number(b.InProgressCount))</td>
+                <td class="lx-num lx-strong">@Fmt.MoneyLocal(b.NetPayableIqd)</td>
+                <td class="lx-num bp6-text-muted">@Fmt.MoneyLocal(b.InProgressCodIqd) (@Fmt.Number(b.InProgressCount))</td>
                 <td>
                     @if (b.DeliveredUnsettledCount > 0)
                     {
@@ -61,7 +61,7 @@ else
                     @if (b.WithCouriersCount > 0)
                     {
                         @* Paid out only once the couriers hand the cash in (Fleet page). *@
-                        <a href="fleet"><Tag Minimal="true" Icon="people" Title="@Fmt.Money(b.WithCouriersIqd, "IQD")">@L.Count("WithCouriersN", b.WithCouriersCount)</Tag></a>
+                        <a href="fleet"><Tag Minimal="true" Icon="people" Title="@Fmt.MoneyLocal(b.WithCouriersIqd)">@L.Count("WithCouriersN", b.WithCouriersCount)</Tag></a>
                     }
                 </td>
             </Row>
@@ -122,16 +122,16 @@ else
                     <dt>@L["Col_DeliveredUnsettled"]</dt>
                     <dd>@Fmt.Number(selectedSeller.DeliveredUnsettledCount)</dd>
                     <dt>@L["Col_GrossCod"]</dt>
-                    <dd>@Fmt.Money(selectedSeller.GrossCodIqd, "IQD")</dd>
+                    <dd>@Fmt.MoneyLocal(selectedSeller.GrossCodIqd)</dd>
                     <dt>@L["Col_DeliveryFees"]</dt>
-                    <dd>@Fmt.Money(selectedSeller.DeliveryFeesIqd, "IQD")</dd>
+                    <dd>@Fmt.MoneyLocal(selectedSeller.DeliveryFeesIqd)</dd>
                     @if (selectedSeller.ReturnCount > 0)
                     {
                         <dt>@L["Col_ReturnFees"]</dt>
-                        <dd>@Fmt.Money(selectedSeller.ReturnFeesIqd, "IQD") · @L.Count("ParcelsN", selectedSeller.ReturnCount)</dd>
+                        <dd>@Fmt.MoneyLocal(selectedSeller.ReturnFeesIqd) · @L.Count("ParcelsN", selectedSeller.ReturnCount)</dd>
                     }
                     <dt>@L["Col_NetPayout"]</dt>
-                    <dd class="lx-strong">@Fmt.Money(selectedSeller.NetPayableIqd, "IQD")</dd>
+                    <dd class="lx-strong">@Fmt.MoneyLocal(selectedSeller.NetPayableIqd)</dd>
                 </dl>
             </div>
             @if (selectedSeller.ReturnFeesIqd > selectedSeller.GrossCodIqd - selectedSeller.DeliveryFeesIqd)

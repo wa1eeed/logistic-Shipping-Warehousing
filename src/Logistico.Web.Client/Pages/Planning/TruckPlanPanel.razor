@@ -4,8 +4,8 @@
 <div class="lx-kpis">
     <KpiCard Icon="drive-time" Label="@L["Plan_Kpi_Trucks"]" Value="@Fmt.Number(Plan.Plan.Trucks)" Intent="Intent.Primary"
              Hint="@VsToday(Fmt.Number(Plan.Baseline.Trucks), Delta(Plan.Plan.Trucks, Plan.Baseline.Trucks))" />
-    <KpiCard Icon="dollar" Label="@L["Plan_Kpi_Cost"]" Amount="@Plan.Plan.CostIqd" Currency="IQD" Intent="@(Plan.Plan.CostIqd < Plan.Baseline.CostIqd ? Intent.Success : Intent.None)"
-             Hint="@VsToday(Fmt.Money(Plan.Baseline.CostIqd, "IQD"), Delta(Plan.Plan.CostIqd, Plan.Baseline.CostIqd))" />
+    <KpiCard Icon="dollar" Label="@L["Plan_Kpi_Cost"]" Amount="@Plan.Plan.CostIqd" Intent="@(Plan.Plan.CostIqd < Plan.Baseline.CostIqd ? Intent.Success : Intent.None)"
+             Hint="@VsToday(Fmt.MoneyLocal(Plan.Baseline.CostIqd), Delta(Plan.Plan.CostIqd, Plan.Baseline.CostIqd))" />
     <KpiCard Icon="path" Label="@L["Plan_Kpi_TruckKm"]" Value="@Fmt.Number((decimal)Plan.Plan.TruckKm, 0)" Unit="@L["Unit_Km"]"
              Hint="@VsToday(Fmt.Number((decimal)Plan.Baseline.TruckKm, 0), Delta((decimal)Plan.Plan.TruckKm, (decimal)Plan.Baseline.TruckKm))" />
     <KpiCard Icon="time" Label="@L["Plan_Kpi_OnTime"]" Value="@($"{Fmt.Number(Plan.Plan.OnTime)} / {Fmt.Number(Plan.Plan.Parcels)}")"
@@ -75,7 +75,7 @@ else
                             }
                         </div>
                     </td>
-                    <td class="lx-num lx-tabular">@Fmt.Money(d.CostIqd, "IQD")</td>
+                    <td class="lx-num lx-tabular">@Fmt.MoneyLocal(d.CostIqd)</td>
                 </Row>
             </DataTable>
         </div>

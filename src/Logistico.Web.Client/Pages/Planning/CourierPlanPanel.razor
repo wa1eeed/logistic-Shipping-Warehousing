@@ -47,7 +47,7 @@ else
                         <div class="lx-plan-fill">
                             <span class="lx-small">@L["Plan_Cash"]</span>
                             <ProgressBar Value="@Ratio((double)run.Run.CashIqd, (double)run.Run.MaxCashIqd)" Intent="@MeterIntent(Ratio((double)run.Run.CashIqd, (double)run.Run.MaxCashIqd))" />
-                            <bdi dir="ltr" class="lx-small lx-tabular">@Fmt.Money(run.Run.CashIqd, "IQD")</bdi>
+                            <bdi dir="ltr" class="lx-small lx-tabular">@Fmt.MoneyLocal(run.Run.CashIqd)</bdi>
                         </div>
                     </div>
                     <ol class="lx-run-stops">

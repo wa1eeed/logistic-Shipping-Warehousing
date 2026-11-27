@@ -296,7 +296,7 @@ else
                                         <td>
                                             <input type="number" class="bp6-input bp6-small" dir="ltr" style="width:105px" step="1" min="0" @bind="row.CodAmount" />
                                         </td>
-                                        <td class="lx-nowrap">@Fmt.Money(row.DeliveryFee, "IQD")</td>
+                                        <td class="lx-nowrap">@Fmt.MoneyLocal(row.DeliveryFee)</td>
                                         <td>
                                             <Button Small="true" Minimal="true" Icon="cross" OnClick="@(() => batchDrafts.RemoveAt(index))" />
                                         </td>
@@ -317,11 +317,11 @@ else
                     <dt>@L["ValidOrders"]</dt>
                     <dd class="lx-strong">@Fmt.Number(ValidBatchOrders.Count) / @Fmt.Number(batchDrafts.Count)</dd>
                     <dt>@L["CustomerPays"]</dt>
-                    <dd class="lx-strong">@Fmt.Money(ValidBatchOrders.Sum(o => o.CodAmount ?? 0), "IQD")</dd>
+                    <dd class="lx-strong">@Fmt.MoneyLocal(ValidBatchOrders.Sum(o => o.CodAmount ?? 0))</dd>
                     <dt>@L["Field_DeliveryFee"]</dt>
-                    <dd>@Fmt.Money(ValidBatchOrders.Sum(o => o.DeliveryFee), "IQD")</dd>
+                    <dd>@Fmt.MoneyLocal(ValidBatchOrders.Sum(o => o.DeliveryFee))</dd>
                     <dt>@L["SellerReceives"]</dt>
-                    <dd class="lx-strong">@Fmt.Money(ValidBatchOrders.Sum(o => (o.CodAmount ?? 0) - o.DeliveryFee), "IQD")</dd>
+                    <dd class="lx-strong">@Fmt.MoneyLocal(ValidBatchOrders.Sum(o => (o.CodAmount ?? 0) - o.DeliveryFee))</dd>
                 </dl>
 
                 @if (serverError is not null)
@@ -451,10 +451,10 @@ else
 
     private string PriceBreakdown(PriceQuote quote)
     {
-        var parts = new List<string> { string.Format(CultureInfo.CurrentCulture, L["Price_Breakdown"], Fmt.Money(quote.BaseFee, "IQD")) };
+        var parts = new List<string> { string.Format(CultureInfo.CurrentCulture, L["Price_Breakdown"], Fmt.MoneyLocal(quote.BaseFee)) };
         if (quote.WeightCharge > 0)
         {
-            parts.Add(string.Format(CultureInfo.CurrentCulture, L["Price_WeightPart"], Fmt.Money(quote.WeightCharge, "IQD")));
+            parts.Add(string.Format(CultureInfo.CurrentCulture, L["Price_WeightPart"], Fmt.MoneyLocal(quote.WeightCharge)));
         }
 
         if (quote.DiscountPercent > 0)
