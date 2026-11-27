@@ -14,10 +14,14 @@
         <Logistico.Web.Client.Pages.Pricing.PricingPage Embedded="true" />
     </Tab>
     <Tab Id="operations" Title="@L["Settings_Tab_Operations"]" Icon="cog">
-        <div class="lx-settings-grid">
+        @* Automation rules live here; the operational queues (alerts, messages) stay on their own pages, linked below. *@
+        <Section Title="@L["Rules"]" Subtitle="@L["AutomationSubtitle"]" Icon="automatic-updates">
+            <Logistico.Web.Client.Pages.Automation.AutomationRulesSettings />
+        </Section>
+        <div class="lx-settings-grid lx-mt">
             @Card("warehouses", "office", "Nav_Warehouses", "Settings_WarehousesDesc", StaffPolicies.Staff)
-            @Card("automation", "automatic-updates", "Nav_Automation", "Settings_AutomationDesc", StaffPolicies.Care)
             @Card("confirmations", "phone-call", "Nav_Confirmations", "Settings_ConfirmationsDesc", StaffPolicies.Care)
+            @Card("automation", "automatic-updates", "Nav_Automation", "Settings_AutomationDesc", StaffPolicies.Care)
         </div>
     </Tab>
     <Tab Id="admin" Title="@L["Settings_Tab_Admin"]" Icon="key">

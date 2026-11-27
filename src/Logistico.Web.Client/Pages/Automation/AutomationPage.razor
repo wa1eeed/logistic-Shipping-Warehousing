@@ -156,69 +156,7 @@
     </Tab>
 
     <Tab Id="rules" Title="@L["Rules"]" Icon="cog">
-        @if (policy is null)
-        {
-            <Skeleton Lines="8" />
-        }
-        else
-        {
-            <EditForm Model="policy" OnValidSubmit="SavePolicyAsync">
-                <DataAnnotationsValidator />
-                <EditableBy Policy="@StaffPolicies.Administer">
-                    <div class="lx-grid-2">
-                        <Section Title="@L["Rules_Delivery"]" Icon="truck" Padded="false">
-                            <div class="lx-rule">
-                                <div><div class="lx-rule-title">@L["Rule_MaxAttempts"]</div><div class="lx-rule-desc">@L["Rule_MaxAttemptsHint"]</div></div>
-                                <div class="lx-rule-value"><InputNumber class="bp6-input" @bind-Value="policy.MaxDeliveryAttempts" min="1" max="6" /> <span>@L["Attempts"]</span></div>
-                            </div>
-                            <div class="lx-rule">
-                                <div><div class="lx-rule-title">@L["Rule_ReturnOnRefusal"]</div><div class="lx-rule-desc">@L["Rule_ReturnOnRefusalHint"]</div></div>
-                                <Switch @bind-Value="policy.ReturnOnRefusal" Large="true" />
-                            </div>
-                            <div class="lx-rule">
-                                <div><div class="lx-rule-title">@L["Rule_AutoReschedule"]</div><div class="lx-rule-desc">@L["Rule_AutoRescheduleHint"]</div></div>
-                                <Switch @bind-Value="policy.AutoReschedule" Large="true" />
-                            </div>
-                            <div class="lx-rule">
-                                <div><div class="lx-rule-title">@L["Rule_AutoRequests"]</div><div class="lx-rule-desc">@L["Rule_AutoRequestsHint"]</div></div>
-                                <Switch @bind-Value="policy.AutoApplyCustomerRequests" Large="true" />
-                            </div>
-                            <div class="lx-rule">
-                                <div><div class="lx-rule-title">@L["Rule_Notify"]</div><div class="lx-rule-desc">@L["Rule_NotifyHint"]</div></div>
-                                <Switch @bind-Value="policy.NotifyCustomers" Large="true" />
-                            </div>
-                        </Section>
-                        <Section Title="@L["Rules_Network"]" Icon="time" Padded="false">
-                            <div class="lx-rule">
-                                <div><div class="lx-rule-title">@L["Rule_AutoTrucks"]</div><div class="lx-rule-desc">@L["Rule_AutoTrucksHint"]</div></div>
-                                <Switch @bind-Value="policy.AutoPlanTransfers" Large="true" />
-                            </div>
-                            <RuleNumber Title="@L["Rule_PickupSla"]" Hint="@L["Rule_PickupSlaHint"]" Unit="@L["Hours"]" @bind-Value="policy.PickupSlaHours" Max="168" />
-                            <RuleNumber Title="@L["Rule_Dwell"]" Hint="@L["Rule_DwellHint"]" Unit="@L["Hours"]" @bind-Value="policy.WarehouseDwellHours" Max="336" />
-                            <RuleNumber Title="@L["Rule_Courier"]" Hint="@L["Rule_CourierHint"]" Unit="@L["Hours"]" @bind-Value="policy.OutForDeliveryHours" Max="72" />
-                            <RuleNumber Title="@L["Rule_LineHaul"]" Hint="@L["Rule_LineHaulHint"]" Unit="@L["Hours"]" @bind-Value="policy.LineHaulGraceHours" Max="72" />
-                            <RuleNumber Title="@L["Rule_ReturnCollection"]" Hint="@L["Rule_ReturnCollectionHint"]" Unit="@L["Days"]" @bind-Value="policy.ReturnCollectionDays" Max="30" />
-                            <RuleNumber Title="@L["Rule_RequestSla"]" Hint="@L["Rule_RequestSlaHint"]" Unit="@L["Hours"]" @bind-Value="policy.RequestSlaHours" Max="168" />
-                        </Section>
-                        <Section Title="@L["Rules_Confirmation"]" Subtitle="@L["Rules_ConfirmationHint"]" Icon="phone-call" Padded="false">
-                            <div class="lx-rule lx-rule-wide">
-                                <div><div class="lx-rule-title">@L["Rule_ConfirmMode"]</div><div class="lx-rule-desc">@L["Rule_ConfirmModeHint"]</div></div>
-                                <SegmentedControl TValue="OrderConfirmationMode" Options="ConfirmOptions" Value="policy.OrderConfirmation" ValueChanged="@(v => policy.OrderConfirmation = v)" Label="@L["Rule_ConfirmMode"]" Small="true" />
-                            </div>
-                            <RuleNumber Title="@L["Rule_ConfirmHours"]" Hint="@L["Rule_ConfirmHoursHint"]" Unit="@L["Hours"]" @bind-Value="policy.ConfirmationHours" Max="72" />
-                            <RuleNumber Title="@L["Rule_AutoCancel"]" Hint="@L["Rule_AutoCancelHint"]" Unit="@L["Hours"]" @bind-Value="policy.AutoCancelUnconfirmedHours" Min="0" Max="336" />
-                        </Section>
-                    </div>
-                    <div class="lx-form-actions">
-                        <Button Type="submit" Intent="Intent.Primary" Icon="tick" Text="@L["SaveRules"]" Loading="saving" />
-                        @if (policy.UpdatedAt is { } changed)
-                        {
-                            <span class="bp6-text-muted lx-small">@string.Format(CultureInfo.CurrentCulture, L["ChangedBy"], Fmt.DateTime(changed), policy.UpdatedBy ?? "—")</span>
-                        }
-                    </div>
-                </EditableBy>
-            </EditForm>
-        }
+        <AutomationRulesSettings />
     </Tab>
 </Tabs>
 
@@ -231,7 +169,6 @@
     private AlertList? alerts;
     private NotificationPage? messages;
     private AutomationLogPage? log;
-    private AutomationPolicy? policy;
     private bool? alertOpen = true;
     private AlertKind? alertKind;
     private string? alertHub;
@@ -244,10 +181,6 @@
     private bool messagesLoading;
     private bool logLoading;
     private bool running;
-    private bool saving;
-
-    private IReadOnlyList<SegmentOption<OrderConfirmationMode>> ConfirmOptions =>
-        [.. Enum.GetValues<OrderConfirmationMode>().Select(m => new SegmentOption<OrderConfirmationMode>(m, ShipmentTexts.Of(m)))];
 
     private IReadOnlyList<SegmentOption<bool?>> OpenOptions => [new(true, L["Open"]), new(false, L["Closed"]), new(null, L["All"])];
 
@@ -271,7 +204,7 @@
     {
         "messages" => LoadMessagesAsync(),
         "log" => LoadLogAsync(),
-        "rules" => LoadPolicyAsync(),
+        "rules" => Task.CompletedTask, // the embedded AutomationRulesSettings loads and saves the policy itself
         _ => LoadAlertsAsync(),
     };
 
@@ -315,8 +248,6 @@
             logLoading = false;
         }
     }
-
-    private async Task LoadPolicyAsync() => policy ??= await Operations.GetPolicyAsync();
 
     private async Task RunAsync()
     {
@@ -372,29 +303,6 @@
     {
         await Operations.MarkMessageAsync(m.Id, status);
         await Task.WhenAll(LoadMessagesAsync(), LoadOverviewAsync());
-    }
-
-    private async Task SavePolicyAsync()
-    {
-        if (policy is null)
-        {
-            return;
-        }
-
-        saving = true;
-        try
-        {
-            policy = await Operations.UpdatePolicyAsync(policy);
-            Toaster.Success(L["RulesSaved"]);
-        }
-        catch (ApiException ex)
-        {
-            Toaster.Error(ex.UserMessage);
-        }
-        finally
-        {
-            saving = false;
-        }
     }
 
     private string DetailText(AutomationLogItem e) => e.Rule switch
