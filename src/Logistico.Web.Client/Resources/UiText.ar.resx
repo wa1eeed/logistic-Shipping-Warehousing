@@ -911,6 +911,7 @@
   <data name="Pricing_InheritsRegion" xml:space="preserve"><value>يرث المنطقة</value></data>
   <data name="Pricing_AddStandardCities" xml:space="preserve"><value>أضف مدن المملكة الكبرى</value></data>
   <data name="Pricing_CityNameBulk" xml:space="preserve"><value>اسم المدينة (أو عدة بفواصل)</value></data>
+  <data name="Pricing_RegionHub" xml:space="preserve"><value>مركز المنطقة</value></data>
   <data name="Pricing_SetAll" xml:space="preserve"><value>الكل:</value></data>
   <data name="Pricing_To" xml:space="preserve"><value>الزبون في</value></data>
   <data name="Pricing_WeightCharge" xml:space="preserve"><value>الوزن الإضافي</value></data>

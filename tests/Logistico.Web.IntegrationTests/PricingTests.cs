@@ -88,4 +88,27 @@ public sealed class PricingTests(LogisticoApiFactory factory)
         inherits.DestinationCityCode = "IQ-BA-ZBR";
         Assert.Equal(7_000m, (await client.GetShipmentAsync((await client.BookAsync(inherits)).Id)).DeliveryFee);
     }
+
+    [Fact]
+    public async Task A_city_can_be_sorted_through_a_hub_other_than_its_regions()
+    {
+        var client = factory.CreateUserClient(tenant: Guid.CreateVersion7());
+        var shop = await client.CreateMerchantAsync("متجر التوجيه", "city.routing.test");
+
+        var response = await client.GetAsync("/" + ShipmentsApiRoutes.Pricing);
+        var card = (await response.Content.ReadFromJsonAsync<RateCard>())!;
+        // Basra normally sorts through the Basra hub; this city is routed through Baghdad instead, another inherits Basra.
+        card.Cities.Add(new CityRate("IQ-BA-FAW", "IQ-BA", "Al-Faw", "الفاو", null, IraqHubs.Baghdad));
+        card.Cities.Add(new CityRate("IQ-BA-ZBR", "IQ-BA", "Zubair", "الزبير", null));
+        var saved = await client.PutWithETagAsync(ShipmentsApiRoutes.Pricing, card, response.Headers.ETag!);
+        Assert.True(saved.IsSuccessStatusCode, await saved.Content.ReadAsStringAsync());
+
+        var overridden = ApiTestHelpers.DomesticOrder(shop, "زبون الفاو");
+        overridden.DestinationCityCode = "IQ-BA-FAW";
+        Assert.Equal(IraqHubs.Baghdad, (await client.GetShipmentAsync((await client.BookAsync(overridden)).Id)).DestinationHubCode);
+
+        var inherits = ApiTestHelpers.DomesticOrder(shop, "زبون الزبير");
+        inherits.DestinationCityCode = "IQ-BA-ZBR";
+        Assert.Equal(IraqHubs.Basra, (await client.GetShipmentAsync((await client.BookAsync(inherits)).Id)).DestinationHubCode);
+    }
 }

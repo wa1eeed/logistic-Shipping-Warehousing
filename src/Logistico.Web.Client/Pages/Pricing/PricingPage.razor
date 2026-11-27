@@ -173,7 +173,17 @@ else
                                     <li class="lx-list-item">
                                         <span class="lx-list-icon lx-list-icon-primary"><Icon Name="map-marker" /></span>
                                         <span class="lx-list-body"><span class="lx-list-title"><Mixed Text="@c.Name" /></span></span>
-                                        <div class="bp6-input-group" style="width:160px">
+                                        <span class="bp6-html-select bp6-small" style="width:150px">
+                                            <select value="@(c.HubCode ?? "")" @onchange="@(e => SetCityHub(c, e.Value?.ToString()))" aria-label="@L["DestinationHub"]">
+                                                <option value="">@L["Pricing_RegionHub"]</option>
+                                                @foreach (var h in HubCatalog.All)
+                                                {
+                                                    <option value="@h.Code">@h.Name</option>
+                                                }
+                                            </select>
+                                            <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
+                                        </span>
+                                        <div class="bp6-input-group" style="width:150px">
                                             <input class="bp6-input bp6-small" type="number" min="0" step="1" dir="ltr" value="@(c.Fee?.ToString("0", CultureInfo.InvariantCulture) ?? "")"
                                                    placeholder="@L["Pricing_InheritsRegion"]" @onchange="@(e => SetCityFee(c, e.Value))" aria-label="@c.Name" />
                                             <span class="bp6-input-action lx-input-suffix">@Fmt.CurrencyUnit()</span>
@@ -303,6 +313,15 @@ else
         if (index >= 0)
         {
             card.Cities[index] = city with { Fee = fee };
+        }
+    }
+
+    private void SetCityHub(CityRate city, string? hubCode)
+    {
+        var index = card!.Cities.IndexOf(city);
+        if (index >= 0)
+        {
+            card.Cities[index] = city with { HubCode = string.IsNullOrEmpty(hubCode) ? null : hubCode };
         }
     }
 

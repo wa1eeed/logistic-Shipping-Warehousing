@@ -39,14 +39,23 @@ internal sealed class OrderDesk(
         }
 
         var network = await hubs.NetworkAsync(tenant.TenantId, ct);
-        if (request.ServiceType == ServiceType.Domestic && request.DeliveryFee is null)
+        string? cityHub = null;
+        if (request.ServiceType == ServiceType.Domestic)
         {
-            // No fee typed: the company's price list decides.
-            request.DeliveryFee = (await pricing.GetAsync(tenant.TenantId, ct))
-                .Quote(merchant?.Governorate ?? request.OriginCode, request.DestinationCode, request.GrossWeightKg, merchant?.Id, request.DestinationCityCode).Fee;
+            // The price list decides an untyped fee and tells us whether the chosen city is sorted through its own hub.
+            var card = await pricing.GetAsync(tenant.TenantId, ct);
+            if (request.DeliveryFee is null)
+            {
+                request.DeliveryFee = card.Quote(merchant?.Governorate ?? request.OriginCode, request.DestinationCode, request.GrossWeightKg, merchant?.Id, request.DestinationCityCode).Fee;
+            }
+
+            if (!string.IsNullOrEmpty(request.DestinationCityCode))
+            {
+                cityHub = card.Cities.FirstOrDefault(c => string.Equals(c.Code, request.DestinationCityCode, StringComparison.OrdinalIgnoreCase))?.HubCode;
+            }
         }
 
-        var shipment = Shipment.Book(tenant.TenantId, await numbers.TrackingNumberAsync(ct), request, merchant, bookedBy, clock.GetUtcNow(), network);
+        var shipment = Shipment.Book(tenant.TenantId, await numbers.TrackingNumberAsync(ct), request, merchant, bookedBy, clock.GetUtcNow(), network, cityHub);
         db.Shipments.Add(shipment);
         await confirmations.ApplyPolicyAsync([shipment], ct);
         await db.SaveChangesAsync(ct);

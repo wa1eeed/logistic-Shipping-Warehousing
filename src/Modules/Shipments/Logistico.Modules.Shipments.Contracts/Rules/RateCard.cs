@@ -126,8 +126,11 @@ public sealed class RateCard : IValidatableObject
 
 public sealed record SellerDiscount(Guid MerchantId, string MerchantName, decimal Percent);
 
-/// <summary>A city under a region (<see cref="RegionCode"/>), optionally with its own delivery price (null = inherit the region's).</summary>
-public sealed record CityRate(string Code, string RegionCode, string NameEn, string NameAr, decimal? Fee)
+/// <summary>
+/// A city under a region (<see cref="RegionCode"/>), optionally with its own delivery price (null <see cref="Fee"/> =
+/// inherit the region's) and optionally sorted through a specific hub (null <see cref="HubCode"/> = the region's hub).
+/// </summary>
+public sealed record CityRate(string Code, string RegionCode, string NameEn, string NameAr, decimal? Fee, string? HubCode = null)
 {
     public string Name => System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? NameAr : NameEn;
 }
