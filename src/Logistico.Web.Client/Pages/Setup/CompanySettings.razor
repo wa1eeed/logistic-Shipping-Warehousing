@@ -1,0 +1,149 @@
+@* The company's profile and operating country. The country is the single source of the platform's currency and
+   regions, so changing it flips both everywhere; the form makes that explicit. Shared by the /settings/company page
+   and the "General" tab of the settings hub. *@
+@inject CompanyApi Company
+@inject Toaster Toaster
+
+@if (view is null)
+{
+    <Skeleton Block="true" Lines="5" />
+}
+else
+{
+    <Section Title="@L["Company_Profile"]" Subtitle="@L["Company_ProfileHint"]" Icon="office">
+        <EditForm Model="model" OnValidSubmit="SaveAsync" Context="form">
+            <DataAnnotationsValidator />
+            <ServerErrors @ref="serverErrors" />
+            <div class="lx-form-grid">
+                <FormField Label="@L["Company_Name"]" Required="true" Field="() => model.Name" CssClass="lx-span-2">
+                    <InputText class="bp6-input bp6-fill" @bind-Value="model.Name" dir="auto" maxlength="100" />
+                </FormField>
+                <FormField Label="@L["Company_Country"]" Required="true" Field="() => model.Country">
+                    <span class="bp6-html-select bp6-fill">
+                        <InputSelect @bind-Value="model.Country" @bind-Value:after="CountryChanged">
+                            @foreach (var country in Countries.All.OrderBy(c => c.Name, StringComparer.CurrentCulture))
+                            {
+                                <option value="@country.Code">@country.Name</option>
+                            }
+                        </InputSelect>
+                        <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
+                    </span>
+                </FormField>
+                @* Currency is derived from the country — shown here so the link is obvious, not a separate setting. *@
+                <div class="lx-currency-readout">
+                    <span class="lx-currency-readout-icon"><Icon Name="dollar" /></span>
+                    <div class="lx-currency-readout-copy">
+                        <span class="lx-currency-readout-label">@L["Company_Currency"]</span>
+                        <span class="lx-currency-readout-value"><bdi dir="ltr">@Currencies.Symbol(Currency, Arabic)</bdi> @Currencies.Name(Currency, Arabic)</span>
+                    </div>
+                    <span class="lx-currency-readout-hint bp6-text-muted lx-small">@L["Company_CurrencyHint"]</span>
+                </div>
+                <FormField Label="@L["Field_Phone"]" Field="() => model.Phone">
+                    <InputText class="bp6-input bp6-fill" @bind-Value="model.Phone" type="tel" dir="ltr" maxlength="20" placeholder="@(Countries.IsIraq(model.Country) ? "0770 123 4567" : Countries.IsSaudi(model.Country) ? "050 123 4567" : "+962 7 9000 0000")" />
+                </FormField>
+                @if (Countries.IsIraq(model.Country))
+                {
+                    <FormField TValue="string" Label="@L["Company_Governorate"]" Hint="@L["Optional"]" For="lx-company-gov">
+                        <HtmlSelect Id="lx-company-gov" Value="@model.Governorate" ValueChanged="@(v => model.Governorate = string.IsNullOrEmpty(v) ? null : v)" Fill="true" Label="@L["Company_Governorate"]">
+                            <option value="">—</option>
+                            @foreach (var g in IraqGovernorates.All.OrderBy(g => g.Name, StringComparer.CurrentCulture))
+                            {
+                                <option value="@g.Code">@g.Name</option>
+                            }
+                        </HtmlSelect>
+                    </FormField>
+                }
+                else
+                {
+                    <FormField TValue="string" Label="@L["Company_Region"]" Hint="@L["Optional"]" For="lx-company-region">
+                        <HtmlSelect Id="lx-company-region" Value="@model.Governorate" ValueChanged="@(v => model.Governorate = string.IsNullOrEmpty(v) ? null : v)" Fill="true" Label="@L["Company_Region"]">
+                            <option value="">—</option>
+                            @foreach (var place in HubCatalog.Places.OrderBy(p => p.Name, StringComparer.CurrentCulture))
+                            {
+                                <option value="@place.Code">@place.Name</option>
+                            }
+                        </HtmlSelect>
+                    </FormField>
+                }
+                <FormField Label="@L["Field_Address"]" Hint="@L["Optional"]" Field="() => model.Address" CssClass="lx-span-2">
+                    <InputTextArea class="bp6-input bp6-fill" rows="2" @bind-Value="model.Address" dir="auto" maxlength="300" />
+                </FormField>
+            </div>
+            @if (CountryChangedFromSaved)
+            {
+                <Callout Intent="Intent.Warning" Icon="warning-sign" CssClass="lx-mb">
+                    @string.Format(CultureInfo.CurrentCulture, L["Company_CountryChangeWarning"], CountryName(model.Country), Currencies.Name(Currency, Arabic))
+                </Callout>
+            }
+            @if (error is not null)
+            {
+                <Callout Intent="Intent.Danger" Icon="error" CssClass="lx-mb">@error</Callout>
+            }
+            <div class="lx-row" style="gap:12px">
+                <Button Type="submit" Intent="Intent.Primary" Icon="tick" Text="@L["Save"]" Loading="saving" />
+                @if (view.UpdatedAt is { } at)
+                {
+                    <span class="bp6-text-muted lx-small">@string.Format(CultureInfo.CurrentCulture, L["UpdatedByAt"], view.UpdatedBy ?? "—", Fmt.DateTime(at))</span>
+                }
+            </div>
+        </EditForm>
+    </Section>
+}
+
+@code {
+    private CompanyProfileView? view;
+    private CompanyProfile model = new();
+    private ServerErrors? serverErrors;
+    private string? error;
+    private bool saving;
+    private string originalCountry = Countries.Iraq;
+
+    private static bool Arabic => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar";
+
+    private string Currency => Currencies.For(model.Country);
+
+    private bool CountryChangedFromSaved => view is not null && !string.Equals(model.Country, originalCountry, StringComparison.OrdinalIgnoreCase);
+
+    private static string CountryName(string code) => Countries.All.FirstOrDefault(c => c.Code == code)?.Name ?? code;
+
+    protected override async Task OnInitializedAsync()
+    {
+        view = await Company.GetCompanyAsync(refresh: true);
+        model = view.Profile.Clone();
+        originalCountry = view.Profile.Country;
+    }
+
+    private void CountryChanged()
+    {
+        if (!string.IsNullOrEmpty(model.Governorate) && Countries.IsIraq(model.Country) != model.Governorate.StartsWith("IQ-", StringComparison.Ordinal))
+        {
+            model.Governorate = null;
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        if (view is null)
+        {
+            return;
+        }
+
+        error = null;
+        saving = true;
+        try
+        {
+            view = await Company.SaveCompanyAsync(model, view.Version);
+            model = view.Profile.Clone();
+            originalCountry = view.Profile.Country;
+            Toaster.Success(L["Company_Saved"]);
+        }
+        catch (ApiException ex)
+        {
+            error = serverErrors?.Show(ex) ?? ex.UserMessage;
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+}

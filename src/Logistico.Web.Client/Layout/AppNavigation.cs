@@ -55,6 +55,7 @@ public static class AppNavigation
         ]),
         new("Nav_AdminSection",
         [
+            new("settings", "Nav_Settings", "cog", null, "settings preferences currency country configuration الإعدادات التفضيلات العملة الدولة الضبط", Exact: true, Policy: StaffPolicies.Administer),
             new("getting-started", "Nav_GettingStarted", "flag", null, "getting started guide setup first steps onboarding checklist البدء دليل الإعداد الخطوات الأولى"),
             new("settings/company", "Nav_Company", "office", null, "company profile name phone address الشركة الملف الاسم الهاتف العنوان", Policy: StaffPolicies.Administer),
             new("team", "Nav_Team", "key", "x", "team users staff roles access permissions الفريق المستخدمين الصلاحيات الأدوار", Policy: StaffPolicies.Administer),

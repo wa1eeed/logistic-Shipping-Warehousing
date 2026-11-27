@@ -2348,3 +2348,39 @@ a.lx-kpi:hover { transform: translateY(-1px); }
     .lx-dashboard > * { animation: none; }
     a.lx-kpi:hover { transform: none; }
 }
+
+/* Settings hub: the company's currency, derived from its country, shown inline in the profile form. */
+.lx-currency-readout {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 12px 14px; border: 1px solid var(--lx-border); border-radius: var(--lx-radius); background: var(--lx-surface-2);
+}
+.lx-currency-readout-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex: none;
+    border-radius: var(--lx-radius); background: var(--lx-success-soft); color: var(--lx-success);
+}
+.lx-currency-readout-copy { display: grid; gap: 1px; }
+.lx-currency-readout-label { font-size: var(--lx-font-size-sm); color: var(--lx-muted); }
+.lx-currency-readout-value { font-weight: 700; color: var(--lx-text-strong); }
+.lx-currency-readout-value bdi { font-variant-numeric: tabular-nums; }
+.lx-currency-readout-hint { margin-inline-start: auto; }
+
+/* Settings hub: cards that open each area's own page (also reachable from the side menu). */
+.lx-settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.lx-settings-card {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-width: 0;
+    background: var(--lx-surface); border: 1px solid var(--lx-border); border-radius: var(--lx-radius-card);
+    color: inherit !important; text-decoration: none !important; transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out, transform 0.15s ease-out;
+}
+.lx-settings-card:hover { border-color: var(--lx-button-border-hover); box-shadow: var(--lx-shadow); transform: translateY(-1px); }
+.lx-settings-card:focus-visible { outline: none; box-shadow: var(--lx-focus-ring); }
+.lx-settings-card-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: none;
+    border-radius: var(--lx-radius); background: var(--lx-primary-soft); color: var(--lx-primary);
+}
+.lx-settings-card-body { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.lx-settings-card-title { font-weight: 700; color: var(--lx-text-strong); }
+.lx-settings-card-desc { font-size: var(--lx-font-size-sm); color: var(--lx-muted); line-height: 1.4; }
+.lx-settings-card-chevron { color: var(--lx-muted); flex: none; }
+@media (prefers-reduced-motion: reduce) {
+    .lx-settings-card:hover { transform: none; }
+}

@@ -1821,4 +1821,20 @@
   <data name="Dashboard_Briefing_Attention_Two" xml:space="preserve"><value>بندان يحتاجان متابعتك</value></data>
   <data name="Dashboard_Briefing_Attention_Few" xml:space="preserve"><value>{0} بنود تحتاج متابعتك</value></data>
   <data name="Dashboard_Briefing_Attention_Many" xml:space="preserve"><value>{0} بنداً يحتاج متابعتك</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>الإعدادات</value></data>
+  <data name="Settings_Subtitle" xml:space="preserve"><value>كل إعدادات المنصّة في مكان واحد</value></data>
+  <data name="Settings_Tab_General" xml:space="preserve"><value>عام</value></data>
+  <data name="Settings_Tab_Pricing" xml:space="preserve"><value>التسعير والمناطق</value></data>
+  <data name="Settings_Tab_Operations" xml:space="preserve"><value>العمليات</value></data>
+  <data name="Settings_Tab_Admin" xml:space="preserve"><value>الفريق والنظام</value></data>
+  <data name="Settings_PricingDesc" xml:space="preserve"><value>أسعار التوصيل والمناطق والمدن</value></data>
+  <data name="Settings_WarehousesDesc" xml:space="preserve"><value>المستودعات ومراكز الفرز والتغطية</value></data>
+  <data name="Settings_AutomationDesc" xml:space="preserve"><value>قواعد التنبيهات والأتمتة</value></data>
+  <data name="Settings_ConfirmationsDesc" xml:space="preserve"><value>مكالمات تأكيد الطلبات وإعداداتها</value></data>
+  <data name="Settings_TeamDesc" xml:space="preserve"><value>المستخدمون والأدوار والصلاحيات</value></data>
+  <data name="Settings_MobileDesc" xml:space="preserve"><value>تطبيق المندوب والتاجر وربط الأجهزة</value></data>
+  <data name="Settings_SystemDesc" xml:space="preserve"><value>صحة التثبيت والبريد والنسخ الاحتياطي</value></data>
+  <data name="Company_Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="Company_CurrencyHint" xml:space="preserve"><value>تُحدَّد تلقائياً من دولة التشغيل</value></data>
+  <data name="Company_CountryChangeWarning" xml:space="preserve"><value>تغيير الدولة إلى {0} سيحوّل عملة المنصّة ومناطقها إلى {1}. الشحنات السابقة تحتفظ بعملتها الأصلية.</value></data>
 </root>
