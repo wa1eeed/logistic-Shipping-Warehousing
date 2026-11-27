@@ -137,7 +137,11 @@
 
 @code {
     private static readonly string[] Incoterms = ["EXW", "FCA", "FOB", "CFR", "CIF", "CPT", "CIP", "DAP", "DPU", "DDP", "FAS"];
-    private static readonly string[] Currencies = ["USD", "IQD", "EUR", "CNY", "TRY", "AED"];
+
+    // The local-currency option follows the company's own currency (SAR or IQD) rather than a fixed "IQD";
+    // the server accepts any declared currency, and Distinct() avoids listing it twice if it is already present.
+    private static IReadOnlyList<string> Currencies =>
+        new[] { "USD", Fmt.CompanyCurrency, "EUR", "CNY", "TRY", "AED" }.Distinct().ToList();
 
     private readonly CreateShipmentRequest model = new()
     {
