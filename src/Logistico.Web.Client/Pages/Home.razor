@@ -3,6 +3,7 @@
 @inject ShipmentsApi Shipments
 @inject OperationsApi Operations
 @inject OpsState Ops
+@inject IOpsLive Live
 @inject IJSRuntime JS
 
 <PageTitle>@L["Nav_Dashboard"] · @L["AppName"]</PageTitle>
@@ -86,6 +87,8 @@ else
     private int days = 7;
     private bool loading = true;
     private string? error;
+    private bool pulseRefreshing;
+    private bool pulsePending;
 
     private IReadOnlyList<SegmentOption<int>> PeriodOptions =>
         [new(1, L["Period_Today"]), new(7, L["Period_7"]), new(30, L["Period_30"]), new(90, L["Period_90"])];
@@ -153,6 +156,60 @@ else
     {
         await RestorePeriodAsync();
         await LoadDashboardAsync();
+        StartLiveUpdates();
+    }
+
+    /// <summary>
+    /// Keep the live operational panel (the pulse, the attention list and today's counters) current the moment a scan
+    /// or a counter changes on the server, instead of only when the user hits Refresh. The heavier period analytics
+    /// (the charts) are left to Refresh and the period selector, so a scan never reloads a chart or flashes a skeleton.
+    /// </summary>
+    private void StartLiveUpdates()
+    {
+        Live.ScansChanged += OnLiveChanged;
+        Live.CountersChanged += OnLiveChanged;
+        _ = Live.StartAsync();
+    }
+
+    private void OnLiveChanged() => _ = InvokeAsync(RefreshPulseAsync);
+
+    private async Task RefreshPulseAsync()
+    {
+        // One refresh at a time; a signal that arrives while we are fetching runs once more after, so the panel ends
+        // on the latest state without a fetch per signal (a scan fires both a scans and a counters signal).
+        if (pulseRefreshing)
+        {
+            pulsePending = true;
+            return;
+        }
+
+        pulseRefreshing = true;
+        try
+        {
+            do
+            {
+                pulsePending = false;
+                var ct = lifetime.Token;
+                var summaryTask = Shipments.GetSummaryAsync(ct: ct);
+                var alertsTask = Operations.ListAlertsAsync(pageSize: 1, ct: ct);
+                await Task.WhenAll(summaryTask, alertsTask, Ops.RefreshAsync());
+                summary = await summaryTask;
+                alerts = await alertsTask;
+                StateHasChanged();
+            }
+            while (pulsePending && !lifetime.IsCancellationRequested);
+        }
+        catch (OperationCanceledException) when (lifetime.IsCancellationRequested)
+        {
+        }
+        catch (Exception ex) when (ex is ApiException or HttpRequestException or TaskCanceledException)
+        {
+            // A best-effort live refresh: the manual Refresh button and the shell's polling fallback still work.
+        }
+        finally
+        {
+            pulseRefreshing = false;
+        }
     }
 
     private async Task RestorePeriodAsync()
@@ -272,6 +329,8 @@ else
 
     public void Dispose()
     {
+        Live.ScansChanged -= OnLiveChanged;
+        Live.CountersChanged -= OnLiveChanged;
         lifetime.Cancel();
         lifetime.Dispose();
     }
