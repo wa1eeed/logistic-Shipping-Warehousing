@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Logistico.Modules.Shipments;
 
@@ -44,6 +45,8 @@ public static class ShipmentsModule
         services.AddScoped<IGettingStartedFacts>(sp => sp.GetRequiredService<ShipmentsSetupFacts>());
         services.AddScoped<IDatabaseHealth>(sp => sp.GetRequiredService<ShipmentsSetupFacts>());
         services.AddScoped<WarehouseScanner>();
+        // Live updates are off by default; the host (Logistico.Web) replaces this with a SignalR-backed notifier.
+        services.TryAddScoped<Contracts.IOpsNotifier, NullOpsNotifier>();
         services.AddScoped<RequestDesk>();
         services.AddScoped<ReturnDesk>();
         services.AddScoped<OrderDesk>();
