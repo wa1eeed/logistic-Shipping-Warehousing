@@ -58,4 +58,34 @@ public sealed class PricingTests(LogisticoApiFactory factory)
         var batchOrder = (await batch.Content.ReadFromJsonAsync<BulkBookOrdersResponse>())!.Orders.Single();
         Assert.Equal(8_000m, (await client.GetShipmentAsync(batchOrder.Id)).DeliveryFee);
     }
+
+    [Fact]
+    public async Task A_city_with_its_own_price_overrides_its_region_and_shows_on_the_order_form()
+    {
+        var client = factory.CreateUserClient(tenant: Guid.CreateVersion7());
+        var shop = await client.CreateMerchantAsync("متجر المدن", "city.pricing.test");
+
+        var response = await client.GetAsync("/" + ShipmentsApiRoutes.Pricing);
+        var card = (await response.Content.ReadFromJsonAsync<RateCard>())!;
+        // One Basra city priced at 12,000 of its own; another that inherits the region's 7,000.
+        card.Cities.Add(new CityRate("IQ-BA-QRN", "IQ-BA", "Qurna", "القرنة", 12_000m));
+        card.Cities.Add(new CityRate("IQ-BA-ZBR", "IQ-BA", "Zubair", "الزبير", null));
+        var saved = await client.PutWithETagAsync(ShipmentsApiRoutes.Pricing, card, response.Headers.ETag!);
+        Assert.True(saved.IsSuccessStatusCode, await saved.Content.ReadAsStringAsync());
+
+        // The cities are offered to the order form.
+        var cities = (await client.GetFromJsonAsync<List<CityOption>>("/" + ShipmentsApiRoutes.PricingCities))!;
+        Assert.Contains(cities, c => c.Code == "IQ-BA-QRN" && c.RegionCode == "IQ-BA");
+
+        // An order to that city is priced at the city's fee; the city that inherits, and no city at all, use the region's 7,000.
+        var toCity = ApiTestHelpers.DomesticOrder(shop, "زبون القرنة");
+        toCity.DeliveryFee = null;
+        toCity.DestinationCityCode = "IQ-BA-QRN";
+        Assert.Equal(12_000m, (await client.GetShipmentAsync((await client.BookAsync(toCity)).Id)).DeliveryFee);
+
+        var inherits = ApiTestHelpers.DomesticOrder(shop, "زبون الزبير");
+        inherits.DeliveryFee = null;
+        inherits.DestinationCityCode = "IQ-BA-ZBR";
+        Assert.Equal(7_000m, (await client.GetShipmentAsync((await client.BookAsync(inherits)).Id)).DeliveryFee);
+    }
 }

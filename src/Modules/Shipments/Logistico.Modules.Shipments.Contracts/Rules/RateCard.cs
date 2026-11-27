@@ -25,6 +25,9 @@ public sealed class RateCard : IValidatableObject
     /// <summary>Price per destination governorate (ISO code → IQD), for deliveries outside the seller's governorate.</summary>
     public Dictionary<string, decimal> GovernorateFees { get; set; } = DefaultGovernorateFees();
 
+    /// <summary>Optional cities under a region. A city with a fee of its own overrides its region's price; one with no fee inherits it.</summary>
+    public List<CityRate> Cities { get; set; } = [];
+
     [Range(0, 100, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.Range))]
     public decimal IncludedWeightKg { get; set; } = 5m;
 
@@ -46,12 +49,14 @@ public sealed class RateCard : IValidatableObject
     public string? UpdatedBy { get; set; }
 
     /// <summary>The delivery fee for a parcel from <paramref name="origin"/> to <paramref name="destination"/>.</summary>
-    public PriceQuote Quote(string? origin, string? destination, decimal weightKg, Guid? merchantId = null)
+    public PriceQuote Quote(string? origin, string? destination, decimal weightKg, Guid? merchantId = null, string? cityCode = null)
     {
         var from = origin?.Trim().ToUpperInvariant() ?? "";
         var to = destination?.Trim().ToUpperInvariant() ?? "";
         var local = to.Length == 0 || from == to;
-        var baseFee = local ? SameGovernorateFee : GovernorateFees.GetValueOrDefault(to, DefaultFee);
+        // A city with its own price is the most specific tier; otherwise fall back to the region (or same-governorate) price.
+        var cityFee = string.IsNullOrEmpty(cityCode) ? null : Cities.FirstOrDefault(c => string.Equals(c.Code, cityCode, StringComparison.OrdinalIgnoreCase))?.Fee;
+        var baseFee = cityFee ?? (local ? SameGovernorateFee : GovernorateFees.GetValueOrDefault(to, DefaultFee));
         var extraKg = weightKg > IncludedWeightKg ? Math.Ceiling(weightKg - IncludedWeightKg) : 0m;
         var gross = baseFee + extraKg * ExtraKgFee;
         var discount = merchantId is { } id ? SellerDiscounts.FirstOrDefault(d => d.MerchantId == id)?.Percent ?? 0m : 0m;
@@ -85,6 +90,12 @@ public sealed class RateCard : IValidatableObject
         {
             yield return new(string.Format(System.Globalization.CultureInfo.CurrentCulture, ValidationText.Range, "", 0, 100), [nameof(SellerDiscounts)]);
         }
+
+        if (Cities.Any(c => string.IsNullOrWhiteSpace(c.Code) || !PlaceCodes.IsValid(c.RegionCode) || c.Fee is < 0 or > 1_000_000)
+            || Cities.GroupBy(c => c.Code, StringComparer.OrdinalIgnoreCase).Any(g => g.Count() > 1))
+        {
+            yield return new(ValidationText.Governorate, [nameof(Cities)]);
+        }
     }
 
     public RateCard Clone() => new()
@@ -92,6 +103,7 @@ public sealed class RateCard : IValidatableObject
         SameGovernorateFee = SameGovernorateFee,
         DefaultFee = DefaultFee,
         GovernorateFees = new(GovernorateFees, StringComparer.OrdinalIgnoreCase),
+        Cities = [.. Cities],
         IncludedWeightKg = IncludedWeightKg,
         ExtraKgFee = ExtraKgFee,
         SellerDiscounts = [.. SellerDiscounts.Select(d => d with { })],
@@ -113,6 +125,12 @@ public sealed class RateCard : IValidatableObject
 }
 
 public sealed record SellerDiscount(Guid MerchantId, string MerchantName, decimal Percent);
+
+/// <summary>A city under a region (<see cref="RegionCode"/>), optionally with its own delivery price (null = inherit the region's).</summary>
+public sealed record CityRate(string Code, string RegionCode, string NameEn, string NameAr, decimal? Fee)
+{
+    public string Name => System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? NameAr : NameEn;
+}
 
 /// <summary>How a fee was made up, for showing the seller.</summary>
 public sealed record PriceQuote(decimal Fee, decimal BaseFee, decimal WeightCharge, decimal DiscountPercent, bool SameGovernorate);

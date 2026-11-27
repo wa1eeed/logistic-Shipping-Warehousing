@@ -1273,6 +1273,11 @@ namespace Logistico.Modules.Shipments.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("tenant_id");
 
+                    b.Property<string>("Cities")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("cities");
+
                     b.Property<decimal>("DefaultFee")
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)")
@@ -1902,6 +1907,11 @@ namespace Logistico.Modules.Shipments.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)")
                         .HasColumnName("destination_city");
+
+                    b.Property<string>("DestinationCityCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("destination_city_code");
 
                     b.Property<string>("DestinationCode")
                         .IsRequired()

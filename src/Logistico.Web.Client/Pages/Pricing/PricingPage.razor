@@ -140,6 +140,46 @@ else
                         }
                     </ChildContent>
                 </Section>
+
+                <Section Title="@L["Pricing_Cities"]" Subtitle="@L["Pricing_CitiesHint"]" Icon="map-marker" Padded="false">
+                    <Actions>
+                        <div class="bp6-control-group">
+                            <HtmlSelect Value="@cityRegion" ValueChanged="@(v => cityRegion = v ?? cityRegion)" Small="true" Label="@L["Field_Governorate"]">
+                                @foreach (var g in HubCatalog.Destinations.OrderBy(g => g.Name, StringComparer.CurrentCulture))
+                                {
+                                    <option value="@g.Code">@g.Name</option>
+                                }
+                            </HtmlSelect>
+                            <input class="bp6-input bp6-small" style="width:170px" placeholder="@L["Pricing_CityName"]" @bind="newCityName" @bind:event="oninput" aria-label="@L["Pricing_CityName"]" />
+                            <Button Small="true" Icon="add" Text="@L["Add"]" Disabled="@(string.IsNullOrWhiteSpace(newCityName) || string.IsNullOrEmpty(cityRegion))" OnClick="AddCity" />
+                        </div>
+                    </Actions>
+                    <ChildContent>
+                        @{ var cities = card.Cities.Where(c => c.RegionCode == cityRegion).ToList(); }
+                        @if (cities.Count == 0)
+                        {
+                            <NonIdealState Icon="map-marker" Title="@L["Pricing_NoCities"]" Description="@L["Pricing_NoCitiesHint"]" />
+                        }
+                        else
+                        {
+                            <ul class="lx-list">
+                                @foreach (var c in cities)
+                                {
+                                    <li class="lx-list-item">
+                                        <span class="lx-list-icon lx-list-icon-primary"><Icon Name="map-marker" /></span>
+                                        <span class="lx-list-body"><span class="lx-list-title"><Mixed Text="@c.Name" /></span></span>
+                                        <div class="bp6-input-group" style="width:160px">
+                                            <input class="bp6-input bp6-small" type="number" min="0" step="1" dir="ltr" value="@(c.Fee?.ToString("0", CultureInfo.InvariantCulture) ?? "")"
+                                                   placeholder="@L["Pricing_InheritsRegion"]" @onchange="@(e => SetCityFee(c, e.Value))" aria-label="@c.Name" />
+                                            <span class="bp6-input-action lx-input-suffix">@Fmt.CurrencyUnit()</span>
+                                        </div>
+                                        <Button Small="true" Minimal="true" Icon="trash" Tip="@L["Remove"]" OnClick="@(() => card.Cities.Remove(c))" />
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </ChildContent>
+                </Section>
             </EditableBy>
         </div>
 
@@ -205,6 +245,8 @@ else
     private string from = "";
     private string to = "";
     private decimal weight = 1;
+    private string cityRegion = "";
+    private string? newCityName;
     private bool saving;
     private string? error;
 
@@ -218,6 +260,32 @@ else
         var places = HubCatalog.Destinations;
         from = places.ElementAtOrDefault(0)?.Code ?? from;
         to = places.FirstOrDefault(p => p.Code != from)?.Code ?? from;
+        cityRegion = from;
+    }
+
+    private void AddCity()
+    {
+        if (string.IsNullOrWhiteSpace(newCityName) || string.IsNullOrEmpty(cityRegion))
+        {
+            return;
+        }
+
+        var name = newCityName.Trim();
+        var code = cityRegion + "-" + Guid.NewGuid().ToString("N");
+        card!.Cities.Add(new CityRate(code.Length > 20 ? code[..20] : code, cityRegion, name, name, null));
+        newCityName = null;
+    }
+
+    private void SetCityFee(CityRate city, object? value)
+    {
+        var text = value?.ToString();
+        decimal? fee = string.IsNullOrWhiteSpace(text) ? null
+            : decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out var v) && v >= 0 ? Math.Round(v) : city.Fee;
+        var index = card!.Cities.IndexOf(city);
+        if (index >= 0)
+        {
+            card.Cities[index] = city with { Fee = fee };
+        }
     }
 
     private decimal CommonFee(IReadOnlyList<PlaceInfo> governorates)

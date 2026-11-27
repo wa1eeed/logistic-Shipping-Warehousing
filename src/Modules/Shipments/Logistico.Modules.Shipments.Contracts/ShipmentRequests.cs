@@ -45,6 +45,10 @@ public sealed partial class CreateShipmentRequest : IValidatableObject
     [StringLength(80, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
     public string? DestinationCity { get; set; }
 
+    /// <summary>The structured city under the destination region (its rate-card code), when the shop picked one. Drives city-level pricing.</summary>
+    [StringLength(20, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
+    public string? DestinationCityCode { get; set; }
+
     [StringLength(300, ErrorMessageResourceType = typeof(ValidationText), ErrorMessageResourceName = nameof(ValidationText.MaxLength))]
     public string? DeliveryAddress { get; set; }
 

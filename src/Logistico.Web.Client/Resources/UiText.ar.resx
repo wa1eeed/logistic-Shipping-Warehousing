@@ -361,6 +361,8 @@
   <data name="FailureWillReturn" xml:space="preserve"><value>هذه المحاولة الأخيرة ({0}). ستُعاد الشحنة إلى المتجر تلقائياً.</value></data>
   <data name="Field_Address" xml:space="preserve"><value>العنوان</value></data>
   <data name="Field_Area" xml:space="preserve"><value>المنطقة / الحي</value></data>
+  <data name="Field_City" xml:space="preserve"><value>المدينة</value></data>
+  <data name="ChooseCity" xml:space="preserve"><value>اختر المدينة…</value></data>
   <data name="Field_AssessedDutyIqd" xml:space="preserve"><value>الرسم الجمركي المحتسب (د.ع على سعر 1310)</value></data>
   <data name="Field_AssessmentNo" xml:space="preserve"><value>رقم إشعار التخميد</value></data>
   <data name="Field_BrokerName" xml:space="preserve"><value>المخلص الجمركي / المصرّح</value></data>
@@ -901,6 +903,12 @@
   <data name="Pricing_SameGovernorateHint" xml:space="preserve"><value>الزبون في نفس محافظة المتجر.</value></data>
   <data name="Pricing_Sellers" xml:space="preserve"><value>خصومات المتاجر</value></data>
   <data name="Pricing_SellersHint" xml:space="preserve"><value>أسعار خاصة للمتاجر الكبيرة: نسبة خصم على كل توصيل.</value></data>
+  <data name="Pricing_Cities" xml:space="preserve"><value>المدن</value></data>
+  <data name="Pricing_CitiesHint" xml:space="preserve"><value>مدن داخل كل منطقة بسعر خاص اختياري؛ المدينة بلا سعر ترث سعر منطقتها.</value></data>
+  <data name="Pricing_CityName" xml:space="preserve"><value>اسم المدينة</value></data>
+  <data name="Pricing_NoCities" xml:space="preserve"><value>لا مدن لهذه المنطقة</value></data>
+  <data name="Pricing_NoCitiesHint" xml:space="preserve"><value>أضف مدينة ليظهر اسمها في نموذج الطلب، مع سعر خاص إن رغبت.</value></data>
+  <data name="Pricing_InheritsRegion" xml:space="preserve"><value>يرث المنطقة</value></data>
   <data name="Pricing_SetAll" xml:space="preserve"><value>الكل:</value></data>
   <data name="Pricing_To" xml:space="preserve"><value>الزبون في</value></data>
   <data name="Pricing_WeightCharge" xml:space="preserve"><value>الوزن الإضافي</value></data>

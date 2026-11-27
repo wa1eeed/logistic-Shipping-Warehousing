@@ -24,7 +24,22 @@ internal static class PricingEndpoints
         group.MapGet("/", GetAsync).WithSummary("Delivery prices: same governorate, per destination governorate, weight and seller discounts.");
         group.MapPut("/", UpdateAsync).WithSummary("Changes the delivery prices for new orders. Requires If-Match.")
             .RequireAuthorization(StaffPolicies.Finance);
+
+        // The cities list feeds the order form's city picker (staff and sellers), so it is readable by any signed-in user.
+        app.MapGet("/" + ShipmentsApiRoutes.PricingCities, CitiesAsync)
+            .WithTags("Pricing")
+            .RequireAuthorization()
+            .WithSummary("The cities the company prices under its regions, for order forms.");
         return app;
+    }
+
+    private static async Task<IResult> CitiesAsync(Pricing pricing, ITenantContext tenant, CancellationToken ct)
+    {
+        var card = await pricing.GetAsync(tenant.TenantId, ct);
+        IReadOnlyList<CityOption> cities = [.. card.Cities
+            .OrderBy(c => c.Name, StringComparer.CurrentCulture)
+            .Select(c => new CityOption(c.Code, c.RegionCode, c.NameEn, c.NameAr))];
+        return TypedResults.Ok(cities);
     }
 
     private static async Task<IResult> GetAsync(HttpResponse response, Pricing pricing, ITenantContext tenant, CancellationToken ct)

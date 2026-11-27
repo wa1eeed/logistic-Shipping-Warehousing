@@ -51,6 +51,9 @@ internal sealed class ShipmentsApi(HttpClient http) : ApiClient(http)
     public Task<Logistico.Modules.Shipments.Contracts.Rules.RateCard> UpdatePricingAsync(Logistico.Modules.Shipments.Contracts.Rules.RateCard card, CancellationToken ct = default) =>
         SendAsync<Logistico.Modules.Shipments.Contracts.Rules.RateCard>(HttpMethod.Put, ShipmentsApiRoutes.Pricing, card, card.Version, ct);
 
+    public Task<IReadOnlyList<CityOption>> GetCitiesAsync(CancellationToken ct = default) =>
+        GetAsync<IReadOnlyList<CityOption>>(ShipmentsApiRoutes.PricingCities, ct);
+
     /// <summary>The customer rates the delivery on the public tracking page.</summary>
     public Task RateAsCustomerAsync(string trackingNumber, CustomerRating rating, CancellationToken ct = default) =>
         SendAsync(HttpMethod.Post, ShipmentsApiRoutes.TrackRating(trackingNumber), rating, null, ct);

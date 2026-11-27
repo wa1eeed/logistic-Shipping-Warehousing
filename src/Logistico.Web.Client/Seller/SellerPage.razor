@@ -157,7 +157,7 @@
                 </FormField>
                 <FormField Label="@L["Field_Governorate"]" Required="true" Field="() => draft.DestinationCode">
                     <span class="bp6-html-select bp6-fill">
-                        <InputSelect @bind-Value="draft.DestinationCode" @bind-Value:after="QuoteAsync">
+                        <InputSelect @bind-Value="draft.DestinationCode" @bind-Value:after="OnRegionChanged">
                             <option value="">@L["ChooseGovernorate"]</option>
                             @foreach (var g in HubCatalog.Destinations.OrderBy(g => g.Name, StringComparer.CurrentCulture))
                             {
@@ -167,6 +167,22 @@
                         <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
                     </span>
                 </FormField>
+                @{ var regionCities = cities.Where(c => c.RegionCode == draft.DestinationCode).OrderBy(c => c.Name, StringComparer.CurrentCulture).ToList(); }
+                @if (regionCities.Count > 0)
+                {
+                    <FormField Label="@L["Field_City"]" Field="() => draft.DestinationCityCode">
+                        <span class="bp6-html-select bp6-fill">
+                            <InputSelect @bind-Value="draft.DestinationCityCode" @bind-Value:after="QuoteAsync">
+                                <option value="">@L["ChooseCity"]</option>
+                                @foreach (var c in regionCities)
+                                {
+                                    <option value="@c.Code">@c.Name</option>
+                                }
+                            </InputSelect>
+                            <span class="bp6-icon bp6-icon-standard bp6-icon-double-caret-vertical"></span>
+                        </span>
+                    </FormField>
+                }
                 <FormField Label="@L["Field_Area"]" Field="() => draft.DestinationCity">
                     <InputText class="bp6-input bp6-fill" @bind-Value="draft.DestinationCity" placeholder="@L["AreaPlaceholder"]" />
                 </FormField>
@@ -247,6 +263,7 @@
 @code {
     private SellerHome? home;
     private SellerOrderList? orders;
+    private IReadOnlyList<CityOption> cities = [];
     private bool notLinked;
     private string tab = "orders";
     private SellerOrderView view;
@@ -291,6 +308,7 @@
             // country and its regions — this drives the destination list, place names and the currency on this page.
             var network = await Seller.GetPlacesAsync();
             HubCatalog.Set(network.Hubs, network.Country, network.Places);
+            cities = await Seller.GetCitiesAsync();
             home = await Seller.GetHomeAsync();
             await LoadOrdersAsync(1);
         }
@@ -471,6 +489,17 @@
     }
 
     /// <summary>The company's fee for this destination and weight, from the server (it knows this shop's discount).</summary>
+    // Switching region drops a city that belonged to the old one, then re-quotes.
+    private async Task OnRegionChanged()
+    {
+        if (!cities.Any(c => c.Code == draft.DestinationCityCode && c.RegionCode == draft.DestinationCode))
+        {
+            draft.DestinationCityCode = null;
+        }
+
+        await QuoteAsync();
+    }
+
     private async Task QuoteAsync()
     {
         if (!HubCatalog.Destinations.Any(place => string.Equals(place.Code, draft.DestinationCode, StringComparison.OrdinalIgnoreCase)))
@@ -481,7 +510,7 @@
 
         try
         {
-            quote = await Seller.QuoteAsync(draft.DestinationCode, draft.GrossWeightKg > 0 ? draft.GrossWeightKg : 1m);
+            quote = await Seller.QuoteAsync(draft.DestinationCode, draft.GrossWeightKg > 0 ? draft.GrossWeightKg : 1m, draft.DestinationCityCode);
         }
         catch (ApiException)
         {

@@ -17,8 +17,11 @@ internal sealed class SellerApi(HttpClient http) : ApiClient(http)
     public Task<CreateShipmentResponse> BookAsync(CreateShipmentRequest request, CancellationToken ct = default) =>
         SendAsync<CreateShipmentResponse>(HttpMethod.Post, ShipmentsApiRoutes.SellerOrders, request, null, ct);
 
-    public Task<PriceQuote> QuoteAsync(string destination, decimal weightKg, CancellationToken ct = default) =>
-        GetAsync<PriceQuote>(ShipmentsApiRoutes.SellerQuote + Query(("destination", destination), ("weightKg", weightKg)), ct);
+    public Task<PriceQuote> QuoteAsync(string destination, decimal weightKg, string? city = null, CancellationToken ct = default) =>
+        GetAsync<PriceQuote>(ShipmentsApiRoutes.SellerQuote + Query(("destination", destination), ("weightKg", weightKg), ("city", city)), ct);
+
+    public Task<IReadOnlyList<CityOption>> GetCitiesAsync(CancellationToken ct = default) =>
+        GetAsync<IReadOnlyList<CityOption>>(ShipmentsApiRoutes.PricingCities, ct);
 
     public Task CancelAsync(Guid id, CancellationToken ct = default) => SendAsync(HttpMethod.Post, ShipmentsApiRoutes.SellerCancel(id), null, null, ct);
 

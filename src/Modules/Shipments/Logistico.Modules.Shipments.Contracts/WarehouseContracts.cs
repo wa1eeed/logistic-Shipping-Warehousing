@@ -172,6 +172,12 @@ public sealed record WarehouseList(
     string Country = "IQ",
     IReadOnlyList<PlaceInfo>? Places = null);
 
+/// <summary>A city under a region, for the order form's city picker (no price — the rate card holds that).</summary>
+public sealed record CityOption(string Code, string RegionCode, string NameEn, string NameAr)
+{
+    public string Name => System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ar" ? NameAr : NameEn;
+}
+
 /// <summary>An area a company delivers to: an Iraqi governorate, or a region the company added.</summary>
 public sealed record PlaceInfo(string Code, string NameEn, string NameAr, double Latitude, double Longitude)
 {

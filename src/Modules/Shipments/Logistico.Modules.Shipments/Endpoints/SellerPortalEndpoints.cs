@@ -140,7 +140,7 @@ internal static class SellerPortalEndpoints
         }
     }
 
-    private static async Task<IResult> QuoteAsync(string? destination, decimal? weightKg, ClaimsPrincipal user, IMerchantDirectory merchants, Pricing pricing, OperatingPlaces places, ITenantContext tenant, CancellationToken ct)
+    private static async Task<IResult> QuoteAsync(string? destination, decimal? weightKg, string? city, ClaimsPrincipal user, IMerchantDirectory merchants, Pricing pricing, OperatingPlaces places, ITenantContext tenant, CancellationToken ct)
     {
         if (await ShopOfAsync(user, merchants, ct) is not { } shop)
         {
@@ -154,7 +154,7 @@ internal static class SellerPortalEndpoints
         }
 
         var weight = Math.Clamp(weightKg ?? 1m, 0.001m, 1_000_000m);
-        return TypedResults.Ok((await pricing.GetAsync(tenant.TenantId, ct)).Quote(shop.Governorate, destination, weight, shop.Id));
+        return TypedResults.Ok((await pricing.GetAsync(tenant.TenantId, ct)).Quote(shop.Governorate, destination, weight, shop.Id, city));
     }
 
     private static async Task<IResult> PlacesAsync(ClaimsPrincipal user, IMerchantDirectory merchants, OperatingPlaces places, ITenantContext tenant, CancellationToken ct)
