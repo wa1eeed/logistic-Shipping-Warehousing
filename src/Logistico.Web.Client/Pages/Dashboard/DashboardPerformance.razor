@@ -20,7 +20,7 @@
                                     <tr @onclick="@(() => Navigation.NavigateTo(sellerHref))"
                                         @onkeydown="@(e => NavigateOnKey(e, sellerHref))"
                                         class="lx-row-link" role="link" tabindex="0">
-                                        <td><Cell Title="@seller.Name" Sub="@(seller.CodCollected > 0 ? Fmt.Money(seller.CodCollected, "IQD") : null)" /></td>
+                                        <td><Cell Title="@seller.Name" Sub="@(seller.CodCollected > 0 ? Fmt.MoneyLocal(seller.CodCollected) : null)" /></td>
                                         <td class="lx-num">@Fmt.Number(seller.Orders)</td>
                                         <td class="lx-num"><RateTag Value="seller.SuccessRate" /></td>
                                     </tr>

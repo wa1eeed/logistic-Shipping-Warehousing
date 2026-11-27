@@ -49,7 +49,7 @@ else
         <KpiCard Icon="shopping-cart" Label="@L["Insights_Orders"]" Value="@Fmt.Number((int)data.Orders.Value)" Intent="Intent.Primary" Change="data.Orders.ChangePercent" />
         <KpiCard Icon="endorsed" Label="@L["Kpi_SuccessRate"]" Value="@Fmt.Percent(data.SuccessRate.Value)" Change="data.SuccessRate.ChangePoints" ChangeInPoints="true"
                  Intent="@(data.SuccessRate.Value >= 90 ? Intent.Success : data.SuccessRate.Value >= 80 ? Intent.Warning : Intent.Danger)" Hint="@L["Kpi_SuccessRateHint"]" />
-        <KpiCard Icon="dollar" Label="@L["Insights_AvgBasket"]" Amount="basket.Value" Currency="IQD" Change="basket.ChangePercent" Hint="@L["Insights_AvgBasketHint"]" />
+        <KpiCard Icon="dollar" Label="@L["Insights_AvgBasket"]" Amount="basket.Value" Currency="@Fmt.CompanyCurrency" Change="basket.ChangePercent" Hint="@L["Insights_AvgBasketHint"]" />
         <KpiCard Icon="people" Label="@L["Insights_Customers"]" Value="@Fmt.Number(data.Customers.Customers)" Hint="@L["Insights_CustomersHint"]" />
         <KpiCard Icon="repeat" Label="@L["Insights_RepeatShare"]" Value="@Fmt.Percent(data.Customers.RepeatOrderShare)" Intent="Intent.Success"
                  Hint="@string.Format(CultureInfo.CurrentCulture, L["Insights_RepeatHint"], Fmt.Number(data.Customers.RepeatCustomers))" />
@@ -116,7 +116,7 @@ else
                                 <td class="lx-num"><span class="lx-strong">@Fmt.Number(g.Orders)</span> <span class="lx-muted lx-small">@Fmt.Percent(share)</span></td>
                                 <td class="lx-num">@if (g.Growth is null) { <span class="lx-muted">—</span> } else { <MetricDelta Change="g.Growth" Compact="true" /> }</td>
                                 <td class="lx-num"><RateTag Value="g.SuccessRate" /></td>
-                                <td class="lx-num">@(g.AvgBasketIqd is { } b ? Fmt.Compact(b, "IQD") : "—")</td>
+                                <td class="lx-num">@(g.AvgBasketIqd is { } b ? Fmt.Compact(b, Fmt.CompanyCurrency) : "—")</td>
                             </tr>
                         }
                     </tbody>
@@ -168,7 +168,7 @@ else
                                 <td class="lx-num"><span class="lx-strong">@Fmt.Number(c.Orders)</span> <span class="lx-muted lx-small">@Fmt.Percent(share)</span></td>
                                 <td class="lx-num"><RateTag Value="c.SuccessRate" /></td>
                                 <td class="lx-num">@Fmt.Percent(c.ReturnRate)</td>
-                                <td class="lx-num">@(c.AvgBasketIqd is { } b ? Fmt.Compact(b, "IQD") : "—")</td>
+                                <td class="lx-num">@(c.AvgBasketIqd is { } b ? Fmt.Compact(b, Fmt.CompanyCurrency) : "—")</td>
                             </tr>
                         }
                     </tbody>
@@ -308,7 +308,7 @@ else
     private Func<decimal, string> MapFormat => measure switch
     {
         MapMeasure.Success => v => Fmt.Percent(v),
-        MapMeasure.Basket => v => Fmt.Compact(v, null),
+        MapMeasure.Basket => v => Fmt.Compact(v, Fmt.CompanyCurrency),
         MapMeasure.Hours => v => Fmt.Number(v) + " " + L["Unit_Hours"],
         _ => v => Fmt.Number((int)v),
     };

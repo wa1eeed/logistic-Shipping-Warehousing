@@ -2306,3 +2306,45 @@ body.bp6-dark { color: var(--lx-text); background: var(--lx-bg); color-scheme: d
     unicode-range: U+20C1;
     font-display: swap;
 }
+
+/* "At a glance": a one-line, plain-language read of the period, with what needs attention pulled to the end. */
+.lx-briefing { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
+.lx-briefing-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: none;
+    border-radius: var(--lx-radius); background: var(--lx-primary-soft); color: var(--lx-primary);
+}
+.lx-briefing-copy { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.lx-briefing-lead { font-size: var(--lx-font-size-sm); font-weight: 700; color: var(--lx-muted); }
+.lx-briefing-text { margin: 0; font-size: 16px; line-height: 1.4; color: var(--lx-text-strong); overflow-wrap: anywhere; }
+.lx-briefing-flag {
+    display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 6px 12px;
+    border-radius: var(--lx-radius-pill); background: var(--lx-warning-soft); color: var(--lx-warning-text) !important;
+    text-decoration: none !important; font-size: var(--lx-font-size-sm); font-weight: 700; white-space: nowrap;
+    transition: background-color 0.15s ease-out;
+}
+.lx-briefing-flag:hover { background: var(--lx-warning-border); }
+.lx-briefing-flag .bp6-icon { color: var(--lx-warning); }
+.lx-briefing-chevron { opacity: 0.7; }
+.lx-briefing-ok { display: inline-flex; align-items: center; gap: 6px; flex: none; font-size: var(--lx-font-size-sm); font-weight: 700; color: var(--lx-success-text); white-space: nowrap; }
+.lx-briefing-ok .bp6-icon { color: var(--lx-success); }
+@media (max-width: 640px) {
+    .lx-briefing { flex-wrap: wrap; gap: 10px 14px; }
+    .lx-briefing-copy { flex-basis: calc(100% - 52px); }
+    .lx-briefing-flag, .lx-briefing-ok { margin-inline-start: 52px; }
+}
+
+/* Gentle entrance for the operations brief, and a slight lift on the cards that drill down. A single staggered
+   fade-up when the dashboard first paints (and when fresh data replaces the skeleton); off for reduced motion. */
+@keyframes lx-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.lx-dashboard > * { animation: lx-rise 0.32s ease-out both; }
+.lx-dashboard > *:nth-child(2) { animation-delay: 0.04s; }
+.lx-dashboard > *:nth-child(3) { animation-delay: 0.08s; }
+.lx-dashboard > *:nth-child(4) { animation-delay: 0.12s; }
+.lx-dashboard > *:nth-child(5) { animation-delay: 0.16s; }
+.lx-dashboard > *:nth-child(n + 6) { animation-delay: 0.2s; }
+a.lx-kpi { transition: box-shadow 0.15s ease-out, background-color 0.15s ease-out, transform 0.15s ease-out; }
+a.lx-kpi:hover { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) {
+    .lx-dashboard > * { animation: none; }
+    a.lx-kpi:hover { transform: none; }
+}

@@ -1,0 +1,47 @@
+@* A one-line, plain-language read of the period — orders, delivered, success rate and what needs attention.
+   Built entirely from data the dashboard already loaded: no extra request and no business logic. *@
+<section class="lx-briefing lx-card" aria-label="@L["Dashboard_Briefing_Lead"]">
+    <span class="lx-briefing-icon" aria-hidden="true"><Icon Name="lightbulb" /></span>
+    <div class="lx-briefing-copy">
+        <span class="lx-briefing-lead">@L["Dashboard_Briefing_Lead"]</span>
+        <p class="lx-briefing-text">@Sentence</p>
+    </div>
+    @if (AttentionCount > 0)
+    {
+        <a class="lx-briefing-flag" href="automation">
+            <Icon Name="warning-sign" />
+            <span>@L.Count("Dashboard_Briefing_Attention", AttentionCount)</span>
+            <Icon Name="@Bidi.ChevronForward" CssClass="lx-briefing-chevron" />
+        </a>
+    }
+    else
+    {
+        <span class="lx-briefing-ok"><Icon Name="tick-circle" /> @L["NothingNeedsAttention"]</span>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public AnalyticsOverview Overview { get; set; } = default!;
+    [Parameter, EditorRequired] public int Days { get; set; }
+
+    /// <summary>How many things on the dashboard currently need a human to look at them.</summary>
+    [Parameter] public int AttentionCount { get; set; }
+
+    private string Sentence => string.Format(
+        CultureInfo.CurrentCulture,
+        L["Dashboard_Briefing"],
+        PeriodPhrase,
+        L.Count("OrdersN", (int)Overview.Booked.Value),
+        Fmt.Number((int)Overview.Delivered.Value),
+        Fmt.Percent(Overview.SuccessRate.Value));
+
+    private string PeriodPhrase => Days == 1
+        ? L["Period_Today"].Value
+        : string.Format(CultureInfo.CurrentCulture, L["Dashboard_PeriodLast"], Days switch
+        {
+            7 => L["Period_7"].Value,
+            30 => L["Period_30"].Value,
+            90 => L["Period_90"].Value,
+            _ => L.Count("DaysN", Days),
+        });
+}
