@@ -1568,7 +1568,8 @@ tr.lx-group-row td { background: var(--lx-surface-2) !important; font-weight: 70
 tr.lx-row-busy { opacity: 0.55; }
 
 /* Warehouses */
-.lx-warehouse-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+.lx-warehouse-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow 0.15s ease-out; }
+.lx-warehouse-card:hover { box-shadow: var(--lx-shadow-sm); }
 .lx-warehouse-head { display: flex; gap: 12px; align-items: flex-start; }
 .lx-warehouse-tag {
     flex: none; min-width: 52px; height: 40px; border-radius: var(--lx-radius); display: inline-flex; align-items: center; justify-content: center;
@@ -1580,11 +1581,14 @@ tr.lx-row-busy { opacity: 0.55; }
 .lx-warehouse-title h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; line-height: 1.35; color: var(--lx-text-strong); }
 .lx-warehouse-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--lx-muted); font-size: 13px; }
 .lx-warehouse-meta > span { display: inline-flex; align-items: center; gap: 5px; }
+.lx-warehouse-meta .bp6-icon { color: var(--lx-faint); }
 .lx-warehouse-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--lx-border); border-radius: var(--lx-radius); overflow: hidden; box-shadow: 0 0 0 1px var(--lx-border); }
 .lx-warehouse-stats > a, .lx-warehouse-stats > div {
     display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; background: var(--lx-surface); color: inherit !important; text-decoration: none !important;
 }
+.lx-warehouse-stats > a { transition: background 0.12s ease-out; }
 .lx-warehouse-stats > a:hover { background: var(--lx-surface-hover); }
+.lx-warehouse-stats > a:not(.lx-stat-danger):hover strong { color: var(--lx-primary-text); }
 .lx-warehouse-stats strong { font-size: 18px; font-weight: 700; color: var(--lx-text-strong); font-variant-numeric: tabular-nums; }
 .lx-warehouse-stats span { font-size: 12px; color: var(--lx-muted); }
 .lx-warehouse-stats .lx-stat-danger strong { color: var(--lx-danger); }
