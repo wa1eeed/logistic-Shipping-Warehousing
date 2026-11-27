@@ -24,4 +24,14 @@ public static class Currencies
 
     /// <summary>Whole-unit currencies shown without decimals (IQD and SAR in this app's demo and pricing).</summary>
     public static bool IsWhole(string? currency) => currency is Iraqi or Saudi;
+
+    /// <summary>The currency's full name, for settings and labels (the Iraqi dinar / the Saudi riyal).</summary>
+    public static string Name(string? currency, bool arabic) => currency switch
+    {
+        Iraqi => arabic ? "الدينار العراقي" : "Iraqi dinar",
+        Saudi => arabic ? "الريال السعودي" : "Saudi riyal",
+        "USD" => arabic ? "الدولار الأمريكي" : "US dollar",
+        null or "" => "",
+        _ => currency,
+    };
 }

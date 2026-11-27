@@ -1,0 +1,47 @@
+@page "/settings"
+@attribute [Authorize(Policy = StaffPolicies.Administer)]
+
+<PageTitle>@L["Nav_Settings"] · @L["AppName"]</PageTitle>
+
+<PageHeader Title="@L["Nav_Settings"]" Subtitle="@L["Settings_Subtitle"]" Icon="cog" />
+
+<Tabs Selected="@tab" SelectedChanged="@(value => tab = value)" CssClass="lx-settings-tabs">
+    <Tab Id="general" Title="@L["Settings_Tab_General"]" Icon="office">
+        <CompanySettings />
+    </Tab>
+    <Tab Id="pricing" Title="@L["Settings_Tab_Pricing"]" Icon="tag">
+        <div class="lx-settings-grid">
+            @Card("pricing", "tag", "Nav_Pricing", "Settings_PricingDesc", StaffPolicies.Staff)
+        </div>
+    </Tab>
+    <Tab Id="operations" Title="@L["Settings_Tab_Operations"]" Icon="cog">
+        <div class="lx-settings-grid">
+            @Card("warehouses", "office", "Nav_Warehouses", "Settings_WarehousesDesc", StaffPolicies.Staff)
+            @Card("automation", "automatic-updates", "Nav_Automation", "Settings_AutomationDesc", StaffPolicies.Care)
+            @Card("confirmations", "phone-call", "Nav_Confirmations", "Settings_ConfirmationsDesc", StaffPolicies.Care)
+        </div>
+    </Tab>
+    <Tab Id="admin" Title="@L["Settings_Tab_Admin"]" Icon="key">
+        <div class="lx-settings-grid">
+            @Card("team", "key", "Nav_Team", "Settings_TeamDesc", StaffPolicies.Administer)
+            @Card("mobile-app", "mobile-phone", "Nav_MobileApp", "Settings_MobileDesc", StaffPolicies.Administer)
+            @Card("system", "pulse", "Nav_System", "Settings_SystemDesc", StaffPolicies.Administer)
+        </div>
+    </Tab>
+</Tabs>
+
+@code {
+    private string tab = "general";
+
+    // Each area keeps its own full page (reachable from the side menu too); the hub links to it in place.
+    private RenderFragment Card(string href, string icon, string titleKey, string descKey, string policy) => @<Allowed Policy="@policy">
+        <a class="lx-settings-card" href="@href">
+            <span class="lx-settings-card-icon"><Icon Name="@icon" /></span>
+            <span class="lx-settings-card-body">
+                <span class="lx-settings-card-title">@L[titleKey]</span>
+                <span class="lx-settings-card-desc">@L[descKey]</span>
+            </span>
+            <Icon Name="@Bidi.ChevronForward" CssClass="lx-settings-card-chevron" />
+        </a>
+    </Allowed>;
+}

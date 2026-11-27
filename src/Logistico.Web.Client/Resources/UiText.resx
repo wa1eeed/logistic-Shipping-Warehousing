@@ -1750,4 +1750,20 @@
   <data name="Dashboard_PeriodLast" xml:space="preserve"><value>Last {0}</value></data>
   <data name="Dashboard_Briefing_Attention" xml:space="preserve"><value>{0} items need your attention</value></data>
   <data name="Dashboard_Briefing_Attention_One" xml:space="preserve"><value>1 item needs your attention</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Settings_Subtitle" xml:space="preserve"><value>Every platform setting in one place</value></data>
+  <data name="Settings_Tab_General" xml:space="preserve"><value>General</value></data>
+  <data name="Settings_Tab_Pricing" xml:space="preserve"><value>Pricing &amp; areas</value></data>
+  <data name="Settings_Tab_Operations" xml:space="preserve"><value>Operations</value></data>
+  <data name="Settings_Tab_Admin" xml:space="preserve"><value>Team &amp; system</value></data>
+  <data name="Settings_PricingDesc" xml:space="preserve"><value>Delivery prices, regions and cities</value></data>
+  <data name="Settings_WarehousesDesc" xml:space="preserve"><value>Warehouses, sorting hubs and coverage</value></data>
+  <data name="Settings_AutomationDesc" xml:space="preserve"><value>Alert rules and automation</value></data>
+  <data name="Settings_ConfirmationsDesc" xml:space="preserve"><value>Order confirmation calls and their settings</value></data>
+  <data name="Settings_TeamDesc" xml:space="preserve"><value>Users, roles and permissions</value></data>
+  <data name="Settings_MobileDesc" xml:space="preserve"><value>Courier and seller app, device pairing</value></data>
+  <data name="Settings_SystemDesc" xml:space="preserve"><value>Install health, email and backups</value></data>
+  <data name="Company_Currency" xml:space="preserve"><value>Currency</value></data>
+  <data name="Company_CurrencyHint" xml:space="preserve"><value>Set automatically by the operating country</value></data>
+  <data name="Company_CountryChangeWarning" xml:space="preserve"><value>Changing the country to {0} switches the platform's currency and regions to {1}. Existing shipments keep their original currency.</value></data>
 </root>
