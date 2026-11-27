@@ -1,4 +1,5 @@
 @page "/pricing"
+@using Logistico.SharedKernel.Saudi
 @inject ShipmentsApi Shipments
 @inject MerchantsApi Merchants
 @inject Toaster Toaster
@@ -150,9 +151,13 @@ else
                                     <option value="@g.Code">@g.Name</option>
                                 }
                             </HtmlSelect>
-                            <input class="bp6-input bp6-small" style="width:170px" placeholder="@L["Pricing_CityName"]" @bind="newCityName" @bind:event="oninput" aria-label="@L["Pricing_CityName"]" />
+                            <input class="bp6-input bp6-small" style="width:170px" placeholder="@L["Pricing_CityNameBulk"]" @bind="newCityName" @bind:event="oninput" aria-label="@L["Pricing_CityName"]" />
                             <Button Small="true" Icon="add" Text="@L["Add"]" Disabled="@(string.IsNullOrWhiteSpace(newCityName) || string.IsNullOrEmpty(cityRegion))" OnClick="AddCity" />
                         </div>
+                        @if (Countries.IsSaudi(HubCatalog.Country))
+                        {
+                            <Button Small="true" Minimal="true" Icon="map-create" Text="@L["Pricing_AddStandardCities"]" OnClick="AddStandardCities" />
+                        }
                     </Actions>
                     <ChildContent>
                         @{ var cities = card.Cities.Where(c => c.RegionCode == cityRegion).ToList(); }
@@ -270,10 +275,23 @@ else
             return;
         }
 
-        var name = newCityName.Trim();
-        var code = cityRegion + "-" + Guid.NewGuid().ToString("N");
-        card!.Cities.Add(new CityRate(code.Length > 20 ? code[..20] : code, cityRegion, name, name, null));
+        // One name, or several separated by commas or new lines, added under the chosen region.
+        foreach (var name in newCityName.Split([',', '،', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var code = cityRegion + "-" + Guid.NewGuid().ToString("N");
+            card!.Cities.Add(new CityRate(code.Length > 20 ? code[..20] : code, cityRegion, name, name, null));
+        }
+
         newCityName = null;
+    }
+
+    // Drops the Kingdom's main cities into the list (those not already there) to price or prune.
+    private void AddStandardCities()
+    {
+        foreach (var c in SaudiCities.All.Where(c => card!.Cities.All(x => x.Code != c.Code)))
+        {
+            card!.Cities.Add(new CityRate(c.Code, c.RegionCode, c.NameEn, c.NameAr, null));
+        }
     }
 
     private void SetCityFee(CityRate city, object? value)
