@@ -305,7 +305,9 @@ app.Run();
 
 static Task ApiAwareRedirect(Microsoft.AspNetCore.Authentication.RedirectContext<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions> context, int apiStatusCode)
 {
-    if (!context.Request.Path.StartsWithSegments("/api"))
+    // APIs and the realtime hub are called by code, not the browser's address bar: they get a status code, not an
+    // HTML redirect to the login page (which a fetch or a SignalR negotiate cannot use).
+    if (!context.Request.Path.StartsWithSegments("/api") && !context.Request.Path.StartsWithSegments("/hubs"))
     {
         context.Response.Redirect(context.RedirectUri);
         return Task.CompletedTask;
