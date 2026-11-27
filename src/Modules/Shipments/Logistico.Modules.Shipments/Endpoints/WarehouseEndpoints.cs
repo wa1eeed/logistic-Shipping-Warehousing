@@ -35,12 +35,14 @@ internal static class WarehouseEndpoints
         return app;
     }
 
-    private static async Task<IResult> ScanAsync(ScanRequest request, ClaimsPrincipal user, WarehouseScanner scanner, CancellationToken ct)
+    private static async Task<IResult> ScanAsync(ScanRequest request, ClaimsPrincipal user, WarehouseScanner scanner, IOpsNotifier ops, CancellationToken ct)
     {
         try
         {
             var outcome = (await scanner.ScanAsync(request.Operation, [request.TrackingNumber], request.HubCode, request.WarehouseBin, request.CourierName,
                 request.TransferId, request.FailureReason, user.UserName(), ct)).Single();
+            // Every scan (a success or a logged failure) adds a radar entry and may move counters: nudge the tenant's live screens.
+            await NotifyAsync(ops, ct);
             if (outcome.Ok)
             {
                 return TypedResults.Ok(outcome);
@@ -61,12 +63,13 @@ internal static class WarehouseEndpoints
         }
     }
 
-    private static async Task<IResult> BulkAsync(BulkScanRequest request, ClaimsPrincipal user, WarehouseScanner scanner, CancellationToken ct)
+    private static async Task<IResult> BulkAsync(BulkScanRequest request, ClaimsPrincipal user, WarehouseScanner scanner, IOpsNotifier ops, CancellationToken ct)
     {
         try
         {
             var outcomes = await scanner.ScanAsync(request.Operation, request.TrackingNumbers, request.HubCode, request.WarehouseBin, request.CourierName,
                 request.TransferId, request.FailureReason, user.UserName(), ct);
+            await NotifyAsync(ops, ct);
             return TypedResults.Ok(new BulkScanResult(outcomes.Count(o => o.Ok), outcomes.Count(o => !o.Ok), outcomes));
         }
         catch (DomainException ex)
@@ -78,6 +81,14 @@ internal static class WarehouseEndpoints
             // A parcel or truck changed at the same moment (another station); scanning again sees the new state.
             return Api.Stale();
         }
+    }
+
+    // A hub scan changes both the live radar and the operational counters; the signals carry no data (listeners refetch
+    // through the tenant-scoped API), and a no-op outside the host, so this never changes how a scan itself behaves.
+    private static async Task NotifyAsync(IOpsNotifier ops, CancellationToken ct)
+    {
+        await ops.ScansChangedAsync(ct);
+        await ops.CountersChangedAsync(ct);
     }
 
     private static async Task<Ok<HubRadar>> RadarAsync(long? afterSeq, string? hub, ShipmentsDbContext db, HubDirectory directory, ITenantContext tenant, TimeProvider clock, CancellationToken ct)

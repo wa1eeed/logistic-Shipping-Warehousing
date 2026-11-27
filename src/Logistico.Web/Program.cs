@@ -2,18 +2,21 @@ using System.Threading.RateLimiting;
 using Logistico.Modules.Audit;
 using Logistico.Modules.Merchants;
 using Logistico.Modules.Shipments;
+using Logistico.Modules.Shipments.Contracts;
 using Logistico.SharedKernel;
 using Logistico.Web.Components;
 using Logistico.Web.Components.Account;
 using Logistico.Web.Data;
 using Logistico.Web.Endpoints;
 using Logistico.Web.Infrastructure;
+using Logistico.Web.Realtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -188,6 +191,12 @@ builder.Services.AddAuditModule(connectionString);
 builder.Services.AddMerchantsModule(connectionString);
 builder.Services.AddShipmentsModule(connectionString);
 
+// Realtime: one internal SignalR hub broadcasts lightweight per-tenant "something changed" signals, so live screens
+// refresh at once instead of polling. Same-origin, so it needs no change to the Content-Security-Policy. The signals
+// carry no data; the browser refetches through the usual tenant-scoped API (see OpsHub and SignalROpsNotifier).
+builder.Services.AddSignalR();
+builder.Services.Replace(ServiceDescriptor.Scoped<IOpsNotifier, SignalROpsNotifier>());
+
 var app = builder.Build();
 
 if (trustedProxyNetworks.Length > 0)
@@ -268,6 +277,9 @@ var modules = app.MapGroup("").RequireStaffRoles();
 modules.MapAuditModule();
 modules.MapMerchantsModule();
 modules.MapShipmentsModule();
+
+// The realtime hub for the operations console (staff only; the [Authorize] on OpsHub is enforced at negotiation).
+app.MapHub<OpsHub>("/hubs/ops");
 
 // The public landing page at the site root; signed-in staff go straight to the console. The page carries one inline
 // script (the interactive map, scroll reveals and the tracking box); it runs under the Content-Security-Policy only

@@ -23,6 +23,7 @@ builder.Services.AddScoped<ShipmentsApi>();
 builder.Services.AddScoped<OperationsApi>();
 builder.Services.AddScoped<PlanningApi>();
 builder.Services.AddScoped<OpsState>();
+builder.Services.AddScoped<IOpsLive, OpsHubClient>();
 builder.Services.AddScoped<Confirmer>();
 builder.Services.AddScoped<MerchantsApi>();
 builder.Services.AddScoped<AccountApi>();

@@ -8,6 +8,7 @@
 @inject CompanyApi Company
 @inject Toaster Toaster
 @inject IJSRuntime JS
+@inject IOpsLive Live
 @using System.Security.Claims
 
 <div class="@Bp.Cls("lx-app", Bp.When(menuOpen, "lx-menu-open"), Bp.When(collapsed, "lx-sidebar-collapsed"), Bp.When(!staff, "lx-no-sidebar"))">
@@ -248,7 +249,23 @@
 
         await Task.WhenAll(RefreshRadarAsync(notify: false), Ops.RefreshAsync(), LoadCompanyAsync());
         StartBackgroundRefresh();
+        await StartLiveUpdatesAsync();
     }
+
+    /// <summary>
+    /// Subscribe to the server's live signals so the radar and counters refresh the moment something changes, instead
+    /// of waiting for the polling loop above (which stays on as a slower fallback for when the live link is down).
+    /// </summary>
+    private async Task StartLiveUpdatesAsync()
+    {
+        Live.ScansChanged += OnLiveScansChanged;
+        Live.CountersChanged += OnLiveCountersChanged;
+        await Live.StartAsync();
+    }
+
+    private void OnLiveScansChanged() => _ = InvokeAsync(() => RefreshRadarAsync(notify: true));
+
+    private void OnLiveCountersChanged() => _ = InvokeAsync(Ops.RefreshAsync);
 
     /// <summary>The company's name for the top bar; the app works without it.</summary>
     private async Task LoadCompanyAsync()
@@ -334,17 +351,19 @@
         _ = RefreshLoopAsync(loopCts.Token);
     }
 
+    // A fallback for when the live link is down or a signal is missed: live updates (StartLiveUpdatesAsync) are the
+    // primary path, so this polls slowly (radar every 30s, counters every 60s) rather than the old 5s.
     private async Task RefreshLoopAsync(CancellationToken token)
     {
         try
         {
-            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
             var ticks = 0;
             while (await timer.WaitForNextTickAsync(token))
             {
                 ticks++;
                 await InvokeAsync(() => RefreshRadarAsync(notify: true));
-                if (ticks % 6 == 0)
+                if (ticks % 2 == 0)
                 {
                     await Ops.RefreshAsync();
                 }
@@ -447,6 +466,8 @@
         Ops.Changed -= OnOpsChanged;
         Company.Changed -= OnCompanyChanged;
         HubCatalog.Changed -= OnNetworkChanged;
+        Live.ScansChanged -= OnLiveScansChanged;
+        Live.CountersChanged -= OnLiveCountersChanged;
         loopCts?.Cancel();
         loopCts?.Dispose();
         selfRef?.Dispose();
