@@ -3,6 +3,7 @@
    and the "General" tab of the settings hub. *@
 @inject CompanyApi Company
 @inject Toaster Toaster
+@inject IJSRuntime JS
 
 @if (view is null)
 {
@@ -68,6 +69,18 @@ else
                 <FormField Label="@L["Field_Address"]" Hint="@L["Optional"]" Field="() => model.Address" CssClass="lx-span-2">
                     <InputTextArea class="bp6-input bp6-fill" rows="2" @bind-Value="model.Address" dir="auto" maxlength="300" />
                 </FormField>
+                <FormField TValue="string" Label="@L["Company_BrandColor"]" Hint="@L["Company_BrandColorHint"]" For="lx-brand-color" CssClass="lx-span-2">
+                    <div class="lx-brandcolor">
+                        @foreach (var swatch in Swatches)
+                        {
+                            <button type="button" class="@Bp.Cls("lx-swatch", Bp.When(IsBrand(swatch), "lx-swatch-on"))" style="@($"background:{swatch}")" title="@swatch" aria-label="@swatch" @onclick="@(() => SetBrandAsync(swatch))"></button>
+                        }
+                        <label class="lx-swatch lx-swatch-custom" title="@L["Company_BrandCustom"]">
+                            <input type="color" id="lx-brand-color" value="@(model.BrandColor ?? "#12a67a")" @onchange="@(e => SetBrandAsync(e.Value?.ToString()))" />
+                        </label>
+                        <Button Small="true" Minimal="true" Icon="reset" Text="@L["Company_BrandDefault"]" OnClick="@(() => SetBrandAsync(null))" />
+                    </div>
+                </FormField>
             </div>
             @if (CountryChangedFromSaved)
             {
@@ -103,6 +116,23 @@ else
     private string Currency => Currencies.For(model.Country);
 
     private bool CountryChangedFromSaved => view is not null && !string.Equals(model.Country, originalCountry, StringComparison.OrdinalIgnoreCase);
+
+    private static readonly string[] Swatches = ["#12a67a", "#0d9488", "#2f6df0", "#6250d6", "#c0392b", "#b8860b", "#0f172a"];
+
+    private bool IsBrand(string color) => string.Equals(model.BrandColor, color, StringComparison.OrdinalIgnoreCase);
+
+    private async Task SetBrandAsync(string? color)
+    {
+        model.BrandColor = string.IsNullOrWhiteSpace(color) ? null : color.Trim().ToLowerInvariant();
+        try
+        {
+            await JS.InvokeVoidAsync("lx.previewBrand", model.BrandColor);
+        }
+        catch (JSException)
+        {
+            // Live preview is a nicety; the colour still saves and applies on reload.
+        }
+    }
 
     private static string CountryName(string code) => Countries.All.FirstOrDefault(c => c.Code == code)?.Name ?? code;
 

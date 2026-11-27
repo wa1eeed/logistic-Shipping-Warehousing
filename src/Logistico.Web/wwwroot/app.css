@@ -624,9 +624,15 @@ a.bp6-breadcrumb:hover { color: var(--lx-link); }
    white panel with rounded corners beside them. */
 .lx-logo {
     width: 22px; height: 22px; flex: none; display: inline-block;
-    background: linear-gradient(135deg, #2ECF9E, #12A67A 55%, #0B7355);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--lx-primary) 62%, #fff), var(--lx-primary) 55%, color-mix(in srgb, var(--lx-primary) 72%, #000));
     clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
 }
+/* Brand colour picker in settings */
+.lx-brandcolor { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.lx-swatch { width: 30px; height: 30px; padding: 0; border: 1px solid var(--lx-border); border-radius: 8px; cursor: pointer; position: relative; }
+.lx-swatch-on { box-shadow: 0 0 0 2px var(--lx-surface), 0 0 0 4px var(--lx-text-strong); }
+.lx-swatch-custom { display: inline-grid; place-items: center; overflow: hidden; background: conic-gradient(red, orange, yellow, green, cyan, blue, magenta, red); }
+.lx-swatch-custom input[type="color"] { width: 44px; height: 44px; border: 0; padding: 0; background: none; cursor: pointer; opacity: 0; }
 .lx-logo-large { width: 44px; height: 44px; }
 
 .lx-app { min-height: 100vh; display: flex; flex-direction: column; background: var(--lx-chrome); }

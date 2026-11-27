@@ -80,6 +80,25 @@ window.lx = {
     print: () => {
         try { window.print(); } catch { /* ignore */ }
     },
+    // Live preview of a brand colour while it is being picked in settings (applied to body so it wins in dark too).
+    previewBrand: (c) => {
+        const s = document.body.style;
+        const names = ["--lx-primary", "--lx-primary-soft", "--lx-primary-text", "--lx-primary-border",
+            "--lx-selected", "--lx-selected-hover", "--lx-selected-active",
+            "--bp-intent-primary-rest", "--bp-intent-primary-hover", "--bp-intent-primary-active", "--lx-link"];
+        if (!c) { names.forEach((n) => s.removeProperty(n)); return; }
+        s.setProperty("--lx-primary", c);
+        s.setProperty("--lx-primary-soft", "color-mix(in srgb, " + c + " 12%, var(--lx-surface))");
+        s.setProperty("--lx-primary-text", "color-mix(in srgb, " + c + " 68%, var(--lx-text-strong))");
+        s.setProperty("--lx-primary-border", "color-mix(in srgb, " + c + " 32%, var(--lx-border))");
+        s.setProperty("--lx-selected", c);
+        s.setProperty("--lx-selected-hover", "color-mix(in srgb, " + c + " 84%, #000)");
+        s.setProperty("--lx-selected-active", "color-mix(in srgb, " + c + " 70%, #000)");
+        s.setProperty("--bp-intent-primary-rest", c);
+        s.setProperty("--bp-intent-primary-hover", "color-mix(in srgb, " + c + " 85%, #000)");
+        s.setProperty("--bp-intent-primary-active", "color-mix(in srgb, " + c + " 72%, #000)");
+        s.setProperty("--lx-link", "var(--lx-primary-text)");
+    },
     // Local scanner tone: high = OK (1046Hz), double-low = error (220Hz -> 180Hz).
     beep: (ok) => {
         if (window.lx.isMuted()) return;

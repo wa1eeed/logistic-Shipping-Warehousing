@@ -126,6 +126,11 @@ namespace Logistico.Web.Data.Migrations
                         .HasColumnType("character varying(300)")
                         .HasColumnName("address");
 
+                    b.Property<string>("BrandColor")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("brand_color");
+
                     b.Property<string>("Country")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
