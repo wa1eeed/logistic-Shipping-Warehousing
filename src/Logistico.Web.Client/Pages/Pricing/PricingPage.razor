@@ -4,16 +4,20 @@
 @inject MerchantsApi Merchants
 @inject Toaster Toaster
 
-<PageTitle>@L["Nav_Pricing"] · @L["AppName"]</PageTitle>
+@* A page on its own (/pricing) and, with Embedded=true, a tab inside the settings hub — same component, same data. *@
+@if (!Embedded)
+{
+    <PageTitle>@L["Nav_Pricing"] · @L["AppName"]</PageTitle>
 
-<PageHeader Title="@L["PricingTitle"]" Subtitle="@L["PricingSubtitle"]" Icon="tag">
-    <Actions>
-        <Allowed Policy="@StaffPolicies.Finance">
-            <Button Icon="reset" Minimal="true" Text="@L["StandardPrices"]" OnClick="ResetToStandard" Disabled="@(card is null)" />
-            <Button Intent="Intent.Primary" Icon="tick" Text="@L["SavePrices"]" Loading="saving" Disabled="@(card is null)" OnClick="SaveAsync" />
-        </Allowed>
-    </Actions>
-</PageHeader>
+    <PageHeader Title="@L["PricingTitle"]" Subtitle="@L["PricingSubtitle"]" Icon="tag">
+        <Actions>
+            <Allowed Policy="@StaffPolicies.Finance">
+                <Button Icon="reset" Minimal="true" Text="@L["StandardPrices"]" OnClick="ResetToStandard" Disabled="@(card is null)" />
+                <Button Intent="Intent.Primary" Icon="tick" Text="@L["SavePrices"]" Loading="saving" Disabled="@(card is null)" OnClick="SaveAsync" />
+            </Allowed>
+        </Actions>
+    </PageHeader>
+}
 
 @if (card is null)
 {
@@ -21,6 +25,15 @@
 }
 else
 {
+    @if (Embedded)
+    {
+        <Allowed Policy="@StaffPolicies.Finance">
+            <div class="lx-row" style="justify-content:flex-end;gap:8px;margin-block-end:12px">
+                <Button Icon="reset" Minimal="true" Text="@L["StandardPrices"]" OnClick="ResetToStandard" />
+                <Button Intent="Intent.Primary" Icon="tick" Text="@L["SavePrices"]" Loading="saving" OnClick="SaveAsync" />
+            </div>
+        </Allowed>
+    }
     @if (error is not null)
     {
         <Callout Intent="Intent.Danger" Icon="error" CssClass="lx-mb">@error</Callout>
@@ -253,6 +266,9 @@ else
 }
 
 @code {
+    /// <summary>True when shown inside the settings hub: the page's own header is dropped for a compact action bar.</summary>
+    [Parameter] public bool Embedded { get; set; }
+
     private RateCard? card;
     private IReadOnlyList<MerchantLookupItem> merchants = [];
     private Guid? newSeller;

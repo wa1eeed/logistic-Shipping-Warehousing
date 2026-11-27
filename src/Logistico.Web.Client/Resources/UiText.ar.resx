@@ -1827,7 +1827,6 @@
   <data name="Settings_Tab_Pricing" xml:space="preserve"><value>التسعير والمناطق</value></data>
   <data name="Settings_Tab_Operations" xml:space="preserve"><value>العمليات</value></data>
   <data name="Settings_Tab_Admin" xml:space="preserve"><value>الفريق والنظام</value></data>
-  <data name="Settings_PricingDesc" xml:space="preserve"><value>أسعار التوصيل والمناطق والمدن</value></data>
   <data name="Settings_WarehousesDesc" xml:space="preserve"><value>المستودعات ومراكز الفرز والتغطية</value></data>
   <data name="Settings_AutomationDesc" xml:space="preserve"><value>قواعد التنبيهات والأتمتة</value></data>
   <data name="Settings_ConfirmationsDesc" xml:space="preserve"><value>مكالمات تأكيد الطلبات وإعداداتها</value></data>

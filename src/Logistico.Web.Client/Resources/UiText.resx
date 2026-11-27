@@ -1756,7 +1756,6 @@
   <data name="Settings_Tab_Pricing" xml:space="preserve"><value>Pricing &amp; areas</value></data>
   <data name="Settings_Tab_Operations" xml:space="preserve"><value>Operations</value></data>
   <data name="Settings_Tab_Admin" xml:space="preserve"><value>Team &amp; system</value></data>
-  <data name="Settings_PricingDesc" xml:space="preserve"><value>Delivery prices, regions and cities</value></data>
   <data name="Settings_WarehousesDesc" xml:space="preserve"><value>Warehouses, sorting hubs and coverage</value></data>
   <data name="Settings_AutomationDesc" xml:space="preserve"><value>Alert rules and automation</value></data>
   <data name="Settings_ConfirmationsDesc" xml:space="preserve"><value>Order confirmation calls and their settings</value></data>
