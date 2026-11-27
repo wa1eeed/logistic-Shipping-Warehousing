@@ -1813,4 +1813,12 @@
   <data name="Plan_AppliedN_Few" xml:space="preserve"><value>طُبّقت الخطة على {0} شحنات.</value></data>
   <data name="Plan_NoPositions" xml:space="preserve"><value>المواقع غير معروفة بعد</value></data>
   <data name="Plan_NoPositionsHint" xml:space="preserve"><value>تظهر خريطة الجولات عندما يسلّم المندوبون عبر التطبيق (موقع GPS عند الباب) أو تكون للزبائن توصيلات سابقة.</value></data>
+  <data name="Dashboard_Briefing_Lead" xml:space="preserve"><value>نظرة سريعة</value></data>
+  <data name="Dashboard_Briefing" xml:space="preserve"><value>{0}: {1}، وسُلِّم منها {2} بنسبة نجاح {3}</value></data>
+  <data name="Dashboard_PeriodLast" xml:space="preserve"><value>آخر {0}</value></data>
+  <data name="Dashboard_Briefing_Attention" xml:space="preserve"><value>{0} بند يحتاج متابعتك</value></data>
+  <data name="Dashboard_Briefing_Attention_One" xml:space="preserve"><value>بند واحد يحتاج متابعتك</value></data>
+  <data name="Dashboard_Briefing_Attention_Two" xml:space="preserve"><value>بندان يحتاجان متابعتك</value></data>
+  <data name="Dashboard_Briefing_Attention_Few" xml:space="preserve"><value>{0} بنود تحتاج متابعتك</value></data>
+  <data name="Dashboard_Briefing_Attention_Many" xml:space="preserve"><value>{0} بنداً يحتاج متابعتك</value></data>
 </root>

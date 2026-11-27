@@ -1745,4 +1745,9 @@
   <data name="Plan_AppliedN_One" xml:space="preserve"><value>Plan applied to 1 parcel.</value></data>
   <data name="Plan_NoPositions" xml:space="preserve"><value>Positions not known yet</value></data>
   <data name="Plan_NoPositionsHint" xml:space="preserve"><value>The map of the runs appears once couriers deliver with the app (GPS at the door) or customers have earlier deliveries.</value></data>
+  <data name="Dashboard_Briefing_Lead" xml:space="preserve"><value>At a glance</value></data>
+  <data name="Dashboard_Briefing" xml:space="preserve"><value>{0}: {1}, {2} delivered at {3} success</value></data>
+  <data name="Dashboard_PeriodLast" xml:space="preserve"><value>Last {0}</value></data>
+  <data name="Dashboard_Briefing_Attention" xml:space="preserve"><value>{0} items need your attention</value></data>
+  <data name="Dashboard_Briefing_Attention_One" xml:space="preserve"><value>1 item needs your attention</value></data>
 </root>

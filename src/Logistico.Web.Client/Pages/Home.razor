@@ -56,6 +56,7 @@ else if (analytics is null || summary is null || network is null || (loading && 
 else
 {
     <main class="lx-dashboard">
+        <DashboardBriefing Overview="analytics" Days="days" AttentionCount="AttentionItems.Count" />
         <DashboardMetrics Overview="analytics" />
 
         <div class="lx-dashboard-main-grid">
