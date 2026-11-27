@@ -1172,6 +1172,13 @@ html table.bp6-html-table.lx-table.lx-role-matrix tbody th[scope="row"] {
     color: var(--lx-text); white-space: normal; line-height: 1.45; background: none; border-block-end: 1px solid var(--lx-border);
 }
 table.bp6-html-table.lx-table.lx-role-matrix thead th + th, table.bp6-html-table.lx-table.lx-role-matrix td { text-align: center; }
+table.bp6-html-table.lx-table.lx-role-matrix thead th + th { font-weight: 700; color: var(--lx-text-strong); }
+/* Role columns separated so the grid of ticks reads cleanly. */
+table.bp6-html-table.lx-table.lx-role-matrix thead th + th,
+table.bp6-html-table.lx-table.lx-role-matrix tbody td { border-inline-start: 1px solid var(--lx-border-subtle); }
+table.bp6-html-table.lx-table.lx-role-matrix tbody tr:hover > :is(th, td) { background: var(--lx-surface-hover); }
+/* Allowed cells carry a soft wash so the "yes" pattern is scannable at a glance (stays put on hover). */
+table.bp6-html-table.lx-table.lx-role-matrix tbody td:has(.lx-intent-success) { background: var(--lx-success-soft); }
 .lx-no-sidebar .lx-body { grid-template-columns: minmax(0, 1fr); }
 .lx-menu-role { padding: 0 7px 6px; }
 
@@ -2020,10 +2027,11 @@ body.bp6-dark { color: var(--lx-text); background: var(--lx-bg); color-scheme: d
 
 /* Audit log: each changed field as "field  before → after", the before value struck through. */
 .lx-audit-changes { min-width: 280px; }
-.lx-audit-change { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding-block: 2px; font-size: var(--lx-font-size-sm); }
-.lx-audit-field { color: var(--lx-muted); min-width: 120px; }
-.lx-audit-old { color: var(--lx-muted); text-decoration: line-through; overflow-wrap: anywhere; }
-.lx-audit-new { color: var(--lx-text-strong); overflow-wrap: anywhere; }
+.lx-audit-change { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding-block: 3px; font-size: var(--lx-font-size-sm); }
+.lx-audit-change + .lx-audit-change { border-block-start: 1px solid var(--lx-border-subtle); }
+.lx-audit-field { color: var(--lx-text-2); font-weight: 600; min-width: 120px; }
+.lx-audit-old { color: var(--lx-muted); text-decoration: line-through; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.lx-audit-new { color: var(--lx-text-strong); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 .lx-audit-arrow { color: var(--lx-faint); align-self: center; }
 
 /* Saved list views: a chip that opens the view, with its own remove button. */
